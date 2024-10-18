@@ -11,6 +11,7 @@ models.Base.metadata.create_all(bind=engine)
 async def root():
     return {"message": "Hello World"}
 
+
 # Define the Pydantic model for user input
 class User(BaseModel):
     username: str
@@ -30,3 +31,23 @@ async def add_user(user: User, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return {"username": db_user.username, "id": db_user.id}  # Return a response
+
+
+
+# Add a test user to the database on startup
+@app.on_event("startup")
+def init_db():
+    #add_test_user()
+    pass
+
+
+def add_test_user():
+    db = SessionLocal()
+    try:
+        test_user = models.User(username="test")
+        db.add(test_user)
+        db.commit()
+        db.refresh(test_user)
+        print(f"Test user added with ID: {test_user.id}")
+    finally:
+        db.close()
