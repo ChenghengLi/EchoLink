@@ -11,6 +11,9 @@ EchoLink is a full-stack application featuring a FastAPI backend, a Vue.js front
 - [Running Frontend and Backend Separately](#running-frontend-and-backend-separately)
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
+- [Running Tests](#running-tests)
+  - [Backend Tests](#backend-tests)
+  - [Frontend Tests](#frontend-tests)
 - [Working Flow](#working-flow)
 - [Contributors](#contributors)
 
@@ -71,8 +74,6 @@ If the server does not appear in pgAdmin, you can manually add it by following t
 
 4. **Click "Save"** to add the server.
 
-
-
 ## Running Frontend and Backend Separately
 
 > [!WARNING]
@@ -94,7 +95,21 @@ If the server does not appear in pgAdmin, you can manually add it by following t
    pip install -r requirements.txt
    ```
 
-3. **Run the FastAPI server:**
+3. **Navigate to the app folder:**
+
+   ```bash
+   cd app
+   ```
+
+4. **Change to the local path for the database at database/config.py:**
+
+   ```bash
+   URL_DATABASE_LOCAL = "postgresql://user:password@localhost:5432/Echolink"
+   ```
+
+   Reminder changing it back when running in docker, the database should be running in docker.
+
+5. **Run the FastAPI server:**
 
    ```bash
    uvicorn main:app --reload
@@ -119,6 +134,57 @@ If the server does not appear in pgAdmin, you can manually add it by following t
    ```bash
    npm run dev
    ```
+
+## Running Tests
+
+### Backend Tests
+
+**Introduction:**  
+All tests are automatically executed within the Dockerfiles when building the application. However, if you would like to run the tests during development, particularly for the backend, you have two options.
+
+#### Option 1: Running Tests Using Docker UI
+
+1. **Access the Docker Dashboard:**
+
+   Open the Docker Desktop application on your machine. This provides a graphical user interface to manage your Docker containers.
+
+2. **Locate the Backend Container:**
+
+   In the Docker Dashboard, find the container running the backend service. It should be listed among the active containers.
+
+3. **Open a Terminal Session:**
+
+   Use the Docker UI to open a terminal session within the backend container. This option is usually available as a "CLI" or "Terminal" button in the container's details view.
+
+4. **Run Pytest:**
+
+   Once inside the container's terminal, navigate to the directory containing the tests, if needed, and execute Pytest:
+
+   ```bash
+   pytest ./tests
+   ```
+
+#### Option 2: Running Tests Using Docker Exec
+
+1. **Identify the Backend Container:**
+
+   Start by listing the running containers to find the backend container's ID or name:
+
+   ```bash
+   docker ps
+   ```
+
+2. **Execute Pytest from Your Host Machine:**
+
+   Use `docker exec` to run Pytest directly from your host machine without entering the container:
+
+   ```bash
+   docker exec -it <container_id_or_name> pytest ./tests
+   ```
+
+### Frontend Tests
+
+**Note:** Frontend tests are not yet implemented. Once implemented, instructions for running frontend tests will be provided here.
 
 ## Working Flow
 
@@ -147,3 +213,4 @@ If the server does not appear in pgAdmin, you can manually add it by following t
 - **Kamil**: Frontend
 - **Diego**: Backend
 - **Miquel**: Backend
+```
