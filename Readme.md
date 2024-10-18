@@ -49,7 +49,7 @@ To build and run the entire application using Docker Compose:
 
    - The frontend will be available at `http://localhost:80`
    - The backend API will be available at `http://localhost:8000`
-   - Access pgAdmin for database management at `http://localhost:5050`
+   - Access pgAdmin for database management at `http://localhost:8001`
      - **Login Credentials:**
        - Email: `admin@admin.com`
        - Password: `admin`
