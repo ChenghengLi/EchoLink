@@ -137,10 +137,9 @@ If the server does not appear in pgAdmin, you can manually add it by following t
 
 ## Running Tests
 
-### Backend Tests
+During the application's build process, all tests are automatically executed within the Dockerfiles to ensure integrity. The build will not be complete unless all tests pass successfully. However, if you wish to run the tests during development, you can follow these instructions.
 
-**Introduction:**  
-All tests are automatically executed within the Dockerfiles when building the application. However, if you would like to run the tests during development, particularly for the backend, you have two options.
+### Backend Tests
 
 #### Option 1: Running Tests Using Docker UI
 
