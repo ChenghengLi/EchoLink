@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the FastAPI application code into the container
 COPY ./app .
 
+# Set the PYTHONPATH environment variable
+ENV PYTHONPATH=/app
+
 # Run tests
 RUN pytest ./tests
 

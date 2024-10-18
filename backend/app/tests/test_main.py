@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
-#from main import app  # No funciona ns pq
+from main import app  # Use absolute import
 
-#client = TestClient(app)
+client = TestClient(app)
 
 def test_read_main():
     assert True

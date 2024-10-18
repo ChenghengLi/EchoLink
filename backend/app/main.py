@@ -3,14 +3,22 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import database.models as models
 from database.config import engine, SessionLocal
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+# Define the lifespan context manager
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup code
+    add_test_user()
+    yield
+    # Shutdown code (if needed)
+
+app = FastAPI(lifespan=lifespan)
 models.Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
 
 # Define the Pydantic model for user input
 class User(BaseModel):
@@ -31,15 +39,6 @@ async def add_user(user: User, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return {"username": db_user.username, "id": db_user.id}  # Return a response
-
-
-
-# Add a test user to the database on startup
-@app.on_event("startup")
-def init_db():
-    #add_test_user()
-    pass
-
 
 def add_test_user():
     db = SessionLocal()
