@@ -1,0 +1,13 @@
+
+.h-divider {
+    @apply h-px my-5 bg-gray-200 border-0 dark:bg-gray-700
+}
+
+.unselectable {
+    user-select: none;
+}
+
+/* Distinguish links on focus/hover for accessibility */
+a:focus, a:hover {
+    text-decoration: underline;
+}

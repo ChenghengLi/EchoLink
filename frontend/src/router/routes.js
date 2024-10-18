@@ -1,6 +1,7 @@
 
 
 import HomeDef from '../pages/HomeDef.vue'
+import RegisterDef from '../pages/RegisterDef.vue'
 
 
 export default  [
@@ -8,5 +9,10 @@ export default  [
             path: '/',
             name: 'Home',
             component: HomeDef,
-        }
+        },
+        {
+            path: '/register',
+            name: 'Register',
+            component: RegisterDef,
+        },
     ]
