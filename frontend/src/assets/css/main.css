@@ -1352,7 +1352,7 @@ i {
  --------- (4.1) header styles start ---------
  ==== */
 .header {
-  position: fixed;
+  position: sticky; /* Changed from fixed so positioning of elements after the header is more intuitive */
   top: 0px;
   left: 0px;
   right: 0px;
