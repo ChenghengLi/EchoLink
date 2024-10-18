@@ -1,4 +1,3 @@
-
 # EchoLink
 
 EchoLink is a full-stack application featuring a FastAPI backend, a Vue.js frontend powered by Vite, and a PostgreSQL database managed with PgAgent. This README provides instructions on how to set up and run the project, as well as guidelines for contributing to the codebase.
@@ -8,6 +7,7 @@ EchoLink is a full-stack application featuring a FastAPI backend, a Vue.js front
 - [Project Overview](#project-overview)
 - [Clone the Repository](#clone-the-repository)
 - [Running the Application with Docker Compose](#running-the-application-with-docker-compose)
+- [Accessing PgAgent](#accessing-pgagent)
 - [Running Frontend and Backend Separately](#running-frontend-and-backend-separately)
   - [Backend Setup](#backend-setup)
   - [Frontend Setup](#frontend-setup)
@@ -54,9 +54,31 @@ To build and run the entire application using Docker Compose:
        - Email: `admin@admin.com`
        - Password: `admin`
 
+## Accessing PgAgent
+
+If the server does not appear in pgAdmin, you can manually add it by following these steps:
+
+1. **Click on "Add Server":**
+
+2. **In the "General" tab:**
+   - Set the **Name** field to `EchoLink`.
+
+3. **In the "Connection" tab:**
+   - **Host name/address**: `postgres`
+   - **Username**: `user`
+   - **Password**: `password`
+   - Activate the **Save password** option.
+
+4. **Click "Save"** to add the server.
+
 
 
 ## Running Frontend and Backend Separately
+
+> [!WARNING]
+> When running the frontend and backend separately, you are running them locally and not within Docker containers. 
+> This approach is **not recommended** due to potential configuration issues and discrepancies between development and production environments. 
+> It is preferable to use Docker Compose to ensure consistency and proper environment setup.
 
 ### Backend Setup
 
@@ -116,7 +138,7 @@ To build and run the entire application using Docker Compose:
    - The QA and Product Owner (PO) will review the code.
    - After approval, the code will be merged into the `master` branch.
    - Once merged, the issue will be closed, and the issue branch will be deleted.
-     
+
 ## Contributors
 
 - **Chengheng**: DevOps (Product Owner)
@@ -125,4 +147,3 @@ To build and run the entire application using Docker Compose:
 - **Kamil**: Frontend
 - **Diego**: Backend
 - **Miquel**: Backend
-
