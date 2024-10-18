@@ -126,7 +126,7 @@ button i {
   color: inherit;
   transition: all 0.4s ease-in-out;
 }
-a:hover,
+/* a:hover, */ /* Kamil: links should have underline for accessibility (can't tell they're links otherwise without relying on color) */
 button:hover {
   text-decoration: none;
   border: 0px;
@@ -192,11 +192,6 @@ input[type="number"] {
   -moz-appearance: textfield;
   -webkit-appearance: textfield;
   appearance: textfield;
-}
-
-input[type="checkbox"] {
-  width: initial;
-  height: initial;
 }
 
 textarea {
@@ -298,7 +293,6 @@ span {
   line-height: 24px;
 }
 
-a,
 button {
   font-size: 16px;
   line-height: 26px;
@@ -307,11 +301,20 @@ button {
   font-family: "Space Grotesk", sans-serif;
   cursor: pointer;
 }
-a i,
+a {
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 500;
+  font-family: "Space Grotesk", sans-serif;
+  cursor: pointer;
+  /* Edited by Kamil: added color to visually distinguish links */
+  @apply text-indigo-500 !important
+}
 button i {
   color: inherit;
 }
-a:hover,
+/* Edited by Kamil: tab-navigation should cause visual change in links as well */
+a:hover, a:focus,
 button:hover {
   color: #4569e7;
 }
@@ -390,7 +393,7 @@ h6 a,
 h6 span,
 .h6 a,
 .h6 span,
-p a,
+/* p a, */ /* Edited by Kamil: contradicts many previous classes */
 p span {
   font-family: inherit;
   font-size: inherit;
