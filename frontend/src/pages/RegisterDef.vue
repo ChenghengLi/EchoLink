@@ -11,18 +11,18 @@
             <!-- Form field container -->
             <div class="px-4 mx-auto">
                 <!-- Basic info -->
-                <TextInput label="Username" placeholder="Username" input-type="text" :value="username" @changed="username = $event"></TextInput>
-                <TextInput label="E-mail" placeholder="example@example.com" input-type="email" :value="email" @changed="email = $event"></TextInput>
+                <TextInput label="Username" :required="true" placeholder="Username" input-type="text" :value="username" @changed="username = $event" :warning="usernameWarning"></TextInput>
+                <TextInput label="E-mail" :required="true" placeholder="example@example.com" input-type="email" :value="email" @changed="email = $event" :warning="emailWarning"></TextInput>
                 
                 <hr class="h-divider"/>
 
                 <!-- Password -->
-                <TextInput label="Password" placeholder="" input-type="password" :value="password" @changed="password = $event"></TextInput>
-                <TextInput label="Confirm password" placeholder="" input-type="password" :value="passwordConfirmation" @changed="passwordConfirmation = $event"></TextInput>
+                <TextInput label="Password" :required="true" placeholder="" input-type="password" :value="password" @changed="password = $event" :warning="passwordWarning"></TextInput>
+                <TextInput label="Confirm password" :required="true" placeholder="" input-type="password" :value="passwordConfirmation" @changed="passwordConfirmation = $event" :warning="passwordConfirmationWarning"></TextInput>
                 
                 <hr class="h-divider"/>
 
-                <Checkbox label="I agree to the terms of service" :checked="termsOfServiceChecked" @changed="termsOfServiceChecked = $event" ></Checkbox>
+                <Checkbox label="I agree to the terms of service *" :checked="termsOfServiceChecked" @changed="termsOfServiceChecked = $event"></Checkbox>
             </div>
 
             <button class="btn btn--primary w-60" :disabled="!canRegister">Register</button>
@@ -66,6 +66,20 @@ const passwordMatches = computed(() => {
 
 const canRegister = computed(() => {
     return isUsernameValid.value && isEmailValid.value && isPasswordValid.value && passwordMatches.value && termsOfServiceChecked.value
+})
+
+// Warnings for invalid fields
+const usernameWarning = computed(() => {
+    return (username.value !== '' && !isUsernameValid.value) ? 'Must be 4-16 letters, digits or underscores' : null
+})
+const emailWarning = computed(() => {
+    return (email.value !== '' && !isEmailValid.value) ? 'Must be a valid address' : null
+})
+const passwordWarning = computed(() => {
+    return (password.value !== '' && !isPasswordValid.value) ? 'Must be 8+ characters' : null
+})
+const passwordConfirmationWarning = computed(() => {
+    return (passwordConfirmation.value !== '' && !passwordMatches.value) ? 'Passwords must match' : null
 })
 
 </script>
