@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 import core.models as models
-from core.config import engine, SessionLocal
+from core.config import engine, SessionLocal, get_db
 from crud.user import create_user
 
 from contextlib import asynccontextmanager
@@ -17,15 +17,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 models.Base.metadata.create_all(bind=engine)
-
-
-# Dependency to get the database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @app.post("/add_user")
 async def add_user(user: models.UserInput, db: Session = Depends(get_db)):
