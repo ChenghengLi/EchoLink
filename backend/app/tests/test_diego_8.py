@@ -1,10 +1,10 @@
-from sqlalchemy.orm import Session
+from core.config import get_db
 from core.models import UserInput
 from core.security import get_password_hash, verify_password
 from crud.user import create_user
-from utils import random_lower_string, random_email
+from tests.utils import random_lower_string, random_email
 
-def test_utils(db: Session):
+def test_utils():
     # Random username, email and password
     username = random_lower_string()
     email = random_email()
@@ -17,7 +17,10 @@ def test_utils(db: Session):
     assert len(pwd) == 32
     assert verify_password(pwd, hash_pwd)
 
-def test_create_user(db: Session):
+def test_create_user():
+    # Get database session
+    db = next(get_db())
+
     # Create random user
     username = random_lower_string()
     email = random_email()
