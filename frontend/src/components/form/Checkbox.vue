@@ -2,7 +2,7 @@
     <div class="flex items-center mb-4">
         <!-- Cannot set border on checkbox inputs directly -->
         <div class="rounded border-3 border-indigo-300">
-            <input id="checkbox" type="checkbox" :value="checked" class="w-5 h-5">
+            <input id="checkbox" type="checkbox" :value="checked" @change="$emit('changed', $event.target.checked)" class="w-5 h-5">
         </div>
         <!-- Clicking label interacts with checkbox; best to disable select so it doesn't happen by accident -->
         <label for="checkbox" class="ms-2 text-sm font-medium unselectable">{{ label }}</label>

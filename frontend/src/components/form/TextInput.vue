@@ -1,7 +1,7 @@
 <template>
 	<div class="mb-3">
         <label for="inputField" class="block text-sm font-medium text-left ml-1 mb-2">{{ label }}</label>
-        <input :type="inputType" id="inputField" class="p-2.5 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full" :placeholder="placeholder" :pattern="pattern" required />
+        <input :type="inputType" id="inputField" class="p-2.5 bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full" :placeholder="placeholder" :pattern="pattern" @change="$emit('changed', $event.target.value)" @keyup="$emit('changed', $event.target.value)" required /> <!-- Emit event also on key release (usually it's only on submit) -->
   </div>
 </template>
 
