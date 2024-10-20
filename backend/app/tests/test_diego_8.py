@@ -1,5 +1,5 @@
 from core.config import get_db
-from core.models import User, UserInput
+from models.user import User, UserInput
 from core.security import get_password_hash, verify_password
 from crud.user import create_user
 from tests.utils import random_lower_string, random_email
