@@ -1,5 +1,5 @@
 from core.config import get_db
-from core.models import UserInput
+from core.models import User, UserInput
 from core.security import get_password_hash, verify_password
 from crud.user import create_user
 from tests.utils import random_lower_string, random_email
@@ -28,12 +28,23 @@ def test_create_user():
     user_input = UserInput(username=username, email=email, password=pwd)
     user = create_user(db, user_input)
 
-    # Check object created
+    # Check object returned
     assert user is not None
     assert user.username == username
     assert user.email == email
     assert verify_password(pwd, user.hashed_password)
 
+    # Check the object persists in db
+    db_user = db.query(User).filter(User.username == username).first()
+    assert db_user is not None
+    assert db_user.username == username
+    assert db_user.email == email
+    assert verify_password(pwd, db_user.hashed_password)
+
     # Remove data created
     db.delete(user)
     db.commit()
+
+    # Check the user is no longer in db
+    db_user = db.query(User).filter(User.username == username).first()
+    assert db_user is None
