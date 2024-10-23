@@ -21,6 +21,9 @@ defineProps({
 
 <style scoped>
 input {
-  @apply focus:ring-blue-50 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:border-blue-500
+  @apply focus:ring-blue-50 bg-indigo-100 border-indigo-200 placeholder-gray-400 text-black focus:border-blue-500
+}
+input::placeholder {
+  @apply text-gray-700
 }
 </style>
