@@ -38,6 +38,7 @@ import TextInput from '../components/form/TextInput.vue';
 import Checkbox from '../components/form/Checkbox.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
+import Cookies from 'js-cookie'
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -67,6 +68,7 @@ function register() {
             icon: 'success',
         })
         router.push('/') // Go to homepage
+        Cookies.set('logged_in', 'true', { expires: 7 }) // Expire login flag after 7 days
     }).catch((err) => {
         Swal.fire({
             title: 'Registration failed',
