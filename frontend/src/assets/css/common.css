@@ -1,4 +1,3 @@
-
 .h-divider {
     @apply h-px my-5 bg-gray-200 border-0 dark:bg-gray-700
 }
@@ -8,6 +7,46 @@
 }
 
 /* Distinguish links on focus/hover for accessibility */
-a:focus, a:hover {
+a:focus,
+a:hover {
     text-decoration: underline;
+}
+
+/* SweetAlert2 mixins */
+/* Toast alerts from https://sweetalert2.github.io/recipe-gallery/colored-toasts.html */
+.colored-toast.swal2-icon-success {
+    background-color: #a5dc86 !important;
+}
+
+.colored-toast.swal2-icon-error {
+    background-color: #f27474 !important;
+}
+
+.colored-toast.swal2-icon-warning {
+    background-color: #f8bb86 !important;
+}
+
+.colored-toast.swal2-icon-info {
+    background-color: #3fc3ee !important;
+}
+
+.colored-toast.swal2-icon-question {
+    background-color: #87adbd !important;
+}
+
+.colored-toast .swal2-title {
+    color: white;
+}
+
+.colored-toast .swal2-close {
+    color: white;
+}
+
+.colored-toast .swal2-html-container {
+    color: white;
+}
+
+/* Fixes alert hover text color */
+a:hover, a:focus, button:hover {
+    color: white;
 }

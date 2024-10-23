@@ -37,10 +37,22 @@ import Footer from '../components/Footer.vue'
 import TextInput from '../components/form/TextInput.vue';
 import Checkbox from '../components/form/Checkbox.vue';
 import UserService from '../services/user.js'
+import Swal from 'sweetalert2'
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top',
+  iconColor: 'white',
+  customClass: {
+    popup: 'colored-toast',
+  },
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: false,
+})
 
 const username = ref('')
 const email = ref('')
@@ -50,11 +62,17 @@ const termsOfServiceChecked = ref(false)
 
 function register() {
     UserService.registerAccount(username.value, email.value, password.value).then(() => {
-        // TODO show toast
+        Toast.fire({
+            title: 'Registration successful!',
+            icon: 'success',
+        })
         router.push('/') // Go to homepage
     }).catch((err) => {
-        // TODO show toast
-        alert('Registration failed: ' + err.message)
+        Swal.fire({
+            title: 'Registration failed',
+            text: 'Reason: ' + err.message,
+            icon: 'error',
+        })
     })
 }
 
