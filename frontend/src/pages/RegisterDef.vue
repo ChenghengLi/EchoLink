@@ -25,7 +25,7 @@
                 <Checkbox label="I agree to the terms of service *" :checked="termsOfServiceChecked" @changed="termsOfServiceChecked = $event"></Checkbox>
             </div>
 
-            <button class="btn btn--primary w-60" :disabled="!canRegister">Register</button>
+            <button class="btn btn--primary w-60" :disabled="!canRegister" @click="register">Register</button>
 		</div>
         <Footer class="footer-light mx-10" />
 	</div>
@@ -36,13 +36,27 @@ import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import TextInput from '../components/form/TextInput.vue';
 import Checkbox from '../components/form/Checkbox.vue';
+import UserService from '../services/user.js'
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const username = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
 const termsOfServiceChecked = ref(false)
+
+function register() {
+    UserService.registerAccount(username.value, email.value, password.value).then(() => {
+        // TODO show toast
+        router.push('/') // Go to homepage
+    }).catch((err) => {
+        // TODO show toast
+        alert('Registration failed: ' + err.message)
+    })
+}
 
 const isUsernameValid = computed(() => {
     // 4-16 characters, can include digits and underscore
