@@ -23,7 +23,7 @@ jobs:
 
     - name: Run the backend-test container
       run: |
-        docker-compose run backend-test
+        docker compose run backend-test
 
     - name: Deploy
       if: success()
