@@ -17,19 +17,6 @@ import './assets/vendor/glyphter/css/Glyphter.css';
 // Move the test conexions method to tests when tests created
 export default {
   name: 'App',
-  created() {
-    this.logMessage();
-  },
-  methods: {
-    async logMessage() {
-      try {
-        const response = await axios.post('http://localhost:8000/test/test');
-        console.log(response.data); // Log the message from the backend
-      } catch (error) {
-        console.error('Error fetching test message:', error);
-      }
-    }
-  }
 };
 </script>
 

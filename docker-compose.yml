@@ -45,7 +45,7 @@ services:
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/Echolink
 
-  test:
+  backend-test:
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -53,6 +53,7 @@ services:
     depends_on:
       - backend
       - postgres
+
 
 volumes:
   postgres_data:
