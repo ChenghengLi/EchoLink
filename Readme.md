@@ -216,9 +216,9 @@ For detailed instructions on defining frontend unit tests, refer to the `connect
    - Work on the issue in the respective branch.
    - Once the task is completed, push the development branch.
 
-3. **Branches**
+3. **Healthy Branches**
 
-   - Branches information will be available soon after setting up the definitive healthy branches.
+   - There will be 3 healthy branches: dev, master and production. Each branch description will be available soon.
 
 
 ## Contributors
