@@ -141,6 +141,8 @@ During the application's build process, all tests are automatically executed wit
 
 ### Backend Tests
 
+For detailed instructions on defining backend unit tests, refer to the `test_main.py` file located in the `backend/app/tests` directory or consult the Pytest documentation.
+
 #### Option 1: Running Tests Using Docker UI
 
 1. **Access the Docker Dashboard:**
@@ -183,26 +185,41 @@ During the application's build process, all tests are automatically executed wit
 
 ### Frontend Tests
 
-**Note:** Frontend tests are not yet implemented. Once implemented, instructions for running frontend tests will be provided here.
+For detailed instructions on defining frontend unit tests, refer to the `connection.test.js` file located in the `frontend/src/tests` directory or consult the Vitest documentation.
+
+1. **Navigate to the Frontend Directory:**
+
+   Open a terminal and navigate to the frontend directory of your project:
+
+   ```bash
+   cd frontend
+   ```
+
+2. **Run the Tests:**
+
+   Execute the following command to run the frontend tests:
+
+   ```bash
+   npm run test
+   ```
+
 
 ## Working Flow
 
 1. **Branching Strategy:**
 
-   - For each issue, create a branch named as `assignee_issuenumber`. For example, if the assignee is John and the issue number is 42, the branch name should be `john_42`.
+   - For each issue, create a branch named as `issuenumber_brew_description`. For example, if the assignee is John and the issue number is 42 and the issue name is "create dummy page", the branch name should be called somthing similar to  `42_dummmy_page`.
    - Assign the branch to the corresponding issue.
 
 2. **Development Process:**
 
    - Work on the issue in the respective branch.
-   - Once the task is completed, push the branch to the repository.
+   - Once the task is completed, push the development branch.
 
-3. **Code Review and Merging:**
+3. **Branches**
 
-   - Open a pull request to merge the branch into the `master` branch.
-   - The QA and Product Owner (PO) will review the code.
-   - After approval, the code will be merged into the `master` branch.
-   - Once merged, the issue will be closed, and the issue branch will be deleted.
+   - Branches information will be available soon after setting up the definitive healthy branches.
+
 
 ## Contributors
 
@@ -212,4 +229,4 @@ During the application's build process, all tests are automatically executed wit
 - **Kamil**: Frontend
 - **Diego**: Backend
 - **Miquel**: Backend
-```
+
