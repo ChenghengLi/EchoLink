@@ -1,10 +1,8 @@
-name: CI
+name: Frequent Tests on Master
 
 on:
-  push:
-    branches:
-      - master
-      - dev
+  schedule:
+    - cron: '*/5 * * * *'  # This cron expression runs the workflow every 5 minutes
 
 jobs:
   backend-tests:
@@ -27,7 +25,7 @@ jobs:
     - name: Run backend tests
       run: |
         cd backend
-        pytest ./tests
+        pytest ./app/tests  # Updated path to the backend tests
 
   frontend-tests:
     runs-on: ubuntu-latest
