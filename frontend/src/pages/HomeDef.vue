@@ -4,6 +4,7 @@
 
 			<Header/>
 			<Banner />
+			<Broadcast />
 			<Footer class="footer-light mx-10" />
 		</div>
 
@@ -14,12 +15,14 @@
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import Banner from '../components/Banner.vue';
+import Broadcast from '../components/Broadcast.vue';
 export default {
 	name: "HomeLight",
 	components: {
 		Header,
 		Footer,
 		Banner,
+		Broadcast,
 
 	}, methods: {
 		scrollToBroadcast() {
