@@ -30,11 +30,11 @@ jobs:
 
     - name: Run backend tests
       run: |
-        docker-compose exec backend pytest ./tests
+        docker-compose exec -T backend pytest ./tests
 
     - name: Run frontend tests
       run: |
-        docker-compose exec frontend npm run test
+        docker-compose exec -T frontend npm run test
 
     - name: Deploy
       run: |
