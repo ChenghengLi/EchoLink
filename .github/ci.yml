@@ -1,10 +1,10 @@
 name: CI
 
 on:
-  pull_request:
+  push:
     branches:
-      - master  # Incluye la rama master
-      - dev     # Incluye la rama dev
+      - master
+      - dev
 
 jobs:
   backend-tests:
@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.8'  # Asegúrate de usar la versión de Python que necesitas
+        python-version: '3.8'
 
     - name: Install backend dependencies
       run: |
@@ -39,7 +39,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '16'  # Asegúrate de usar la versión de Node.js que necesitas
+        node-version: '16'
 
     - name: Install frontend dependencies
       run: |
