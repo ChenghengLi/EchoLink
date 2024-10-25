@@ -1,4 +1,4 @@
-# Use the official Node.js image as the base image
+# Use the official Node.js image as the base image for building and testing
 FROM node:16-alpine AS build
 
 # Set the working directory
@@ -16,10 +16,29 @@ COPY . .
 # Build the application
 RUN npm run build
 
+# Separate stage for running tests
+FROM node:16-alpine AS test
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the application code
+COPY . .
+
+# Run tests
+CMD ["npm", "run", "test"]
+#CMD ["npm", "run", "lint-test"]
+
 # Use Caddy to serve the static files
 FROM caddy:alpine
 
-# Copy the built files from the previous stage
+# Copy the built files from the build stage
 COPY --from=build /app/dist /usr/share/caddy
 
 # Copy the Caddyfile

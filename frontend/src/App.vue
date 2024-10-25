@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <router-view />
+    
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import 'wowjs/css/libs/animate.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import './assets/vendor/font-awesome/css/all.min.css';
