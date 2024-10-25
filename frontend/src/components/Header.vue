@@ -97,10 +97,13 @@ export default {
 		},
 	},
 	mounted() {
-		this.$router.beforeEach((to, from, next) => {
-			window.scrollTo(0, 0);
-			next();
-		});
+		// Router won't exist in tests
+		if (this.$router) {
+			this.$router.beforeEach((to, from, next) => {
+				window.scrollTo(0, 0);
+				next();
+			});
+		}
 
 		const navBars = document.querySelectorAll('.nav__bar');
 		const navMenus = document.querySelectorAll('.nav__menu');

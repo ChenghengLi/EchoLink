@@ -11,21 +11,21 @@
             <!-- Form field container -->
             <div class="px-4 mx-auto">
                 <!-- Basic info -->
-                <TextInput label="Username" :required="true" placeholder="Username" input-type="text" :value="username" @changed="username = $event" :warning="usernameWarning"></TextInput>
-                <TextInput label="E-mail" :required="true" placeholder="example@example.com" input-type="email" :value="email" @changed="email = $event" :warning="emailWarning"></TextInput>
+                <TextInput label="Username" :required="true" placeholder="Username" input-type="text" :value="username" @changed="username = $event" :warning="usernameWarning" :test-id="'field-username'"></TextInput>
+                <TextInput label="E-mail" :required="true" placeholder="example@example.com" input-type="email" :value="email" @changed="email = $event" :warning="emailWarning" :test-id="'field-email'"></TextInput>
                 
                 <hr class="h-divider"/>
 
                 <!-- Password -->
-                <TextInput label="Password" :required="true" placeholder="" input-type="password" :value="password" @changed="password = $event" :warning="passwordWarning"></TextInput>
-                <TextInput label="Confirm password" :required="true" placeholder="" input-type="password" :value="passwordConfirmation" @changed="passwordConfirmation = $event" :warning="passwordConfirmationWarning"></TextInput>
+                <TextInput label="Password" :required="true" placeholder="" input-type="password" :value="password" @changed="password = $event" :warning="passwordWarning" :test-id="'field-password'"></TextInput>
+                <TextInput label="Confirm password" :required="true" placeholder="" input-type="password" :value="passwordConfirmation" @changed="passwordConfirmation = $event" :warning="passwordConfirmationWarning" :test-id="'field-passwordconfirmation'"></TextInput>
                 
                 <hr class="h-divider"/>
 
-                <Checkbox label="I agree to the terms of service *" :checked="termsOfServiceChecked" @changed="termsOfServiceChecked = $event"></Checkbox>
+                <Checkbox label="I agree to the terms of service *" :checked="termsOfServiceChecked" @changed="termsOfServiceChecked = $event" :test-id="'checkbox-tos'"></Checkbox>
             </div>
 
-            <button class="btn btn--primary w-60" :disabled="!canRegister" @click="register">Register</button>
+            <button class="btn btn--primary w-60" :disabled="!canRegister" @click="register" :data-test="'button-register'">Register</button>
 		</div>
         <Footer class="footer-light mx-10" />
 	</div>
