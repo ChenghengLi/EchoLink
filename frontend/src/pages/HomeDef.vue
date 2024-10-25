@@ -2,7 +2,7 @@
 	<div>
 		<div class="home-two-light my-app home-light">
 
-			<Header/>
+			<Header />
 			<Banner />
 			<Footer class="footer-light mx-10" />
 		</div>
@@ -23,10 +23,10 @@ export default {
 
 	}, methods: {
 		scrollToBroadcast() {
-        this.$nextTick(() => {
-            this.$refs.broadcastComponent.$el.scrollIntoView({ behavior: 'smooth' });
-        });
-    }
+			this.$nextTick(() => {
+				this.$refs.broadcastComponent.$el.scrollIntoView({ behavior: 'smooth' });
+			});
+		}
 	}
 };
 </script>

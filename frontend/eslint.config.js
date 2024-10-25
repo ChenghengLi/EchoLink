@@ -18,7 +18,6 @@ export default [
       'no-unused-vars': 'warn', // Warn about unused variables
       'no-undef': 'off', // Disable no-undef to allow global variables
       'quotes': ['off', 'single'], // Disable quotes rule to allow any quote style
-      'semi': ['error', 'always'], // Require semicolons
       'no-var': 'error', // Disallow var, use let or const instead
       'prefer-const': 'error', // Prefer const over let for variables that are never reassigned
       'vue/no-unused-components': 'warn', // Warn about unused Vue components
