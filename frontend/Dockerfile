@@ -16,14 +16,17 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Use a lightweight web server to serve the static files
-FROM nginx:alpine AS production
+# Use Caddy to serve the static files
+FROM caddy:alpine
 
 # Copy the built files from the previous stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/caddy
+
+# Copy the Caddyfile
+COPY Caddyfile /etc/caddy/Caddyfile
 
 # Expose port 80
 EXPOSE 80
 
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Start Caddy server
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]

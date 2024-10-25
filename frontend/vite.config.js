@@ -8,6 +8,10 @@ export default ({ mode }) => {
   // https://vitejs.dev/config/
   return defineConfig({
     plugins: [vue()],
+    test: {
+      globals: true,
+      environment: 'jsdom',
+    },
     VITE_API_URL: process.env.VITE_API_URL,
   })
 }
