@@ -54,6 +54,16 @@ services:
       - backend
       - postgres
 
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: test
+    depends_on:
+      - frontend
+      - backend
+      - postgres
+
 
 volumes:
   postgres_data:
