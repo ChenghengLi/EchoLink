@@ -2,6 +2,9 @@
 	<div>
 		<div class="home-two-light my-app home-light">
 
+			<!-- 
+			<Header :LogoSrc="'/assets/logo1.png'" />
+			-->
 			<Header />
 			<Banner />
 			<Footer class="footer-light mx-10" />
