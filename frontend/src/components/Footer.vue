@@ -9,7 +9,7 @@
             </router-link>
             <p>
               Copyright &copy;
-              <span id="copyYear"></span>
+              <span id="copyYear">{{ new Date().getFullYear() }}</span>
               <router-link to="/">  EchoLink</router-link>
               . All Rights Reserved.
             </p>
@@ -74,9 +74,6 @@
 
 export default {
   name: "Footer2",
-  mounted() {
-    document.getElementById("copyYear").textContent = new Date().getFullYear();
-  },
   methods: {
    
     

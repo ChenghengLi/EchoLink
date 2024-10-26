@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"
-    volumes:
-      - ./frontend:/usr/share/nginx/html  
     depends_on:
       - backend
 
@@ -46,6 +44,26 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/Echolink
+
+  backend-test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: pytest ./tests
+    depends_on:
+      - backend
+      - postgres
+
+  frontend-test:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: test
+    depends_on:
+      - frontend
+      - backend
+      - postgres
+
 
 volumes:
   postgres_data:

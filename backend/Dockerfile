@@ -14,9 +14,6 @@ COPY ./app .
 # Set the PYTHONPATH environment variable
 ENV PYTHONPATH=/app
 
-# Run tests
-#RUN pytest ./tests
-
 # Expose the port the app runs on
 EXPOSE 8000
 

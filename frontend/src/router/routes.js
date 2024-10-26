@@ -1,6 +1,7 @@
 
 
 import HomeDef from '../pages/HomeDef.vue'
+import RegisterDef from '../pages/RegisterDef.vue'
 
 
 export default  [
@@ -9,4 +10,4 @@ export default  [
             name: 'Home',
             component: HomeDef,
         }
-    ]
+    ];
