@@ -1,5 +1,5 @@
 from core.config import get_db
-from core.models import User, UserInput
+from models.user import User, UserInput
 from core.security import get_password_hash, verify_password
 from crud.user import create_user
 from tests.utils import random_lower_string, random_email
@@ -12,9 +12,9 @@ def test_utils():
     hash_pwd = get_password_hash(pwd)
 
     # Check data
-    assert len(username) == 32
-    assert len(email) == 69
-    assert len(pwd) == 32
+    assert len(username) == 10
+    assert len(email) == 25
+    assert len(pwd) == 10
     assert verify_password(pwd, hash_pwd)
 
 def test_create_user():

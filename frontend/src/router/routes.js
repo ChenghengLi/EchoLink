@@ -1,6 +1,6 @@
 
 
-import HomeDef from '../pages/HomeDef.vue'
+import HomeDef from '../pages/HomeDef.vue';
 
 
 export default  [
@@ -9,4 +9,4 @@ export default  [
             name: 'Home',
             component: HomeDef,
         }
-    ]
+    ];

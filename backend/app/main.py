@@ -1,36 +1,30 @@
-from fastapi import FastAPI, HTTPException, Depends
-from sqlalchemy.orm import Session
-import core.models as models
-from core.config import engine, SessionLocal, get_db
-from crud.user import create_user
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from core.lifespan import lifespan
+from core.config import engine
+from core.config import Base
+from routes import user, test
 
-from contextlib import asynccontextmanager
-
-# Define the lifespan context manager
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup code
-    init_db()
-    yield
-    # Shutdown code (if needed)
-
+# Initialize the FastAPI app with the lifespan context manager
 app = FastAPI(lifespan=lifespan)
-models.Base.metadata.create_all(bind=engine)
 
-@app.post("/add_user")
-async def add_user(user: models.UserInput, db: Session = Depends(get_db)):
-    #db_user = models.User(username=user.username)
-    #db.add(db_user)
-    #db.commit()
-    #b.refresh(db_user)
-    #return {"username": db_user.username, "id": db_user.id}  # Return a response
-    pass
 
-# Add a test user to the database on startup
-@app.on_event("startup")
-def init_db():
-    db = SessionLocal()
-    try:
-        create_user(db, models.UserInput(username="test", email="test@test.com", password="test"))
-    finally:
-        db.close()
+# Set up CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins, change this to specific domains in production
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
+
+# Create the database tables on startup
+Base.metadata.create_all(bind=engine)
+
+# Include routers
+app.include_router(user.router, prefix="/users", tags=["Users"])
+app.include_router(test.router, prefix="/test", tags=["Test"])
+
+
+
