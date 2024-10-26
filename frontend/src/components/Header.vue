@@ -13,13 +13,14 @@
 							<div class="nav__menu">
 								<div class="nav__menu-logo d-flex d-xl-none">
 									<router-link to="/" class="text-center hide-nav">
-										<img :src="LogoURL" alt="Logo" />
+										<img :src="LogoURL" alt="Logo"/>
 									</router-link>
 									<button aria-label="close the menu" class="nav__menu-close">
 										<i class="fa-solid fa-xmark"></i>
 									</button>
 								</div>
 								<ul class="nav__menu-items">
+									<!-- De moment, això no es necessita
 									<li class="nav__menu-item">
 										<router-link to="/" class="nav__menu-link hide-nav">Home</router-link>
 									</li>
@@ -42,30 +43,34 @@
 											</li>
 										</ul>
 									</li>
-									<li class="nav__menu-item d-block d-md-none">
-										<router-link to="/events" class="btn btn--secondary">
-											Events
+									-->
+
+									<li v-if="!isLoggedIn" class="nav__menu-item d-block d-md-none">
+										<router-link to="/logIn" class="btn btn--secondary mb-4">
+											Log In
+										</router-link>
+										<router-link to="/register" class="btn btn--secondary">
+											Sign In
+										</router-link>
+									</li>
+									<li v-else class="nav__menu-item d-block d-md-none">
+										<router-link to="/" class="btn btn--secondary">
+											Log Out
 										</router-link>
 									</li>
 								</ul>
-								<div class="social">
-									<a href="https://www.facebook.com" aria-label="social media">
-										<i class="fa-brands fa-facebook-f"></i>
-									</a>
-									<a href="https://www.twitter.com" aria-label="social media">
-										<i class="fa-brands fa-twitter"></i>
-									</a>
-									<a href="https://www.linkedin.com" aria-label="social media">
-										<i class="fa-brands fa-linkedin-in"></i>
-									</a>
-									<a href="https://www.instagram.com" aria-label="social media">
-										<i class="fa-brands fa-instagram"></i>
-									</a>
-								</div>
 							</div>
 							<div class="nav__uncollapsed">
 								<div class="nav__uncollapsed-item d-none d-md-flex">
-									<router-link to="/events" class="btn btn--secondary">Events</router-link>
+									<router-link v-if="!isLoggedIn" to="/logIn" class="btn btn--secondary">
+										Log In
+									</router-link>
+									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
+										Sign In
+									</router-link>
+									<router-link v-else to="/" class="btn btn--secondary">
+										Log Out
+									</router-link>
 								</div>
 								<button class="nav__bar d-block d-xl-none">
 									<span class="icon-bar top-bar"></span>
@@ -83,11 +88,15 @@
 </template>
 
 <script>
+
+import logo from '../assets/logo.png';
+
 export default {
 	name: "Header",
 	data: function () {
 		return {
 			scrollPosition: null,
+			LogoSrc : logo
 		};
 	},
 	methods: {
@@ -97,10 +106,13 @@ export default {
 		},
 	},
 	mounted() {
-		this.$router.beforeEach((to, from, next) => {
-			window.scrollTo(0, 0);
-			next();
-		});
+		// Router won't exist in tests
+		if (this.$router) {
+			this.$router.beforeEach((to, from, next) => {
+				window.scrollTo(0, 0);
+				next();
+			});
+		}
 
 		const navBars = document.querySelectorAll('.nav__bar');
 		const navMenus = document.querySelectorAll('.nav__menu');
@@ -192,10 +204,18 @@ export default {
 			type: String,
 			required: true,
 		},
+		isLoggedIn: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	computed: {
 		LogoURL() {
-			return this.LogoSrc;
+			return this.LogoSrc; 
+		},
+
+		SessioIniciada(){
+			return true;
 		},
 	},
 };

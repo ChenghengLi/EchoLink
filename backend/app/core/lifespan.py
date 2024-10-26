@@ -9,7 +9,7 @@ import models.user as user
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code
-    init_db()
+    #init_db()
     yield
     # Shutdown code (if needed)
 

@@ -11,8 +11,9 @@
             </router-link>
             <p>
               Copyright &copy;
-              <span id="copyYear"></span>
+              <span id="copyYear">{{ new Date().getFullYear() }}</span>
               <a href="/" aria-current="page" class="router-link-exact-active router-link-active">EchoLink</a>
+              <router-link to="/">  EchoLink</router-link>
               . All Rights Reserved.
             </p>
           </div>
@@ -26,9 +27,6 @@
 
 export default {
   name: "Footer2",
-  mounted() {
-    document.getElementById("copyYear").textContent = new Date().getFullYear();
-  },
   methods: {
    
     

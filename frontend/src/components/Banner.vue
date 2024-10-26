@@ -9,17 +9,16 @@
                                 <span>EchoLink</span>
 
                             </p>
-                            <h1 class="h1">Music For Everyone</h1>
+                            <h2 class="h4">Connect with artists and other music fans worldwide. 
+                                Join EchoLink now to share your music interests with the world</h2>
                             <div class="section__content-cta">
-                                <button @click="learnMore" class="btn btn--primary">
-                                    Learn More
-                                </button>
+                                <a href="#learnMore" class="btn btn--primary">Learn More</a>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-lg-6">
                         <div class="banner-one__thumb text-start text-lg-end">
-                            <img src="" alt="Image" class="wow fadeInUp">
+                            <img src="../images/img_dummy1.png" alt="Image" class="wow fadeInUp">
                         </div>
                     </div>
                 </div>
