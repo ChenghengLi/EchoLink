@@ -1,12 +1,10 @@
-import pytest
 from core.config import get_db
 from models.user import User, UserInput
-from crud.user import create_user, get_user_by_username
-from core.config import Base
+from crud.user import create_user
 from tests.utils import random_lower_string, random_email
 from fastapi.testclient import TestClient
 from main import app
-from core.security import get_password_hash, verify_password
+from core.security import verify_password
 
 client = TestClient(app)
 

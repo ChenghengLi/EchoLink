@@ -6,3 +6,4 @@ passlib
 pytest-picked
 watchdog
 httpx
+ruff

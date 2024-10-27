@@ -17,8 +17,8 @@
 <script>
 import Header from '../components/HeaderComponent.vue';
 import Footer from '../components/FooterComponent.vue';
-import Banner from '../components/Banner.vue';
-import Broadcast from '../components/Broadcast.vue';
+import Banner from '../components/BannerComponent.vue';
+import Broadcast from '../components/BroadcastComponent.vue';
 export default {
 	name: "HomeLight",
 	components: {

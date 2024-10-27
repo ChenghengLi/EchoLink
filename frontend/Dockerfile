@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image for building and testing
-FROM node:16-alpine AS build
+FROM node:18-alpine AS build
 
 # Set the working directory
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Separate stage for running tests
-FROM node:16-alpine AS test
+FROM node:18-alpine AS test
 
 # Set the working directory
 WORKDIR /app
@@ -32,7 +32,7 @@ RUN npm install
 COPY . .
 
 # Run tests
-CMD ["npm", "run", "test"]
+CMD ["npm", "run", "lint-test"]
 #CMD ["npm", "run", "lint-test"]
 
 # Use Caddy to serve the static files

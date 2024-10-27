@@ -6,7 +6,6 @@ from crud.user import create_user as create_user_crud, \
     get_user_by_username as get_user_by_username_crud, \
     get_user_by_email as get_user_by_email_crud
 import models.user as user
-from core.security import get_password_hash
 
 router = APIRouter()
 

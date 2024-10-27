@@ -1,13 +1,9 @@
 import pytest
 from core.config import get_db
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models.user import User, UserInput
+from models.user import UserInput
 from crud.user import create_user, get_user_by_username, get_user_by_email, get_user_by_id
-from core.config import Base
 from tests.utils import random_lower_string, random_email
-from core.security import get_password_hash, verify_password
-from fastapi import HTTPException, status
+from fastapi import HTTPException
 
 # Function to create a random user
 def create_random_user():

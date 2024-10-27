@@ -1,8 +1,9 @@
 <template>
-	<div class="home-two-light home-light">
-        <Header/>
-        <!-- Extra margin at top for spacing between header -->
-		<div class="mx-auto max-w-lg p-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
+    <div class="home-two-light home-light container">
+
+        <HeaderComponent />
+        <!-- Set a fixed width for the container -->
+        <div class="form-container mx-auto p-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
             <div class="mb-3">
                 <h2>Register</h2>
                 <p>Already got an account? <RouterLink to="/login">Log-in instead.</RouterLink></p>
@@ -25,15 +26,15 @@
                 <Checkbox label="I agree to the terms of service *" :checked="termsOfServiceChecked" @changed="termsOfServiceChecked = $event" :test-id="'checkbox-tos'"></Checkbox>
             </div>
 
-            <button class="btn btn--primary w-60" :disabled="!canRegister" @click="register" :data-test="'button-register'">Register</button>
-		</div>
-        <Footer class="footer-light mx-10" />
-	</div>
+            <button class="btn btn--primary w-100 w-md-60" :disabled="!canRegister" @click="register" :data-test="'button-register'">Register</button>
+        </div>
+        <FooterComponent class="footer-light mx-10" />
+    </div>
 </template>
 
 <script setup>
-import Header from '../components/HeaderComponent.vue'
-import Footer from '../components/FooterComponent.vue'
+import HeaderComponent from '../components/HeaderComponent.vue';
+import FooterComponent from '../components/FooterComponent.vue';
 import TextInput from '../components/form/TextInput.vue';
 import Checkbox from '../components/form/CheckBox.vue';
 import UserService from '../services/user.js'
@@ -117,3 +118,24 @@ const passwordConfirmationWarning = computed(() => {
 })
 
 </script>
+
+
+<style scoped>
+.form-container {
+    width: 100%; /* Full width by default */
+    width: 600px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+.container{
+    width: 100vw;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        width: 100vw; /* Full viewport width for small screens */
+        height: 100vh; /* Full viewport height for small screens */
+        margin: 0; /* Remove margin for full screen effect */
+        border-radius: 0; /* Remove border radius for full screen effect */
+    }
+}
+</style>

@@ -49,7 +49,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: pytest ./tests
+    command: /bin/sh -c "ruff check . && pytest ./tests"
     depends_on:
       - backend
       - postgres

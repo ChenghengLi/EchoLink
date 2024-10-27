@@ -7,13 +7,13 @@
 						<div class="nav__content">
 							<div class="nav__logo">
 								<router-link to="/">
-									<img :src="LogoURL" alt="Logo" />
+									<img :src="LogoURL" alt="Logo" style="max-width: 55px;" />
 								</router-link>
 							</div>
 							<div class="nav__menu">
 								<div class="nav__menu-logo d-flex d-xl-none">
 									<router-link to="/" class="text-center hide-nav">
-										<img :src="LogoURL" alt="Logo"/>
+										<img :src="LogoURL" alt="Logo" />
 									</router-link>
 									<button aria-label="close the menu" class="nav__menu-close">
 										<i class="fa-solid fa-xmark"></i>
@@ -54,9 +54,9 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
-										<router-link to="/" class="btn btn--secondary">
+										<button @click="logout_function" class="btn btn--secondary">
 											Log Out
-										</router-link>
+										</button>
 									</li>
 								</ul>
 							</div>
@@ -68,9 +68,9 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Sign In
 									</router-link>
-									<router-link v-else to="/" class="btn btn--secondary">
+									<button v-else @click="logout_function" class="btn btn--secondary">
 										Log Out
-									</router-link>
+									</button>
 								</div>
 								<button class="nav__bar d-block d-xl-none">
 									<span class="icon-bar top-bar"></span>
@@ -88,22 +88,27 @@
 </template>
 
 <script>
-
+import { ref } from 'vue';
 import logo from '../assets/logo.png';
+import Cookies from 'js-cookie';
 
 export default {
 	name: "HeaderComponent",
 	data: function () {
 		return {
 			scrollPosition: null,
-			LogoSrc : logo
+			LogoSrc: logo,
+			isLoggedIn: ref(Boolean(Cookies.get('logged_in'))),
 		};
 	},
 	methods: {
 		updateScroll() {
 			this.scrollPosition =
 				window.scrollY;
-		},
+		}, logout_function() {
+			Cookies.remove('logged_in');
+			this.$router.push('/');
+		}
 	},
 	mounted() {
 		// Router won't exist in tests
@@ -203,20 +208,18 @@ export default {
 		LogoSrc: {
 			type: String,
 			required: true,
-		},
-		isLoggedIn: {
-			type: Boolean,
-			default: false,
-		},
+		}
 	},
 	computed: {
 		LogoURL() {
-			return this.LogoSrc; 
+			return this.LogoSrc;
 		},
-
-		SessioIniciada(){
-			return true;
-		},
+	}, watch: {
+		isLoggedIn(newValue, oldValue) {
+			if (newValue !== oldValue) {
+				this.isLoggedIn = Boolean(Cookies.get('logged_in'));
+			}
+		}
 	},
 };
 </script>

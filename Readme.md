@@ -141,7 +141,7 @@ During the application's build process, all tests are automatically executed wit
 
 ### Backend Tests
 
-For detailed instructions on defining backend unit tests, refer to the `test_main.py` file located in the `backend/app/tests` directory or consult the Pytest documentation.
+For detailed instructions on defining backend unit tests, refer to the `test_dummy.py` file located in the `backend/app/tests` directory or consult the Pytest documentation.
 
 #### Option 1: Running Tests Using Docker UI
 
@@ -185,7 +185,7 @@ For detailed instructions on defining backend unit tests, refer to the `test_mai
 
 ### Frontend Tests
 
-For detailed instructions on defining frontend unit tests, refer to the `connection.test.js` file located in the `frontend/src/tests` directory or consult the Vitest documentation.
+For detailed instructions on defining frontend unit tests, refer to the `dummy.test.js` file located in the `frontend/src/tests` directory or consult the Vitest documentation.
 
 1. **Navigate to the Frontend Directory:**
 

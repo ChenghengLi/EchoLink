@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from sqlalchemy.orm import Session
 from core.config import SessionLocal
 from crud.user import create_user, get_user_by_username
-import models.user as user
 
 # Define the lifespan context manager
 @asynccontextmanager

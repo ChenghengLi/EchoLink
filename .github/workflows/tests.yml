@@ -21,11 +21,11 @@ jobs:
       run: |
         docker compose -f docker-compose.yml build
 
-    - name: Run the backend-test container
+    - name: Run the backend-test container (Unit Tests + Lint)
       run: |
         docker compose run backend-test
     
-    - name: Run the backend-test container
+    - name: Run the frontend-test container (Unit Tests + Lint)
       run: |
         docker compose run frontend-test
 
