@@ -26,7 +26,7 @@
 <script>
 
 export default {
-  name: "Footer2",
+  name: "FooterComponent",
   methods: {
    
     

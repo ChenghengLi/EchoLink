@@ -92,7 +92,7 @@
 import logo from '../assets/logo.png';
 
 export default {
-	name: "Header",
+	name: "HeaderComponent",
 	data: function () {
 		return {
 			scrollPosition: null,

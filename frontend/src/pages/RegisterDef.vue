@@ -32,10 +32,10 @@
 </template>
 
 <script setup>
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
+import Header from '../components/HeaderComponent.vue'
+import Footer from '../components/FooterComponent.vue'
 import TextInput from '../components/form/TextInput.vue';
-import Checkbox from '../components/form/Checkbox.vue';
+import Checkbox from '../components/form/CheckBox.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
@@ -80,13 +80,13 @@ function register() {
 
 const isUsernameValid = computed(() => {
     // 4-16 characters, can include digits and underscore
-    let regex = RegExp(/^([a-zA-Z0-9_]{4,16})$/)
+    const regex = RegExp(/^([a-zA-Z0-9_]{4,16})$/)
     return regex.test(username.value)
 })
 
 const isEmailValid = computed(() => {
     // Pattern source: https://stackoverflow.com/a/46181
-    let regex = RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+    const regex = RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     return regex.test(email.value)
 })
 
@@ -95,7 +95,7 @@ const isPasswordValid = computed(() => {
 })
 
 const passwordMatches = computed(() => {
-    return password.value == passwordConfirmation.value
+    return password.value === passwordConfirmation.value
 })
 
 const canRegister = computed(() => {

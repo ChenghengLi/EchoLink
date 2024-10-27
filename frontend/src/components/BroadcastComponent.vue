@@ -76,7 +76,7 @@
 
 
 export default {
-    name: "Broadcast",
+    name: "BroadcastComponent",
     methods: {
 
     }

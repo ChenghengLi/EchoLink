@@ -31,7 +31,7 @@
 
 
 export default {
-    name: "Banner",
+    name: "BannerComponent",
     methods: {
 
     }

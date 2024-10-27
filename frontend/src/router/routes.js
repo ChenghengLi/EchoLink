@@ -9,5 +9,10 @@ export default  [
             path: '/',
             name: 'Home',
             component: HomeDef,
+        },
+        {
+            path: '/register',
+            name: 'Resgister',
+            component: RegisterDef,
         }
     ];

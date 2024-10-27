@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import Header from '../components/Header.vue';
-import Footer from '../components/Footer.vue';
+import Header from '../components/HeaderComponent.vue';
+import Footer from '../components/FooterComponent.vue';
 import Banner from '../components/Banner.vue';
 import Broadcast from '../components/Broadcast.vue';
 export default {
