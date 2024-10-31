@@ -1,7 +1,7 @@
 """ User related CRUD methods """
 from sqlalchemy.orm import Session
-from models.user import User, UserInput
-from core.security import get_password_hash
+from models.user import User, UserInput, UserLogin
+from core.security import get_password_hash, verify_password, create_access_token
 from fastapi import HTTPException, status
 
 # User creation
@@ -40,3 +40,12 @@ def get_user_by_email(db: Session, email: str) -> User:
 def get_user_by_id(db: Session, user_id: int) -> User:
     return db.query(User).filter(User.id == user_id).first()
     
+# Authenticate user, returning a valid access token, if possible
+def authenticate(db: Session, user_login: UserLogin) -> str:
+    user = get_user_by_email(db, user_login.email)
+    if not user:
+        raise ValueError('The email is not associated to any account.')
+    if not verify_password(user_login.password, user.hashed_password):
+        raise ValueError('Incorrect password.')
+    
+    return create_access_token(user.id)
