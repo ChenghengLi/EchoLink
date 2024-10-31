@@ -1,0 +1,54 @@
+name: Unit tests + linting at dev branch with merge.
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+
+jobs:
+  tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build all Docker containers
+      run: |
+        docker compose -f docker-compose.yml build
+
+    - name: Run the backend-test container (Unit Tests + Lint)
+      run: |
+        docker compose run backend-test
+    
+    - name: Run the frontend-test container (Unit Tests + Lint)
+      run: |
+        docker compose run frontend-test
+
+  merge:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone repository
+      run: |
+        git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/UB-ES-2024-F3/Echolink_devops.git project
+
+    - name: Configure Git
+      run: |
+        cd project
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'github-actions@github.com'
+        git config pull.rebase false 
+
+    - name: Merge to testing branch
+      run: |
+        cd project
+        git checkout testing
+        git pull --allow-unrelated-histories origin dev 
+        git push origin testing
+
+        

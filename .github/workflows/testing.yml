@@ -1,21 +1,21 @@
-name: CI/CD Pipeline
-
+name: Unit tests + linting 
 on:
   push:
     branches:
-      - master
+      - testing
   pull_request:
     branches:
-      - master
+      - testing
+
 
 jobs:
-  docker:
+  tests:
     timeout-minutes: 10
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
     - name: Build all Docker containers
       run: |
@@ -28,8 +28,3 @@ jobs:
     - name: Run the frontend-test container (Unit Tests + Lint)
       run: |
         docker compose run frontend-test
-
-    - name: Deploy
-      if: success()
-      run: |
-        # Add your deployment commands here
