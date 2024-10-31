@@ -25,6 +25,11 @@ jobs:
         touch ./backend/.env
         echo ".env files created"
 
+    - name: Set up environment variables
+      run: |
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> ./backend/.env
+        echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> ./backend/.env
+        echo "ACCESS_TOKEN_EXPIRE_DAYS=${{ secrets.ACCESS_TOKEN_EXPIRE_DAYS }}" >> ./backend/.env
 
     - name: Build all Docker containers
       run: |
