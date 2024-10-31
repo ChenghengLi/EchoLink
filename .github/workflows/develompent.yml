@@ -42,7 +42,7 @@ jobs:
     steps:
     - name: Clone repository
       run: |
-        git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/UB-ES-2024-F3/Echolink_devops.git project
+        git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/UB-ES-2024-F3/Echolink.git project
 
     - name: Configure Git
       run: |
