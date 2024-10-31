@@ -130,7 +130,7 @@ def test_create_user_invalid_email():
 
     # Check object returned
     assert response.status_code == 422
-    assert response.json()['detail'][0]['msg'] == "Value error, Invalid email address."
+    assert response.json()['detail'][0]['msg'] == "Value error, Incorrect email format."
 
     # Remove data created
     db.delete(user)
