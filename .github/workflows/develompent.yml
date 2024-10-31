@@ -17,6 +17,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Create empty .env files
+      run: |
+        echo "Creating empty .env files"
+        touch ./frontend/.env
+        touch ./backend/.env
+        echo ".env files created"
+
     - name: Build all Docker containers
       run: |
         docker compose -f docker-compose.yml build
