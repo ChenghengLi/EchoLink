@@ -54,6 +54,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     command: /bin/sh -c "ruff check . && pytest ./tests"
+    env_file:
+    - ./backend/.env
     depends_on:
       - backend
       - postgres
@@ -63,6 +65,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       target: test
+    env_file:
+    - ./frontend/.env
     depends_on:
       - frontend
       - backend
