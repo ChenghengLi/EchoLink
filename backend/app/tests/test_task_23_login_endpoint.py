@@ -45,7 +45,7 @@ def test_successful_authentication():
 
     # Check token is valid
     assert token is not None
-    assert type(token) == str
+    assert type(token) is str
 
     # Deleta data created
     db.delete(user)
@@ -87,7 +87,7 @@ def test_successful_login():
     assert response.status_code == 200
     assert "access_token" in response.json()
     assert response.json()["access_token"] is not None
-    assert type(response.json()["access_token"]) == str
+    assert type(response.json()["access_token"]) is str
     assert response.json()["token_type"] == "bearer"
 
     # Delete data created
