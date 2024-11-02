@@ -69,9 +69,10 @@
                 </div>
             </div>
         </div>
-        <div v-else>
-            <!-- TODO show error -->
-            <p>Some error has ocurred.</p>
+        <div v-else class="content-block max-w-sm mx-auto">
+            <p>The profile could not be loaded:</p>
+            <p>{{ errorMsg }}</p>
+            <RouterLink to="/">Return to homepage</RouterLink>
         </div>
 
         <FooterComponent class="footer-light mx-10" />
@@ -90,14 +91,14 @@ import { PencilIcon, MusicalNoteIcon, GlobeAltIcon } from '@heroicons/vue/24/sol
 const router = useRouter()
 const route = useRoute()
 
-const errored = ref(false)
+const errorMsg = ref(null)
 const user = ref(null)
 
 async function fetchUserData() {
     try {
         user.value = await UserService.get(route.params.username)
-    } catch (error) {
-        errored.value = true
+    } catch (err) {
+        errorMsg.value = err.message
     }
 }
 
