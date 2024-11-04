@@ -1,5 +1,4 @@
 from time import sleep
-from core.config import get_db
 from tests.utils import create_random_user_input, create_random_auth_user, get_session, get_client
 from models.user import UserLogin
 from crud.user import create_user, authenticate
