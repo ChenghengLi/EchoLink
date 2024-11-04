@@ -3,7 +3,7 @@ from pytest import Session
 from core.config import get_db
 from core.security import CurrentUser
 from models.user import UserLogin, Token
-from crud.user import authenticate
+from crud.user import authenticate, deauthenticate
 
 router = APIRouter()
 
@@ -23,3 +23,10 @@ def login_check_token(user: CurrentUser):
     Check access token is valid
     """
     pass
+
+@router.post("/logout/")
+def login_logout(user: CurrentUser, db: Session = Depends(get_db)):
+    """
+    User logout, delete access token
+    """
+    deauthenticate(db, user)
