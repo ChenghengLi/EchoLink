@@ -56,3 +56,8 @@ def authenticate(db: Session, user_login: UserLogin) -> str:
     db.commit()
     
     return token
+
+# Deauthenticate user, invalidating its current access token
+def deauthenticate(db: Session, user: User):
+    user.token = None
+    db.commit()
