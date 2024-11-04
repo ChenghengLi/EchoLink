@@ -12,6 +12,7 @@ class User(Base):
     username = Column(String, index=True, unique=True)
     email = Column(String, index=True, unique=True)
     hashed_password = Column(String)
+    token = Column(String, default=None)
 
 # Input user for login
 class UserLogin(BaseModel):
@@ -36,6 +37,10 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+# Contents of JWT token
+class TokenPayload(BaseModel):
+    sub: int = None
 
 # Input user for register
 class UserInput(UserLogin):

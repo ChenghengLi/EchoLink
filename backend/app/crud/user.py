@@ -48,4 +48,11 @@ def authenticate(db: Session, user_login: UserLogin) -> str:
     if not verify_password(user_login.password, user.hashed_password):
         raise ValueError('Incorrect password.')
     
-    return create_access_token(user.id)
+    # Create token
+    token = create_access_token(user.id)
+
+    # Update user's token
+    user.token = token
+    db.commit()
+    
+    return token
