@@ -48,7 +48,7 @@
                             <div class="badge bg-indigo-500">
                                 <span class="text-white"><MusicalNoteIcon class="icon"/> Music Fan</span>
                             </div>
-                            <div class="badge bg-blue-500" v-if="isOwnProfile"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
+                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="user.visibility = !user.visibility"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
                                 <span class="text-white">
                                     <span v-if="!isEditing" class="text-white">
                                         <GlobeAltIcon class="icon"/>
@@ -183,6 +183,16 @@ const editableFieldClass = computed(() => {
     }
 })
 
+// Make the badge behave like a button when in edit mode,
+// as clicking it will also interact with the checkbox.
+const visibilityBadgeClass = computed(() => {
+    return {
+        "hover:bg-blue-600": isEditing.value,
+        "focus:bg-blue-600": isEditing.value,
+        "active:bg-blue-500": isEditing.value,
+    }
+})
+
 // Refetch user data when navigating to another profile from this page (ex. directly rewriting the URL)
 // This is necessary as the component won't be recreated, thus onMounted() won't fire.
 watch(
@@ -206,7 +216,7 @@ onMounted(function () {
 .btn-blue {
     @apply bg-blue-500 text-white;
 }
-.btn-blue:hover {
+.btn-blue:hover, .btn-blue:focus {
     @apply bg-blue-700;
 }
 .icon {
