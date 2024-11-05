@@ -63,14 +63,17 @@
                 </div>
             </div>
             <!-- Description and details -->
-            <div class="flex">
+            <div class="lg:flex">
                 <!-- Description -->
-                <div class="content-block flex flex-grow mr-2">
+                <div class="content-block flex flex-grow lg:mr-2">
                     <div class="flex flex-column">
                         <h2 class="section-header">About</h2>
                         <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass" class="details-field text-left flex-grow w-100 min-w-full min-h-60" :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing" v-model="user.description"></textarea>
                     </div>
                 </div>
+
+                <div class="my-2"></div> <!-- Used for spacing in column layout (low viewport width) -->
+
                 <!-- Details -->
                 <!-- TODO make this wrap on lower res -->
                 <div class="content-block min-w-96">
