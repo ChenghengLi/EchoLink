@@ -122,7 +122,7 @@ const DESCRIPTION_MAX_LENGTH = 120
 const GENRE_MAX_LENGTH = 20
 
 // TODO ideally this would be fetched from a DB to make it easier to maintain.
-const genres = ["Rock", "Pop"]
+const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "House", "Jazz", "Folk", "Hip hop", "Metal", "Gnomestep", "Nightcore", "Vaporwave", "Synthwave", "Classic"].sort()
 
 const errorMsg = ref(null)
 const isEditing = ref(false)
