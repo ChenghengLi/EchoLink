@@ -39,22 +39,12 @@ import TextInput from '../components/form/TextInput.vue';
 import Checkbox from '../components/form/CheckBoxes.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
+import Toast from '../utilities/toast.js'
 import Cookies from 'js-cookie'
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
-const Toast = Swal.mixin({
-  toast: true,
-  position: 'top',
-  iconColor: 'white',
-  customClass: {
-    popup: 'colored-toast',
-  },
-  showConfirmButton: false,
-  timer: 1500,
-  timerProgressBar: false,
-})
 
 const username = ref('')
 const email = ref('')

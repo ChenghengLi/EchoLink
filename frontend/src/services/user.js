@@ -14,6 +14,15 @@ class UserService {
             throw error;
         }
     }
+    async updateProfile(data) {
+        try {
+            // TODO need to pass token
+            const response = await axios.patch('/users/user', data);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
     async get(username) {
         try {
             // TODO replace this once user endpoint is ready

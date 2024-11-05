@@ -31,7 +31,10 @@
 
                     <!-- Right area; badges & owner controls -->
                     <div v-if="isOwnProfile" class="flex flex-col items-end">
-                        <button class="btn btn-blue max-w-min text-nowrap"><PencilIcon class="icon"/> Edit Profile</button>
+                        <button class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode">
+                            <PencilIcon class="icon"/>
+                            {{ isEditing ? "Save Changes" : "Edit Profile" }}
+                        </button>
 
                         <div class="my-auto"></div>
 
@@ -42,7 +45,18 @@
                                 <span class="text-white"><MusicalNoteIcon class="icon"/> Music Fan</span>
                             </div>
                             <div class="badge bg-blue-500" v-if="isOwnProfile"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
-                                <span class="text-white"><GlobeAltIcon class="icon"/> Public Profile</span>
+                                <span class="text-white">
+                                    <span v-if="!isEditing" class="text-white">
+                                        <GlobeAltIcon class="icon"/>
+                                         {{ user.visibility ? "Public Profile" : "Private Profile" }}
+                                    </span>
+                                    <!-- When editing, show a checkbox instead of the globe icon -->
+                                    <span v-else class="flex max-w-fit items-center text-white">
+                                        <input class="size-4 mr-1" type="checkbox" v-model="user.visibility"/>
+                                        <!-- When editing, always show this badge as "Public Profile" to clarify the meaning of on/off for the checkbox. -->
+                                         Public Profile
+                                    </span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -52,19 +66,22 @@
             <div class="flex">
                 <!-- Description -->
                 <div class="content-block flex flex-grow mr-2">
-                    <div>
+                    <div class="flex flex-column">
                         <h2 class="section-header">About</h2>
-                        <p class="text-left">{{ user.description }}</p>
+                        <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass" class="details-field text-left flex-grow w-100 min-w-full min-h-60" :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing" v-model="user.description"></textarea>
                     </div>
                 </div>
                 <!-- Details -->
                 <!-- TODO make this wrap on lower res -->
-                <div class="content-block min-w-80">
+                <div class="content-block min-w-96">
                     <h2 class="section-header">Details</h2>
                     <div class="flex">
-                        <p><span><MusicalNoteIcon class="icon"/> Favorite Genre:</span></p>
+                        <p><span class="text-nowrap mr-2"><MusicalNoteIcon class="icon"/> Favorite Genre:</span></p>
                         <div class="mx-auto"></div>
-                        <p>{{ user.genre }}</p>
+                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass" class="details-field text-right max-w-min" placeholder="Favorite genre" list="genresList" :readonly="!isEditing" v-model="user.genre"></input>
+                        <datalist id="genresList">
+                            <option v-for="genre in genres" :value="genre"/>
+                        </datalist>
                     </div>
                 </div>
             </div>
@@ -84,34 +101,83 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import FooterComponent from '../components/FooterComponent.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
+import Toast from '../utilities/toast.js'
 import { computed, onMounted, ref, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { PencilIcon, MusicalNoteIcon, GlobeAltIcon } from '@heroicons/vue/24/solid'
+import { reactive } from 'vue';
 
-const router = useRouter()
 const route = useRoute()
 
-const errorMsg = ref(null)
-const user = ref(null)
+// Max lengths of fields, in characters.
+// TODO adjust these to match backend
+const DESCRIPTION_MAX_LENGTH = 120
+const GENRE_MAX_LENGTH = 20
 
+// TODO ideally this would be fetched from a DB to make it easier to maintain.
+const genres = ["Rock", "Pop"]
+
+const errorMsg = ref(null)
+const isEditing = ref(false)
+const loaded = ref(false)
+const user = reactive({
+    genre: '',
+    description: '',
+    visibility: true,
+})
+
+// Fetches and assigns user data reactive,
+// as well as marking the page as loaded and storing error message, if any.
 async function fetchUserData() {
     try {
-        user.value = await UserService.get(route.params.username)
+        Object.assign(user, await UserService.get(route.params.username))
     } catch (err) {
         errorMsg.value = err.message
+    } finally {
+        loaded.value = true
+    }
+}
+
+function toggleEditMode() {
+    // Post to save changes
+    if (isEditing.value) {
+        UserService.updateProfile(user).then(() => {
+            Toast.fire({
+                title: 'Profile updated',
+                icon: 'success',
+            })
+            // Only exit edit mode if the request was successful,
+            // so the user can quickly retry in case of failure.
+            isEditing.value = !isEditing.value
+        }).catch((err) => {
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to save changes:' + err.message, 
+                icon: 'error',
+            })
+        })
+    } else {
+        // Enter edit mode immediately
+        isEditing.value = !isEditing.value
     }
 }
 
 const isLoaded = computed(() => {
-    return user !== null || errored.value
+    return loaded.value
 })
 
 const isOwnProfile = computed(() => {
     return UserService.isLoggedIn()
 })
 
-// Refetch user data when navigating to another profile
-// This is necessary as the component won't be recreated.
+const editableFieldClass = computed(() => {
+    return {
+        "details-field-editable": isEditing.value,
+    }
+})
+
+// Refetch user data when navigating to another profile from this page (ex. directly rewriting the URL)
+// This is necessary as the component won't be recreated, thus onMounted() won't fire.
 watch(
     () => route.params.id,
     (newId, _) => {
@@ -155,4 +221,17 @@ onMounted(function () {
 .section-header {
     @apply text-left font-bold text-xl
 }
+
+.details-field {
+    /* Padding is used for nicer spacing to the input field boundaries; it's declared in this field as well to prevent the text from changing position when toggling edit mode. */
+    @apply px-2 bg-transparent max-h-min
+}
+.details-field::placeholder {
+    @apply text-gray-400
+}
+
+.details-field-editable {
+    @apply bg-gray-50 border border-gray-300 rounded-lg
+}
+
 </style>
