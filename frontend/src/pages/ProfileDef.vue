@@ -19,7 +19,7 @@
             <!-- Username, badges and banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
-                <div class="flex min-h-32">
+                <div class="sm:flex min-h-32 relative">
                     <!-- Avatar and username -->
                     <div class="flex items-end">
                         <img class="max-w-100 min-w-20 h-auto rounded-3 border-black" src="../assets/images/placeholder.png" />
@@ -27,14 +27,18 @@
                         <p class="ms-3 font-bold text-lg text-white">{{ route.params.username }}</p>
                     </div>
 
-                    <div class="mx-auto"></div>
-
-                    <!-- Right area; badges & owner controls -->
-                    <div v-if="isOwnProfile" class="flex flex-col items-end">
-                        <button class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode">
+                    <div class="mx-auto my-3"></div> <!-- Spacing between avatar/username and badges, handles both desktop & mobile layouts -->
+                    
+                    <!-- "Edit Profile" button; always in top-right -->
+                    <div class="absolute right-0 top-0">
+                        <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode">
                             <PencilIcon class="icon"/>
                             {{ isEditing ? "Save Changes" : "Edit Profile" }}
                         </button>
+                    </div>
+
+                    <!-- Right area; badges & owner controls -->
+                    <div class="flex flex-col items-end">
 
                         <div class="my-auto"></div>
 
