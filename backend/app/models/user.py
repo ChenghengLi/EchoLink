@@ -1,4 +1,5 @@
 """ Models """
+from typing import Optional
 from sqlalchemy import Column, Integer, String, Enum
 from core.config import Base
 from pydantic import BaseModel, field_validator
@@ -61,3 +62,15 @@ class UserInput(UserLogin):
         if not re.match(r'^[a-zA-Z_0-9]{4,16}$', v):
             raise ValueError('Username must be 4-16 characters long, containing only letters, numbers, and underscores.')
         return v
+
+# Output user
+class UserOutput(BaseModel):
+    id: int
+    username: str
+    email: str
+    description: Optional[str] = None
+    genre: Optional[str] = None
+    visibility: VisibilityEnum
+
+    # Pydantic V2 configuration for ORM mode
+    model_config = {'from_attributes': True}

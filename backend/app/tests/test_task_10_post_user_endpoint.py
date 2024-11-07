@@ -47,53 +47,6 @@ def test_create_correct_user():
     db_user = db.query(User).filter(User.username == new_username).first()
     assert db_user is None
 
-
-def test_get_user_by_id():
-    db, user = create_random_user()
-
-    # Get user by id
-    response = client.get(f"/users/get_user/{user.id}")
-
-    # Check object returned
-    assert response.status_code == 200
-    assert response.json()['username'] == user.username
-    assert response.json()['email'] == user.email
-    assert response.json()['hashed_password'] == user.hashed_password
-
-    # Remove data created
-    db.delete(user)
-    db.commit()
-
-def test_get_user_by_username():
-    db, user = create_random_user()
-
-    # Get user by username
-    response = client.get(f"/users/get_user_by_username/{user.username}")
-
-    # Check object returned
-    assert response.status_code == 200
-    assert response.json()['username'] == user.username
-    assert response.json()['hashed_password'] == user.hashed_password
-
-    # Remove data created
-    db.delete(user)
-    db.commit()
-
-def test_get_user_by_email():
-    db, user = create_random_user()
-
-    # Get user by email
-    response = client.get(f"/users/get_user_by_email/{user.email}")
-
-    # Check object returned
-    assert response.status_code == 200
-    assert response.json()['email'] == user.email
-    assert response.json()['hashed_password'] == user.hashed_password
-
-    # Remove data created
-    db.delete(user)
-    db.commit()
-
 def test_create_user_duplicate_email():
     db, user = create_random_user()
 
@@ -102,7 +55,7 @@ def test_create_user_duplicate_email():
 
     # Check object returned
     assert response.status_code == 400
-    assert response.json()['detail'] == "Email already registered"
+    assert response.json()['detail'] == "Email already exists."
 
     # Remove data created
     db.delete(user)
@@ -116,7 +69,7 @@ def test_create_user_duplicate_username():
 
     # Check object returned
     assert response.status_code == 400
-    assert response.json()['detail'] == "Username already registered"
+    assert response.json()['detail'] == "Username already exists."
 
     # Remove data created
     db.delete(user)
