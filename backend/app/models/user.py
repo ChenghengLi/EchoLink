@@ -1,8 +1,14 @@
 """ Models """
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Enum
 from core.config import Base
 from pydantic import BaseModel, field_validator
 import re
+import enum
+
+# Enum for profile visibility
+class VisibilityEnum(enum.Enum):
+    public = "public"
+    private = "private"
 
 # User table
 class User(Base):
@@ -13,6 +19,9 @@ class User(Base):
     email = Column(String, index=True, unique=True)
     hashed_password = Column(String)
     token = Column(String, default=None)
+    description = Column(String, nullable=True)
+    genre = Column(String, nullable=True)
+    visibility = Column(Enum(VisibilityEnum), default=VisibilityEnum.public)
 
 # Input user for login
 class UserLogin(BaseModel):
