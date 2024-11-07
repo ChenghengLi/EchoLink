@@ -1,26 +1,11 @@
 from core.config import get_db
-from models.user import User, UserInput
-from crud.user import create_user
-from tests.utils import random_lower_string, random_email
+from models.user import User
+from tests.utils import random_lower_string, random_email, create_random_user
 from fastapi.testclient import TestClient
 from main import app
 from core.security import verify_password
 
 client = TestClient(app)
-
-# Function to create a random user
-def create_random_user():
-    # Get database session
-    db = next(get_db())
-
-    # Create random user
-    username = random_lower_string()
-    email = random_email()
-    pwd = random_lower_string()
-    user_input = UserInput(username=username, email=email, password=pwd)
-    user = create_user(db, user_input)
-
-    return db, user
 
 def test_create_correct_user():
     db = next(get_db())
@@ -48,7 +33,8 @@ def test_create_correct_user():
     assert db_user is None
 
 def test_create_user_duplicate_email():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Create a new user
     response = client.post("/users/user", json={"username": "new_username", "email": user.email, "password": "123456"})
@@ -62,7 +48,8 @@ def test_create_user_duplicate_email():
     db.commit()
 
 def test_create_user_duplicate_username():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Create a new user with a valid email format
     response = client.post("/users/user", json={"username": user.username, "email": "email_testing@example.com", "password": "123456"})
@@ -76,7 +63,8 @@ def test_create_user_duplicate_username():
     db.commit()
 
 def test_create_user_invalid_email():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Create a new user with an invalid email format
     response = client.post("/users/user", json={"username": "new_username", "email": "invalid_email", "password": "123456"})
@@ -90,7 +78,8 @@ def test_create_user_invalid_email():
     db.commit()
 
 def test_create_user_invalid_username():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Create a new user with an invalid username format
     response = client.post("/users/user", json={"username": "inv", "email": "email_testing@example.com", "password":"123456"})

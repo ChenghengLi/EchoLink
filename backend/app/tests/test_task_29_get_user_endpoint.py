@@ -1,29 +1,14 @@
 from core.config import get_db
-from models.user import UserInput
-from crud.user import create_user
-from tests.utils import random_lower_string, random_email
+from tests.utils import random_lower_string, create_random_user
 from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
 
-# Function to create a random user
-def create_random_user():
-    # Get database session
-    db = next(get_db())
-
-    # Create random user
-    username = random_lower_string()
-    email = random_email()
-    pwd = random_lower_string()
-    user_input = UserInput(username=username, email=email, password=pwd)
-    user = create_user(db, user_input)
-
-    return db, user
-
 def test_get_user_by_username():
     # Create a random user and save it to the database
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Make a GET request to fetch the user by username
     response = client.get(f"/users/username?username={user.username}")
@@ -46,4 +31,4 @@ def test_get_user_by_username_not_found():
 
     # Check that the response status is 404 and the appropriate error message is returned
     assert response.status_code == 404
-    assert response.json()['detail'] == "User not found"
+    assert response.json()['detail'] == "User not found."

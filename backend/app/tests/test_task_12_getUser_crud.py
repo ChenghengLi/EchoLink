@@ -1,27 +1,14 @@
 import pytest
+from tests.utils import create_random_user
 from core.config import get_db
 from models.user import UserInput
 from crud.user import create_user, get_user_by_username, get_user_by_email, get_user_by_id
-from tests.utils import random_lower_string, random_email
 from fastapi import HTTPException
-
-# Function to create a random user
-def create_random_user():
-    # Get database session
-    db = next(get_db())
-
-    # Create random user
-    username = random_lower_string()
-    email = random_email()
-    pwd = random_lower_string()
-    user_input = UserInput(username=username, email=email, password=pwd)
-    user = create_user(db, user_input)
-
-    return db, user
 
 # Test getting user by username
 def test_get_user_by_username():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Get user by username
     db_user = get_user_by_username(db, user.username)
@@ -38,7 +25,8 @@ def test_get_user_by_username():
 
 # Test getting user by email
 def test_get_user_by_email():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Get user by email
     db_user = get_user_by_email(db, user.email)
@@ -55,7 +43,8 @@ def test_get_user_by_email():
 
 # Test getting user by id
 def test_get_user_by_id():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Get user by id
     db_user = get_user_by_id(db, user.id)
@@ -91,7 +80,8 @@ def test_create_user_invalid_email():
 
 # Test unique username constraint
 def test_create_user_duplicate_username():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Attempt to create another user with the same username
     user_input = UserInput(username=user.username, email="newemail@example.com", password="newpassword")
@@ -104,7 +94,8 @@ def test_create_user_duplicate_username():
 
 # Test unique email constraint
 def test_create_user_duplicate_email():
-    db, user = create_random_user()
+    db = next(get_db())
+    user = create_random_user(db)
 
     # Attempt to create another user with the same email
     user_input = UserInput(username="newuser", email=user.email, password="newpassword")

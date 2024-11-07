@@ -1,6 +1,6 @@
 """ User related CRUD methods """
 from sqlalchemy.orm import Session
-from models.user import User, UserInput, UserLogin
+from models.user import User, UserInput, UserLogin, UserUpdate
 from core.security import get_password_hash, verify_password, create_access_token
 from fastapi import HTTPException, status
 
@@ -30,7 +30,10 @@ def create_user(db: Session, user_input: UserInput) -> User:
 
 # Get user by username
 def get_user_by_username(db: Session, username: str) -> User:
-    return db.query(User).filter(User.username == username).first()
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+    return user
 
 # Get user by email
 def get_user_by_email(db: Session, email: str) -> User:
@@ -39,7 +42,33 @@ def get_user_by_email(db: Session, email: str) -> User:
 # Get user by id
 def get_user_by_id(db: Session, user_id: int) -> User:
     return db.query(User).filter(User.id == user_id).first()
+
+# Update user by username
+def update_user(db: Session, username: str, user_update: UserUpdate) -> User:
+    user = get_user_by_username(db, username)
     
+    # Check if username already exists
+    existing_user_by_username = db.query(User).filter(User.username == user_update.username).first()
+    if existing_user_by_username and user.id != existing_user_by_username.id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists.")
+
+    # Check if email already exists
+    existing_user_by_email = db.query(User).filter(User.email == user_update.email).first()
+    if existing_user_by_email and user.id != existing_user_by_email.id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exists.")
+
+    # If validation passes, update the user
+    update_data = user_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(user, key, value)
+
+    if user_update.password:
+        user.hashed_password = get_password_hash(user_update.password)
+
+    db.commit()
+    db.refresh(user)
+    return user
+
 # Authenticate user, returning a valid access token, if possible
 def authenticate(db: Session, user_login: UserLogin) -> str:
     user = get_user_by_email(db, user_login.email)
