@@ -1,5 +1,5 @@
 from core.config import get_db
-from tests.utils import random_lower_string, random_email, create_random_user
+from tests.utils import random_lower_string, random_email, create_random_auth_user
 from fastapi.testclient import TestClient
 from main import app
 from core.security import verify_password
@@ -9,21 +9,24 @@ client = TestClient(app)
 def test_update_user_success():
     # Create a random user and save it to the database
     db = next(get_db())
-    user = create_random_user(db)
+    user = create_random_auth_user(db)
 
     # Prepare the data to update the user
     new_email = random_email()
     new_username = random_lower_string()
 
+    # Set headers with the Authorization token
+    headers = {"Authorization": f"Bearer {user.token}"}
+
     # Make the PUT request to update the user
-    response = client.put("/users/username", json={
+    response = client.put("/users/user", json={
         "username": new_username,
         "email": new_email,
         "password": "newpassword",
         "description": "Updated description",
         "genre": "Updated genre",
         "visibility": "private"
-    }, params={"username": user.username})
+    }, headers=headers)
 
     # Check the response is successful
     assert response.status_code == 200
@@ -43,15 +46,18 @@ def test_update_user_success():
 
 def test_update_user_username_taken():
     db = next(get_db())
-    user1 = create_random_user(db)
-    user2 = create_random_user(db)
+    user1 = create_random_auth_user(db)
+    user2 = create_random_auth_user(db)
+
+    # Set headers with the Authorization token
+    headers = {"Authorization": f"Bearer {user1.token}"}
 
     # Attempt to update user1's username to user2's username, which is already taken
-    response = client.put("/users/username", json={
+    response = client.put("/users/user", json={
         "username": user2.username,
         "email": "new_email@example.com",
         "password": "newpassword"
-    }, params={"username": user1.username})
+    }, headers=headers)
 
     # Check that the response returns a conflict error
     assert response.status_code == 400
@@ -64,15 +70,18 @@ def test_update_user_username_taken():
 
 def test_update_user_email_taken():
     db = next(get_db())
-    user1 = create_random_user(db)
-    user2 = create_random_user(db)
+    user1 = create_random_auth_user(db)
+    user2 = create_random_auth_user(db)
+
+    # Set headers with the Authorization token
+    headers = {"Authorization": f"Bearer {user1.token}"}
 
     # Attempt to update user1's email to user2's email, which is already taken
-    response = client.put("/users/username", json={
+    response = client.put("/users/user", json={
         "username": "new_username",
         "email": user2.email,
         "password": "newpassword"
-    }, params={"username": user1.username})
+    }, headers=headers)
 
     # Check that the response returns a conflict error
     assert response.status_code == 400
@@ -85,14 +94,17 @@ def test_update_user_email_taken():
 
 def test_update_user_invalid_email():
     db = next(get_db())
-    user = create_random_user(db)
+    user = create_random_auth_user(db)
+
+    # Set headers with the Authorization token
+    headers = {"Authorization": f"Bearer {user.token}"}
 
     # Attempt to update the user's email to an invalid format
-    response = client.put("/users/username", json={
+    response = client.put("/users/user", json={
         "username": "new_username",
         "email": "invalid_email",
         "password": "newpassword"
-    }, params={"username": user.username})
+    }, headers=headers)
 
     # Check that the response returns a validation error
     assert response.status_code == 422
@@ -104,14 +116,17 @@ def test_update_user_invalid_email():
 
 def test_update_user_invalid_username():
     db = next(get_db())
-    user = create_random_user(db)
+    user = create_random_auth_user(db)
+
+    # Set headers with the Authorization token
+    headers = {"Authorization": f"Bearer {user.token}"}
 
     # Attempt to update the username to an invalid format (too short)
-    response = client.put("/users/username", json={
+    response = client.put("/users/user", json={
         "username": "inv",
         "email": "new_email@example.com",
         "password": "newpassword"
-    }, params={"username": user.username})
+    }, headers=headers)
 
     # Check that the response returns a validation error
     assert response.status_code == 422
@@ -123,14 +138,17 @@ def test_update_user_invalid_username():
 
 def test_update_user_invalid_password():
     db = next(get_db())
-    user = create_random_user(db)
+    user = create_random_auth_user(db)
+
+    # Set headers with the Authorization token
+    headers = {"Authorization": f"Bearer {user.token}"}
 
     # Attempt to update the user's password to an invalid value (too short)
-    response = client.put("/users/username", json={
+    response = client.put("/users/user", json={
         "username": "new_username",
         "email": "new_email@example.com",
         "password": "short"
-    }, params={"username": user.username})
+    }, headers=headers)
 
     # Check that the response returns a validation error
     assert response.status_code == 422
@@ -142,13 +160,16 @@ def test_update_user_invalid_password():
 
 def test_update_user_partial_data():
     db = next(get_db())
-    user = create_random_user(db)
+    user = create_random_auth_user(db)
+
+    # Set headers with the Authorization token
+    headers = {"Authorization": f"Bearer {user.token}"}
 
     # Attempt to update the user with only some of the fields (e.g., only update email)
     new_email = random_email()
-    response = client.put("/users/username", json={
+    response = client.put("/users/user", json={
         "email": new_email
-    }, params={"username": user.username})
+    }, headers=headers)
 
     # Check the response is successful and the email is updated
     assert response.status_code == 200
