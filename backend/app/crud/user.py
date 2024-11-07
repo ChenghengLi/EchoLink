@@ -44,8 +44,7 @@ def get_user_by_id(db: Session, user_id: int) -> User:
     return db.query(User).filter(User.id == user_id).first()
 
 # Update user by username
-def update_user(db: Session, username: str, user_update: UserUpdate) -> User:
-    user = get_user_by_username(db, username)
+def update_user(db: Session, user: User, user_update: UserUpdate) -> User:
     
     # Check if username already exists
     existing_user_by_username = db.query(User).filter(User.username == user_update.username).first()
