@@ -9,7 +9,7 @@
         </div>
         <div class="col-auto">
           <p class="copyright">
-            &copy; <span id="copyYear">{{ new Date().getFullYear() }}</span>
+            &copy; <span id="copyYear">{{ new Date().getFullYear() }}</span>&nbsp;
             <router-link to="/"> EchoLink</router-link>. All Rights Reserved.
           </p>
         </div>
