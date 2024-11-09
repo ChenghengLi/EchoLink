@@ -59,7 +59,7 @@ function logIn(){
     }).catch((err) => {
         Swal.fire({
             title: 'Log in failed',
-            text: 'Reason: ' + err.message,
+            text: 'Reason: ' + err.response.data.detail,
             icon: 'error',
         })
     })
