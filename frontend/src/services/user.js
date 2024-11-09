@@ -13,6 +13,17 @@ class UserService {
             throw error;
         }
     }
+    async loginAccount(email, password) {
+        try{
+            const response = await axios.post('/login', {
+                'email': email,
+                'password': password,
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default new UserService()
