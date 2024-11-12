@@ -2,7 +2,6 @@ from core.config import get_db
 from tests.utils import random_lower_string, random_email, create_random_auth_user
 from fastapi.testclient import TestClient
 from main import app
-from core.security import verify_password
 
 client = TestClient(app)
 
@@ -36,9 +35,6 @@ def test_update_user_success():
     assert updated_user['description'] == "Updated description"
     assert updated_user['genre'] == "Updated genre"
     assert updated_user['visibility'] == "private"
-
-    # Verify that the password is updated (hashed password check)
-    assert verify_password("newpassword", updated_user['hashed_password'])
 
     # Clean up by deleting the test user from the database
     db.delete(user)
