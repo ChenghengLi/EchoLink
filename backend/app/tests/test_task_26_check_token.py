@@ -31,7 +31,7 @@ def test_token_no_format():
     h = {"Authorization": "Bearer no_format"}
 
     # Check no user error
-    r = client.get("login/check_token/", headers=h)
+    r = client.get("login/check_token", headers=h)
     assert r.status_code == 403
     assert r.json() == {"detail": "Could not validate credentials"}
     
@@ -42,7 +42,7 @@ def test_token_no_user():
     h = {"Authorization": f"Bearer {create_access_token(0)}"}
 
     # Check no user error
-    r = client.get("login/check_token/", headers=h)
+    r = client.get("login/check_token", headers=h)
     assert r.status_code == 401
     assert r.json() == {"detail": "User not found"}
 
@@ -60,7 +60,7 @@ def test_token_no_database():
     h = {"Authorization": f"Bearer {create_access_token(user.id)}"}
 
     # Check invalid token error
-    r = client.get("login/check_token/", headers=h)
+    r = client.get("login/check_token", headers=h)
     assert r.status_code == 401
     assert r.json() == {"detail": "Invalid token"}
 
@@ -79,7 +79,7 @@ def test_token_successful():
     h = {"Authorization": f"Bearer {user.token}"}
 
     # Check response is successful
-    r = client.get("login/check_token/", headers=h)
+    r = client.get("login/check_token", headers=h)
     assert r.status_code == 200
 
     # Delete data created

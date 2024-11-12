@@ -30,11 +30,11 @@ def test_logout():
     h = {"Authorization": f"Bearer {user.token}"}
 
     # Check response is successful
-    r = client.post("login/logout/", headers=h)
+    r = client.post("login/logout", headers=h)
     assert r.status_code == 200
 
     # Try to logout again
-    r = client.post("login/logout/", headers=h)
+    r = client.post("login/logout", headers=h)
     assert r.status_code == 401
     assert r.json() == {"detail": "Invalid token"}
 

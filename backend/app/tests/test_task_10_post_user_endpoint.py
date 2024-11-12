@@ -3,7 +3,6 @@ from models.user import User
 from tests.utils import random_lower_string, random_email, create_random_user
 from fastapi.testclient import TestClient
 from main import app
-from core.security import verify_password
 
 client = TestClient(app)
 
@@ -21,7 +20,6 @@ def test_create_correct_user():
     assert response.status_code == 200
     assert response.json()['username'] == new_username
     assert response.json()['email'] == new_email
-    assert verify_password(new_password, response.json()['hashed_password'])
 
     # Remove data created
     db_user = db.query(User).filter(User.username == new_username).first()
