@@ -48,7 +48,7 @@
                             <div class="badge bg-indigo-500">
                                 <span class="text-white"><MusicalNoteIcon class="icon"/> Music Fan</span>
                             </div>
-                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="user.visibility = !user.visibility"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
+                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="toggleVisibility"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
                                 <span class="text-white">
                                     <span v-if="!isEditing" class="text-white">
                                         <GlobeAltIcon class="icon"/>
@@ -166,6 +166,13 @@ function toggleEditMode() {
     } else {
         // Enter edit mode immediately
         isEditing.value = !isEditing.value
+    }
+}
+
+function toggleVisibility() {
+    // Clicking the badge outside of edit mode is no-op.
+    if (isEditing.value) {
+        user.visibility = !user.visibility
     }
 }
 
