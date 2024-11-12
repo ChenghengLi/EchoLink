@@ -73,7 +73,7 @@ function register() {
     }).catch((err) => {
         Swal.fire({
             title: 'Registration failed',
-            text: 'Reason: ' + err.message,
+            text: (err.response != null) ? err.response.data.detail : err.message,
             icon: 'error',
         })
     })
