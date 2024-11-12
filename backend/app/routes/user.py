@@ -19,7 +19,7 @@ async def add_user(
     user = create_user_crud(db, user_input)
     return user_model.UserOutput.model_validate(user)
 
-@router.get("/username", response_model=user_model.UserOutput)
+@router.get("/{username}", response_model=user_model.UserOutput)
 async def get_user_by_username(
     username: str,
     db: Session = Depends(get_db)
@@ -36,7 +36,7 @@ async def update_user(
     user = update_user_crud(db, current_user, user_update)
     return user_model.UserOutput.model_validate(user)
 
-@router.delete("/delete_account", status_code=status.HTTP_200_OK)
+@router.delete("/user", status_code=status.HTTP_200_OK)
 async def delete_user(
     db: Session = Depends(get_db),
     current_user: user_model.User = Depends(get_current_user)

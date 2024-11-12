@@ -11,7 +11,7 @@ def test_get_user_by_username():
     user = create_random_user(db)
 
     # Make a GET request to fetch the user by username
-    response = client.get(f"/users/username?username={user.username}")
+    response = client.get(f"/users/{user.username}")
 
     # Check that the response is successful and returns the correct data
     assert response.status_code == 200
@@ -27,7 +27,7 @@ def test_get_user_by_username_not_found():
     non_existent_username = random_lower_string()
 
     # Make a GET request to fetch a user that doesn't exist
-    response = client.get(f"/users/username?username={non_existent_username}")
+    response = client.get(f"/users/{non_existent_username}")
 
     # Check that the response status is 404 and the appropriate error message is returned
     assert response.status_code == 404
