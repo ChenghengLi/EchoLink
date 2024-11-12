@@ -47,6 +47,6 @@ a:hover {
 }
 
 /* Fixes alert hover text color */
-a:hover, a:focus, button:hover {
+.swal2-confirm:hover {
     color: white;
 }

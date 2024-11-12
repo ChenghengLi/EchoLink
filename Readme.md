@@ -208,7 +208,7 @@ For detailed instructions on defining frontend unit tests, refer to the `dummy.t
 
 1. **Branching Strategy:**
 
-   - For each issue, create a branch named as `issuenumber_brew_description`. For example, if the assignee is John and the issue number is 42 and the issue name is "create dummy page", the branch name should be called somthing similar to  `42_dummmy_page`.
+   - For each issue, create a branch named as `issuenumber_breif_description`. For example, if the assignee is John and the issue number is 42 and the issue name is "create dummy page", the branch name should be called somthing similar to  `42_dummmy_page`.
    - Assign the branch to the corresponding issue.
 
 2. **Development Process:**

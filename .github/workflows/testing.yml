@@ -1,0 +1,44 @@
+name: Unit tests + linting 
+on:
+  push:
+    branches:
+      - testing
+  pull_request:
+    branches:
+      - testing
+
+
+jobs:
+  tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+      
+    - name: Create empty .env files
+      run: |
+        echo "Creating empty .env files"
+        touch ./frontend/.env
+        touch ./backend/.env
+        echo ".env files created"
+
+    - name: Set up environment variables
+      run: |
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> ./backend/.env
+        echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> ./backend/.env
+        echo "ACCESS_TOKEN_EXPIRE_DAYS=${{ secrets.ACCESS_TOKEN_EXPIRE_DAYS }}" >> ./backend/.env
+
+    - name: Build all Docker containers
+      run: |
+        docker compose -f docker-compose.yml build
+
+    - name: Run the backend-test container (Unit Tests + Lint)
+      run: |
+        docker compose run backend-test
+    
+    - name: Run the frontend-test container (Unit Tests + Lint)
+      run: |
+        docker compose run frontend-test

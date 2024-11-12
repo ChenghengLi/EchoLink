@@ -50,7 +50,7 @@
 											Log In
 										</router-link>
 										<router-link to="/register" class="btn btn--secondary">
-											Sign In
+											Register
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
@@ -66,7 +66,7 @@
 										Log In
 									</router-link>
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
-										Sign In
+										Register
 									</router-link>
 									<button v-else @click="logout_function" class="btn btn--secondary">
 										Log Out

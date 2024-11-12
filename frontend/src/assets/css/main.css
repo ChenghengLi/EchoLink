@@ -313,7 +313,7 @@ a {
   font-family: "Space Grotesk", sans-serif;
   cursor: pointer;
   /* Edited by Kamil: added color to visually distinguish links */
-  @apply text-indigo-500 !important
+  @apply text-indigo-500
 }
 button i {
   color: inherit;

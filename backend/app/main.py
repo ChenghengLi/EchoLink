@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.lifespan import lifespan
 from core.config import engine
 from core.config import Base
-from routes import user, test
+from routes import user, test, login
 
 # Initialize the FastAPI app with the lifespan context manager
 app = FastAPI(lifespan=lifespan)
@@ -25,6 +25,6 @@ Base.metadata.create_all(bind=engine)
 # Include routers
 app.include_router(user.router, prefix="/users", tags=["Users"])
 app.include_router(test.router, prefix="/test", tags=["Test"])
-
+app.include_router(login.router, prefix="/login", tags=["login"])
 
 
