@@ -9,13 +9,18 @@
                 <p>Don't have an account? <RouterLink to="/register">Register instead.</RouterLink></p>
             </div>
 
+
             <!-- Form field container -->
             <div class="px-4 mx-auto">
                 <!-- E mail -->
-                <TextInput label="E-mail" :required="true" placeholder="example@example.com" input-type="email" :value="email" @changed="email = $event" :warning="emailWarning" :test-id="'field-email'"></TextInput>
+                <TextInput label="E-mail" @keyup.enter="focusSecondText" :required="true" placeholder="example@example.com" input-type="email" :value="email" @changed="email = $event" :warning="emailWarning" :test-id="'field-email'" ref="InputEmail"></TextInput>
                 <!-- Password -->
-                <TextInput label="Password" :required="true" placeholder="" input-type="password" :value="password" @changed="password = $event" :warning="passwordWarning" :test-id="'field-password'"></TextInput>
+                <TextInput label="Password" @keyup.enter="logInEnter" :required="true" placeholder="" input-type="password" :value="password" @changed="password = $event" :warning="passwordWarning" :test-id="'field-password'" ref="InputPassword"></TextInput>
             </div>
+
+            <hr class="h-divider"/>
+
+
             <button class="btn btn--primary w-100 w-md-60" :disabled="!canLogIn" @click="logIn" :data-test="'button-login'">Log In</button>
         </div>
         <FooterComponent class="footer-light mx-10" />
@@ -47,6 +52,16 @@ const Toast = Swal.mixin({
 
 const email = ref('')
 const password = ref('')
+
+
+const InputPassword = ref(null)
+const InputEmail = ref(null)
+
+
+function focusSecondText(){
+    InputPassword.value.focus()
+}
+
 
 function logIn(){
     UserService.loginAccount(email.value, password.value).then(() => {
@@ -87,6 +102,11 @@ const emailWarning = computed(() => {
 const passwordWarning = computed(() => {
     return (password.value !== '' && !isPasswordValid.value) ? 'Must be 8+ characters' : null
 })
+
+
+function logInEnter(){
+    if (canLogIn) logIn()
+}
 
 </script>
 
