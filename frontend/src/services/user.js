@@ -19,7 +19,7 @@ class UserService {
                 'email': email,
                 'password': password,
             });
-            return response.data;
+            return response;
         } catch (error) {
             throw error;
         }
