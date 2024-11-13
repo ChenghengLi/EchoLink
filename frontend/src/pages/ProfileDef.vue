@@ -45,18 +45,18 @@
                         <!-- Badges area -->
                         <div class="flex">
                             <!-- TODO modify this once we have other user roles -->
-                            <div class="badge bg-indigo-500">
+                            <div class="badge bg-indigo-500" v-tooltip="accountTypeBadgeTooltip">
                                 <span class="text-white"><MusicalNoteIcon class="icon"/> Music Fan</span>
                             </div>
-                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="toggleVisibility"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
+                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="toggleVisibility" v-tooltip="visibilityBadgeTooltip"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
                                 <span class="text-white">
                                     <span v-if="!isEditing" class="text-white">
                                         <GlobeAltIcon class="icon"/>
-                                         {{ user.visibility ? "Public Profile" : "Private Profile" }}
+                                         {{ user.publicProfile ? "Public Profile" : "Private Profile" }}
                                     </span>
                                     <!-- When editing, show a checkbox instead of the globe icon -->
                                     <span v-else class="flex max-w-fit items-center text-white">
-                                        <input class="size-4 mr-1" type="checkbox" v-model="user.visibility"/>
+                                        <input class="size-4 mr-1" type="checkbox" v-model="user.publicProfile"/>
                                         <!-- When editing, always show this badge as "Public Profile" to clarify the meaning of on/off for the checkbox. -->
                                          Public Profile
                                     </span>
@@ -130,7 +130,8 @@ const loaded = ref(false)
 const user = reactive({
     genre: '',
     description: '',
-    visibility: true,
+    visibility: 'public',
+    publicProfile: true, // Alias of visibility; exists to simplify reactivity of the visibility checkbox.
 })
 
 // Fetches and assigns user data reactive,
@@ -138,6 +139,7 @@ const user = reactive({
 async function fetchUserData() {
     try {
         Object.assign(user, await UserService.get(route.params.username))
+        user.publicProfile = user.visibility === 'public'
     } catch (err) {
         errorMsg.value = err.message
     } finally {
@@ -172,7 +174,8 @@ function toggleEditMode() {
 function toggleVisibility() {
     // Clicking the badge outside of edit mode is no-op.
     if (isEditing.value) {
-        user.visibility = !user.visibility
+        user.visibility = user.visibility == 'private' ? 'public' : 'private'
+        user.publicProfile = !user.publicProfile
     }
 }
 
@@ -181,7 +184,15 @@ const isLoaded = computed(() => {
 })
 
 const isOwnProfile = computed(() => {
-    return UserService.isLoggedIn()
+    return UserService.isLoggedIn() // TODO
+})
+
+const accountTypeBadgeTooltip = computed(() => {
+    return 'This is a personal account.' // TODO modify once more user types are implemented
+})
+
+const visibilityBadgeTooltip = computed(() => {
+    return user.visibility === 'public' ? 'Any user can access your profile.' : 'Only you can see your profile.'
 })
 
 const editableFieldClass = computed(() => {

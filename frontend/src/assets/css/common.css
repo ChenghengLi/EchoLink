@@ -50,3 +50,13 @@ a:hover {
 .swal2-confirm:hover {
     color: white;
 }
+
+/* Floating-vue class overrides */
+/* The spacing in these is fucked up out of the box - likely the fault of main.css as usual */
+.v-popper__inner {
+    min-height: 2em;
+}
+.v-popper__inner > div {
+    padding: 5px;
+    padding-top: 10px;
+}
