@@ -15,7 +15,7 @@
             </svg>
             <span class="sr-only">Loading...</span>
         </div>
-        <div v-else-if="user" class="flex flex-col mx-auto max-w-screen-lg">
+        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg">
             <!-- Username, badges and banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
@@ -161,7 +161,7 @@ function toggleEditMode() {
         }).catch((err) => {
             Swal.fire({
                 title: 'Error',
-                text: 'Failed to save changes:' + err.message, 
+                text: 'Failed to save changes: ' + ((err.response != null) ? err.response.data.detail : err.message), 
                 icon: 'error',
             })
         })
