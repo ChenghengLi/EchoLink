@@ -70,10 +70,8 @@ class UserInput(UserLogin):
 
 # Output user
 class UserOutput(BaseModel):
-    id: int
     username: str
     email: str
-    hashed_password: str
     description: Optional[str] = None
     genre: Optional[str] = None
     visibility: VisibilityEnum

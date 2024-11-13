@@ -17,14 +17,14 @@ def login_access_token(user_login: UserLogin, db: Session = Depends(get_db)) -> 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/check_token/")
+@router.get("/check_token")
 def login_check_token(user: CurrentUser):
     """
     Check access token is valid
     """
     pass
 
-@router.post("/logout/")
+@router.post("/logout")
 def login_logout(user: CurrentUser, db: Session = Depends(get_db)):
     """
     User logout, delete access token

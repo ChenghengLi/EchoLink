@@ -54,7 +54,7 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
-										<button @click="logout_function" class="btn btn--secondary">
+										<button @click="logout_function" class="btn btn--secondary" data-test="button-logout">
 											Log Out
 										</button>
 									</li>
@@ -68,7 +68,7 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
-									<button v-else @click="logout_function" class="btn btn--secondary">
+									<button v-else @click="logout_function" class="btn btn--secondary" data-test="button-logout">
 										Log Out
 									</button>
 								</div>
@@ -108,6 +108,7 @@ export default {
 		}, logout_function() {
 			Cookies.remove('logged_in');
 			this.$router.push('/');
+			this.isLoggedIn = false;
 		}
 	},
 	mounted() {
