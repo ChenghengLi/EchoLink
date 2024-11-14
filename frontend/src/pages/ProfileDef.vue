@@ -141,7 +141,7 @@ async function fetchUserData() {
         Object.assign(user, await UserService.get(route.params.username))
         user.publicProfile = user.visibility === 'public'
     } catch (err) {
-        errorMsg.value = err.message
+        errorMsg.value = (err.response) ? err.response.data.detail : err.message
     } finally {
         loaded.value = true
     }
