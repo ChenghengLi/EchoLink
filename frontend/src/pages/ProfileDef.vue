@@ -6,7 +6,7 @@
         <div v-if="!isLoaded" class="flex">
             <LoadingSpinner class="mx-auto"/>
         </div>
-        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg">
+        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg" data-test="container-main">
             <!-- Username, badges and banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
@@ -15,14 +15,14 @@
                     <div class="flex items-end">
                         <img class="max-w-100 min-w-20 h-auto rounded-3 border-black" src="../assets/images/placeholder.png" />
                         <!-- TODO ensure contrast vs banner -->
-                        <p class="ms-3 font-bold text-lg text-white">{{ route.params.username }}</p>
+                        <p class="ms-3 font-bold text-lg text-white" data-test="label-username">{{ getUsername() }}</p>
                     </div>
 
                     <div class="mx-auto my-3"></div> <!-- Spacing between avatar/username and badges, handles both desktop & mobile layouts -->
                     
                     <!-- "Edit Profile" button; always in top-right -->
                     <div class="absolute right-0 top-0">
-                        <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode">
+                        <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode" data-test="button-edit">
                             <PencilIcon class="icon"/>
                             {{ isEditing ? "Save Changes" : "Edit Profile" }}
                         </button>
@@ -39,7 +39,7 @@
                             <div class="badge bg-indigo-500" v-tooltip="accountTypeBadgeTooltip">
                                 <span class="text-white"><MusicalNoteIcon class="icon"/> Music Fan</span>
                             </div>
-                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="toggleVisibility" v-tooltip="visibilityBadgeTooltip"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
+                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="toggleVisibility" v-tooltip="visibilityBadgeTooltip" data-test="badge-visibility"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
                                 <span class="text-white">
                                     <span v-if="!isEditing" class="text-white">
                                         <GlobeAltIcon class="icon"/>
@@ -63,7 +63,7 @@
                 <div class="content-block flex flex-grow lg:mr-2">
                     <div class="flex flex-column">
                         <h2 class="section-header">About</h2>
-                        <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass" class="details-field text-left flex-grow w-100 min-w-full min-h-60" :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing" v-model="user.description"></textarea>
+                        <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass" class="details-field text-left flex-grow w-100 min-w-full min-h-60" :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing" v-model="user.description" data-test="field-description"></textarea>
                     </div>
                 </div>
 
@@ -76,7 +76,8 @@
                     <div class="flex">
                         <p><span class="text-nowrap mr-2"><MusicalNoteIcon class="icon"/> Favorite Genre:</span></p>
                         <div class="mx-auto"></div>
-                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass" class="details-field text-right max-w-min min-w-0" placeholder="Favorite genre" list="genresList" :readonly="!isEditing" v-model="user.genre"></input>
+                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass" class="details-field text-right max-w-min min-w-0" placeholder="Favorite genre" list="genresList" :readonly="!isEditing" v-model="user.genre" data-test="field-genre"></input>
+                        <!-- Necessary for browser auto-completion -->
                         <datalist id="genresList">
                             <option v-for="genre in genres" :value="genre"/>
                         </datalist>
@@ -84,7 +85,7 @@
                 </div>
             </div>
         </div>
-        <div v-else class="content-block max-w-sm mx-auto">
+        <div v-else class="content-block max-w-sm mx-auto" data-test="container-error">
             <p>The profile could not be loaded:</p>
             <p>{{ errorMsg }}</p>
             <RouterLink to="/">Return to homepage</RouterLink>
@@ -132,13 +133,17 @@ const user = reactive({
 // as well as marking the page as loaded and storing error message, if any.
 async function fetchUserData() {
     try {
-        Object.assign(user, await UserService.get(route.params.username))
+        Object.assign(user, await UserService.get(getUsername()))
         user.publicProfile = user.visibility === 'public'
     } catch (err) {
         errorMsg.value = (err.response) ? err.response.data.detail : err.message
     } finally {
         loaded.value = true
     }
+}
+
+function getUsername() {
+    return route.params.username
 }
 
 function toggleEditMode() {
@@ -216,7 +221,7 @@ watch(
 
 // Fetch user data when the page is accessed from another one.
 onMounted(function () {
-    fetchUserData(route.params.username)
+    fetchUserData(getUsername())
 })
 
 </script>
