@@ -13,7 +13,7 @@
                 <div class="sm:flex min-h-32 relative">
                     <!-- Avatar and username -->
                     <div class="flex items-end">
-                        <img class="max-w-100 min-w-20 h-auto rounded-3 border-black" src="../assets/images/placeholder.png" />
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
                         <!-- TODO ensure contrast vs banner -->
                         <p class="ms-3 font-bold text-lg text-white" data-test="label-username">{{ getUsername() }}</p>
                     </div>
