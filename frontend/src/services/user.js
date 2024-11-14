@@ -27,8 +27,7 @@ class UserService {
     }
     async updateProfile(data) {
         try {
-            // TODO need to pass token
-            const response = await axios.patch('/users/user', data);
+            const response = await axios.put('/users/user', data, this.getConfig());
             return response.data;
         } catch (error) {
             throw error;
@@ -36,16 +35,21 @@ class UserService {
     }
     async get(username) {
         try {
-            // TODO replace this once user endpoint is ready
-            // const response = await axios.get('/users/' + username);
-            // return response.data;
-            return {description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum", genre: 'some genre', visibility: 'public'}
+            const response = await axios.get('/users/' + username);
+            return response.data;
         } catch (error) {
             throw error;
         }
     }
     isLoggedIn() {
-        return Cookies.get('logged_in') || true // TODO replace once sessions are implemented
+        return Cookies.get('auth_token') !== undefined
+    }
+    getConfig() {
+        return {
+            headers: {
+                Authorization: `Bearer ${Cookies.get('auth_token')}`,
+            }
+        };
     }
 }
 
