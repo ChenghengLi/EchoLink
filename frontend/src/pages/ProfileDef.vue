@@ -6,6 +6,7 @@
         <div v-if="!isLoaded" class="flex">
             <LoadingSpinner class="mx-auto"/>
         </div>
+        <!-- Profile view -->
         <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg" data-test="container-main">
             <!-- Username, badges and banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
@@ -35,10 +36,13 @@
 
                         <!-- Badges area -->
                         <div class="flex">
+                            <!-- Account type badge -->
                             <!-- TODO modify this once we have other user roles -->
                             <div class="badge bg-indigo-500" v-tooltip="accountTypeBadgeTooltip">
                                 <span class="text-white"><MusicalNoteIcon class="icon"/> Music Fan</span>
                             </div>
+
+                            <!-- Visibility badge -->
                             <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="toggleVisibility" v-tooltip="visibilityBadgeTooltip" data-test="badge-visibility"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
                                 <span class="text-white">
                                     <span v-if="!isEditing" class="text-white">
@@ -70,7 +74,6 @@
                 <div class="my-2"></div> <!-- Used for spacing in column layout (low viewport width) -->
 
                 <!-- Details -->
-                <!-- TODO make this wrap on lower res -->
                 <div class="content-block lg:min-w-96">
                     <h2 class="section-header">Details</h2>
                     <div class="flex">
@@ -85,13 +88,12 @@
                 </div>
             </div>
         </div>
+        <!-- Error view -->
         <div v-else class="content-block max-w-sm mx-auto" data-test="container-error">
             <p>The profile could not be loaded:</p>
             <p>{{ errorMsg }}</p>
             <RouterLink to="/">Return to homepage</RouterLink>
         </div>
-
-        <div class="my-auto"></div>
 
         <FooterComponent class="footer-light mx-10" />
     </div>
@@ -104,10 +106,9 @@ import LoadingSpinner from '../components/LoadingSpinner.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { PencilIcon, MusicalNoteIcon, GlobeAltIcon } from '@heroicons/vue/24/solid'
-import { reactive } from 'vue';
 
 const route = useRoute()
 
@@ -119,9 +120,10 @@ const GENRE_MAX_LENGTH = 20
 // TODO ideally this would be fetched from a DB to make it easier to maintain.
 const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "House", "Jazz", "Folk", "Hip hop", "Metal", "Gnomestep", "Nightcore", "Vaporwave", "Synthwave", "Classic"].sort()
 
-const errorMsg = ref(null)
-const isEditing = ref(false)
-const loaded = ref(false)
+const errorMsg = ref(null) // Error message from profile load request.
+const isEditing = ref(false) // Whether the profile is being edited.
+const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
+// Profile data. Field names should match the API ones.
 const user = reactive({
     genre: '',
     description: '',
@@ -138,7 +140,8 @@ async function fetchUserData() {
     } catch (err) {
         errorMsg.value = (err.response) ? err.response.data.detail : err.message
     } finally {
-        loaded.value = true
+        // Mark the page as loaded in either case
+        isLoaded.value = true
     }
 }
 
@@ -177,10 +180,6 @@ function toggleVisibility() {
         user.publicProfile = !user.publicProfile
     }
 }
-
-const isLoaded = computed(() => {
-    return loaded.value
-})
 
 const isOwnProfile = computed(() => {
     return UserService.isLoggedIn() // TODO
