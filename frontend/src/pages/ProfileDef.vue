@@ -71,12 +71,12 @@
 
                 <!-- Details -->
                 <!-- TODO make this wrap on lower res -->
-                <div class="content-block min-w-96">
+                <div class="content-block lg:min-w-96">
                     <h2 class="section-header">Details</h2>
                     <div class="flex">
                         <p><span class="text-nowrap mr-2"><MusicalNoteIcon class="icon"/> Favorite Genre:</span></p>
                         <div class="mx-auto"></div>
-                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass" class="details-field text-right max-w-min" placeholder="Favorite genre" list="genresList" :readonly="!isEditing" v-model="user.genre"></input>
+                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass" class="details-field text-right max-w-min min-w-0" placeholder="Favorite genre" list="genresList" :readonly="!isEditing" v-model="user.genre"></input>
                         <datalist id="genresList">
                             <option v-for="genre in genres" :value="genre"/>
                         </datalist>
@@ -89,6 +89,8 @@
             <p>{{ errorMsg }}</p>
             <RouterLink to="/">Return to homepage</RouterLink>
         </div>
+
+        <div class="my-auto"></div>
 
         <FooterComponent class="footer-light mx-10" />
     </div>
