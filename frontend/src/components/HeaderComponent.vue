@@ -106,6 +106,7 @@ export default {
 			this.scrollPosition =
 				window.scrollY;
 		}, logout_function() {
+			Cookies.remove('auth_token');
 			Cookies.remove('logged_in');
 			this.$router.push('/');
 			this.isLoggedIn = false;
