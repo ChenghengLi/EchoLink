@@ -160,7 +160,7 @@ function toggleEditMode() {
         }).catch((err) => {
             Swal.fire({
                 title: 'Error',
-                text: 'Failed to save changes: ' + ((err.response != null) ? err.response.data.detail : err.message), 
+                text: 'Failed to save changes: ' + ((err.response !== undefined) ? err.response.data.detail : err.message), 
                 icon: 'error',
             })
         })
@@ -173,7 +173,7 @@ function toggleEditMode() {
 function toggleVisibility() {
     // Clicking the badge outside of edit mode is no-op.
     if (isEditing.value) {
-        user.visibility = user.visibility == 'private' ? 'public' : 'private'
+        user.visibility = user.visibility === 'private' ? 'public' : 'private'
         user.publicProfile = !user.publicProfile
     }
 }
@@ -214,7 +214,7 @@ const visibilityBadgeClass = computed(() => {
 // This is necessary as the component won't be recreated, thus onMounted() won't fire.
 watch(
     () => route.params.id,
-    (newId, _) => {
+    (newId) => {
         fetchUserData(newId)
     }
 )
