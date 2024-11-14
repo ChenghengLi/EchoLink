@@ -15,7 +15,8 @@ def test_token_database():
     assert user.token is None
 
     # Get JWT
-    token = authenticate(db, UserLogin(email=user_input.email, password=user_input.password))
+    user = authenticate(db, UserLogin(email=user_input.email, password=user_input.password))
+    token = user.token 
 
     # Check token in database
     assert user.token == token

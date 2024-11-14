@@ -41,7 +41,8 @@ def test_successful_authentication():
     user = create_user(db, user_input)
 
     # Get JWT
-    token = authenticate(db, UserLogin(email=user_input.email, password=user_input.password))
+    user = authenticate(db, UserLogin(email=user_input.email, password=user_input.password))
+    token = user.token
 
     # Check token is valid
     assert token is not None
@@ -84,6 +85,8 @@ def test_successful_login():
 
     # Successful login
     response = client.post("/login", json={"email": user_input.email, "password": user_input.password})
+
+    print(response.json())
     assert response.status_code == 200
     assert "access_token" in response.json()
     assert response.json()["access_token"] is not None

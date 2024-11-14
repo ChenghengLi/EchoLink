@@ -50,5 +50,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Add SSH key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_KEY }}
+
     - name: Deploy to Server
+      env:
+        USER: root
+        HOST: 209.38.168.71
+        WORKDIR: Echolink_devops
       run: |
+        ssh -o StrictHostKeyChecking=no $USER@$HOST << EOF
+          cd $WORKDIR
+          git pull https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/UB-ES-2024-F3/EchoLink.git
+
+
+          # Rebuild Docker images and restart containers
+          docker compose down --remove-orphans
+          docker compose build  # Rebuilds images with the latest code
+          docker compose up -d  # Starts containers in detached mode
+        EOF
