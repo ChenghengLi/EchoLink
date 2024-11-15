@@ -37,6 +37,14 @@ class UserService {
             throw error;
         }
     }
+    async logout() {
+        try {
+            const response = await axios.post('/login/logout', {}, this.getConfig());
+            return response.data; 
+        } catch (error) {
+            throw error;
+        }
+    }
     async updateProfile(data) {
         try {
             const response = await axios.put('/users/user', data, this.getConfig());

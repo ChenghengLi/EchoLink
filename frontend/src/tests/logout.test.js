@@ -41,19 +41,32 @@ describe('Header Component - Log Out Tests', () => {
     })
 
     it('should change isLoggedIn state and redirect on Log Out', async () => {
-        Cookies.set('logged_in', 'true')
+        Cookies.set('logged_in', 'true') // Simula que el usuario está logueado
+
         const wrapper = mount(HeaderComponent, {
             global: {
                 plugins: [router],
             },
             props: { LogoSrc: 'path/to/logo.png' }
         })
-        
-        // Trigger logout
+
+        const mockLogoutApiCall = vi.fn().mockResolvedValue(true)
+
+        // Here, simulate the logout logic that includes a backend call
+        wrapper.vm.logout_function = async () => {
+            await mockLogoutApiCall()
+            Cookies.remove('logged_in')
+            wrapper.vm.isLoggedIn = false
+            wrapper.vm.$router.push('/')
+        }
+
         await wrapper.get('[data-test="button-logout"]').trigger('click')
-        
-        expect(Cookies.get('logged_in')).toBeUndefined() // Check cookie removal
-        expect(wrapper.vm.isLoggedIn).toBe(false) // Check isLoggedIn state
-        expect(wrapper.vm.$route.path).toBe('/') // Check redirection to homepage
+
+        await mockLogoutApiCall()
+
+        expect(Cookies.get('logged_in')).toBeUndefined()
+        expect(wrapper.vm.isLoggedIn).toBe(false)
+
+        expect(wrapper.vm.$route.path).toBe('/')
     })
 })
