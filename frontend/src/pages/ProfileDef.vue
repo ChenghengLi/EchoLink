@@ -190,7 +190,7 @@ function toggleVisibility() {
 }
 
 const isOwnProfile = computed(() => {
-    return UserService.isLoggedIn() // TODO
+    return UserService.isLoggedIn() && UserService.getCurrentUsername() === getUsername()
 })
 
 const accountTypeBadgeTooltip = computed(() => {
