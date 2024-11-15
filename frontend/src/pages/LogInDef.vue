@@ -65,13 +65,16 @@ function focusSecondText(){
 
 function logIn(){
     UserService.loginAccount(email.value, password.value).then((response) => {
-        const token = response.data.access_token;
+        const data = response.data;
+        const token = data.access_token;
+        const username = data.username;
 
         if (!token) {
             throw new Error('Token not found in the response.');
         }
 
         Cookies.set('auth_token', token, {expires: 7});
+        Cookies.set('username', username, {expires: 7});
 
         Toast.fire({
             title: 'Log in successful!',

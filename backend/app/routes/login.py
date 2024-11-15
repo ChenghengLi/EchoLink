@@ -14,7 +14,7 @@ def login_access_token(user_login: UserLogin, db: Session = Depends(get_db)) -> 
     """
     try:
         user = authenticate(db, user_login)
-        return Token(access_token=user.token, user=user.username)
+        return Token(access_token=user.token, username=user.username)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
