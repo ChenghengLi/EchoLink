@@ -137,6 +137,14 @@ async function fetchUserData() {
     try {
         Object.assign(user, await UserService.get(getUsername()))
         user.publicProfile = user.visibility === 'public'
+
+        // Don't show private profiles unless they belong to the user.
+        // TODO this should be done in the backend, but I felt like "mocking" it now
+        // so we don't get embarrassed in the demo over a checkbox for a not-fully-implemented feature.
+        // Arguably this checkbox should not have been planned for this sprint and should've been part of the US for profile visibility. 
+        if (user.visibility === 'private' && getUsername() !== UserService.getCurrentUsername()) {
+            errorMsg.value = 'The profile is private.'
+        }
     } catch (err) {
         errorMsg.value = (err.response) ? err.response.data.detail : err.message
     } finally {
