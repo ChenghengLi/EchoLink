@@ -56,7 +56,7 @@ class UserLogin(UserValidationMixin):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
-    user: str = None
+    username: str = None
 
 # Contents of JWT token
 class TokenPayload(BaseModel):

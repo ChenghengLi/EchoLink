@@ -206,20 +206,82 @@ For detailed instructions on defining frontend unit tests, refer to the `dummy.t
 
 ## Working Flow
 
-1. **Branching Strategy:**
+### 1. **Branching Strategy**
 
-   - For each issue, create a branch named as `issuenumber_breif_description`. For example, if the assignee is John and the issue number is 42 and the issue name is "create dummy page", the branch name should be called somthing similar to  `42_dummmy_page`.
-   - Assign the branch to the corresponding issue.
+- **Branch Naming Convention:**
+  - For each issue, create a branch named using the format `task_issuenumber_brief_description`. If the assignee is John, the issue number is 42, and the issue name is "create dummy page", the branch name should be `task_42_dummy_page`.
 
-2. **Development Process:**
+- **Branch Assignment:**
+  - Assign the newly created branch to the corresponding issue in your project management tool to maintain clear traceability.
 
-   - Work on the issue in the respective branch.
-   - Once the task is completed, push the development branch.
+### 2. **Development Process**
 
-3. **Healthy Branches**
+- **Working on Issues:**
+  - Develop the feature or fix the bug in the respective branch created for the issue.
+  - Ensure that all changes are committed with meaningful messages.
 
-   - There will be 3 healthy branches: dev, master and production. Each branch description will be available soon.
+- **Commit Message Format:**
+  - Start each commit message with `#issuenumber` followed by a brief description of the changes. For the previous example it would be,`#42 Added initial layout for dummy page`.
 
+- **Pushing Changes:**
+  - Once the task is completed, push the development branch to the remote repository (see [How to merge to dev](#4-merging-a-branch-into-dev)).
+
+### 3. **Healthy Branches**
+
+There are three main branches: `dev`, `testing`, and `master`.
+
+- **Development Branch (`dev`):**
+  - This branch receives all new features from the smaller issue branches.
+  - Code in this branch must pass unit tests and be free of lint errors.
+  - If all checks pass, the code is automatically merged into the `testing` branch.
+
+- **Testing Branch (`testing`):**
+  - This branch contains code that has passed all unit tests.
+  - QA teams perform end-to-end testing on this branch.
+  - Automated end-to-end tests are executed using tools like Playwright.
+
+- **Production Branch (`master`):**
+  - This is the production-ready branch.
+  - Code here has passed all types of tests, including QA and Product Owner reviews.
+  - Changes in this branch are automatically deployed to production, updating the live website in real-time.
+
+### 4. Merging a Branch into `dev`
+
+To merge a feature branch into the `dev` branch, follow these steps:
+
+1. **Ensure Your Local Repository is Up-to-Date:**
+   - First, switch to the `dev` branch and pull the latest changes to ensure your local copy is up-to-date.
+     ```bash
+     git checkout dev
+     git pull origin dev
+     ```
+
+2. **Merge the Feature Branch:**
+   - Now, merge your feature branch into the `dev` branch. Replace `feature_branch_name` with the actual name of your branch.
+     ```bash
+     git merge feature_branch_name
+     ```
+   - If you want to ensure a merge commit is created even if the merge could be fast-forwarded, use the `--no-ff` option:
+     ```bash
+     git merge --no-ff feature_branch_name
+     ```
+
+3. **Resolve Any Merge Conflicts:**
+   - If there are any conflicts, Git will notify you. Open the files with conflicts, resolve them, and then mark them as resolved.
+
+4. **Run Tests and Linting:**
+   - Before pushing the merged code, run all test containers to ensure the code is stable and meets quality standards.
+   - Use the following commands to run the test containers:
+     ```bash
+     docker run backend-test
+     docker run frontend-test
+     ```
+
+5. **Push the Changes:**
+   - Once everything is verified, push the changes to the remote `dev` branch:
+     ```bash
+     git push origin dev
+     ```
 
 ## Contributors
 

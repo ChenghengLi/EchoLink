@@ -92,6 +92,7 @@ def test_successful_login():
     assert response.json()["access_token"] is not None
     assert type(response.json()["access_token"]) is str
     assert response.json()["token_type"] == "bearer"
+    assert "username" in response.json()
 
     # Delete data created
     db.delete(user)

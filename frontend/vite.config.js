@@ -1,18 +1,24 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import dotenv from 'dotenv'
 
-export default ({ mode }) => {
-  // Load environment variables with VITE_ prefix
-  process.env = {...process.env, ...loadEnv(mode, './config')};
+// Load environment variables from .env file
+dotenv.config()
 
-  // https://vitejs.dev/config/
-  return defineConfig({
-    plugins: [vue()],
-    test: {
-      globals: true,
-      environment: 'jsdom',
-    },
-    VITE_API_URL: process.env.VITE_API_URL,
-  })
-}
+// Filter and extract all VITE_ prefixed environment variables
+const viteEnvVariables = Object.keys(process.env)
+  .filter(key => key.startsWith('VITE_'))
+  .reduce((env, key) => {
+    env[key] = process.env[key]
+    return env
+  }, {})
 
+export default defineConfig({
+  plugins: [vue()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
+  // Spread the VITE_ prefixed variables into the config
+  ...viteEnvVariables
+});

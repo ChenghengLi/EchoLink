@@ -28,7 +28,6 @@
 
             <button class="btn btn--primary w-100 w-md-60" :disabled="!canRegister" @click="register" :data-test="'button-register'">Register</button>
         </div>
-        <FooterComponent class="footer-light mx-10" />
     </div>
 </template>
 
@@ -111,15 +110,20 @@ const passwordConfirmationWarning = computed(() => {
 
 
 <style scoped>
-.form-container {
-    width: 100%; /* Full width by default */
-    width: 600px;
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-.container{
+.container {
     width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the top */
+    min-height: 100vh; /* Ensure the container takes the full height of the viewport */
 }
 
+.form-container {
+    width: 600px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    margin-top: 50px; /* Add some margin to push the form down slightly from the header */
+}
 @media (max-width: 768px) {
     .form-container {
         width: 100vw; /* Full viewport width for small screens */
