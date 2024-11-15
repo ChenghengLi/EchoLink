@@ -31,6 +31,9 @@ describe('When profile is accessed', () => {
         UserService.isLoggedIn = function() {
             return true
         }
+        UserService.getCurrentUsername = function() {
+            return USERNAME
+        }
 
         const wrapper = mount(Profile, {
             global: {
@@ -71,6 +74,9 @@ describe('When profile is accessed', () => {
         }
         UserService.isLoggedIn = function() {
             return true
+        }
+        UserService.getCurrentUsername = function() {
+            return USERNAME
         }
 
         const wrapper = mount(Profile, {
@@ -113,6 +119,9 @@ describe('When profile is accessed', () => {
         }
         UserService.isLoggedIn = function() {
             return false
+        }
+        UserService.getCurrentUsername = function() {
+            return null
         }
 
         const wrapper = mount(Profile, {
