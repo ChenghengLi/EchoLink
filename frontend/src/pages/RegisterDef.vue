@@ -39,7 +39,6 @@ import Checkbox from '../components/form/CheckBoxes.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
-import Cookies from 'js-cookie'
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -57,8 +56,16 @@ function register() {
             title: 'Registration successful!',
             icon: 'success',
         })
-        router.push('/') // Go to homepage
-        Cookies.set('logged_in', 'true', { expires: 7 }) // Expire login flag after 7 days
+        // Login automatically
+        UserService.loginAccount(email.value, password.value).then(() => {
+            router.push('/') // Go to homepage
+        }).catch((err) => {
+            Swal.fire({
+                title: 'Login failed',
+                text: (err.response !== null) ? err.response.data.detail : err.message,
+                icon: 'error',
+            })
+        })
     }).catch((err) => {
         Swal.fire({
             title: 'Registration failed',

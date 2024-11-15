@@ -20,6 +20,18 @@ class UserService {
                 'email': email,
                 'password': password,
             });
+            const data = response.data;
+            const token = data.access_token;
+            const username = data.username;
+
+            if (!token) {
+                throw new Error('Token not found in the response.');
+            }
+
+            Cookies.set('auth_token', token, {expires: 7});
+            Cookies.set('username', username, {expires: 7});
+            Cookies.set('logged_in', 'true', {expires: 7}) // Expire login flag after 7 days
+
             return response;
         } catch (error) {
             throw error;
