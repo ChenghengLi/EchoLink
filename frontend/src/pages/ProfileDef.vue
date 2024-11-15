@@ -23,6 +23,10 @@
                     
                     <!-- "Edit Profile" button; always in top-right -->
                     <div class="absolute right-0 top-0">
+                        <button v-if="isOwnProfile && isEditing" class="btn btn-red max-w-min text-nowrap mr-1" @click="deleteAccount" data-test="button-delete">
+                            <TrashIcon class="icon"/>
+                            Delete Account
+                        </button>
                         <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode" data-test="button-edit">
                             <PencilIcon class="icon"/>
                             {{ isEditing ? "Save Changes" : "Edit Profile" }}
@@ -106,9 +110,10 @@ import LoadingSpinner from '../components/LoadingSpinner.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
+import Cookies from 'js-cookie';
 import { computed, onMounted, ref, watch, reactive } from 'vue';
 import { useRoute } from 'vue-router';
-import { PencilIcon, MusicalNoteIcon, GlobeAltIcon } from '@heroicons/vue/24/solid'
+import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon } from '@heroicons/vue/24/solid'
 
 const route = useRoute()
 
@@ -181,6 +186,40 @@ function toggleVisibility() {
     }
 }
 
+function deleteAccount(){
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This action cannot be undone. You will lose access to EchoLink and your profile will be permanently deleted.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            UserService.deleteAccount() 
+                .then((response) => {
+                    Cookies.remove('auth_token');
+                    Cookies.remove('logged_in');
+                    Swal.fire(
+                        'Deleted!',
+                        response.detail,
+                        'success'
+                    ).then(() => {
+                        window.location.href = "/";
+                    });
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to delete account: ' + (err.response ? err.response.data.detail : err.message),                        icon: 'error',
+                    });
+                });
+        }
+    });
+}
+
+
 const isOwnProfile = computed(() => {
     return UserService.isLoggedIn() // TODO
 })
@@ -234,6 +273,12 @@ onMounted(function () {
 }
 .btn-blue:hover, .btn-blue:focus {
     @apply bg-blue-700;
+}
+.btn-red {
+    @apply bg-red-500 text-white;
+}
+.btn-red:hover, .btn-red:focus {
+    @apply bg-red-700;
 }
 .icon {
     @apply h-4 inline

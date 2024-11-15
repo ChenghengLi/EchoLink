@@ -51,6 +51,15 @@ class UserService {
             }
         };
     }
+    deleteAccount(){
+        return axios.delete('/users/user', this.getConfig())
+        .then(response => {
+            return response.data;
+        })
+        .catch(error => {
+            throw error.response ? error.response.data : new Error('Error deleting account');
+        });
+    }
 }
 
 export default new UserService()
