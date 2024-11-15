@@ -42,7 +42,12 @@ class UserService {
         }
     }
     isLoggedIn() {
-        return Cookies.get('auth_token') !== undefined
+        return (Cookies.get('auth_token') !== undefined) && (Cookies.get('username') !== undefined) // Checks both cookies for coherency.
+    }
+    // Returns the username of the current session,
+    // or null if the client is not logged in.
+    getCurrentUsername() {
+        return this.isLoggedIn() ? Cookies.get('username') : null // Tests for both cookies as sanity check.
     }
     getConfig() {
         return {

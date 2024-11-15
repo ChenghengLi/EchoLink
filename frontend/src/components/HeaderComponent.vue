@@ -54,6 +54,9 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
+										<button @click="goToProfile" class="btn btn--secondary">
+											My Profile
+										</button>
 										<button @click="logout_function" class="btn btn--secondary" data-test="button-logout">
 											Log Out
 										</button>
@@ -68,7 +71,10 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
-									<button v-else @click="logout_function" class="btn btn--secondary" data-test="button-logout">
+									<button v-if="isLoggedIn" @click="goToProfile" class="btn btn--secondary">
+										My Profile
+									</button>
+									<button v-if="isLoggedIn" @click="logout_function" class="btn btn--secondary" data-test="button-logout">
 										Log Out
 									</button>
 								</div>
@@ -90,6 +96,7 @@
 <script>
 import { ref } from 'vue';
 import logo from '../assets/logo.png';
+import UserService from '../services/user.js'
 import Cookies from 'js-cookie';
 
 export default {
@@ -110,6 +117,13 @@ export default {
 			Cookies.remove('logged_in');
 			this.$router.push('/');
 			this.isLoggedIn = false;
+		},
+		goToProfile() {
+			const username = UserService.getCurrentUsername()
+			// Sanity check.
+			if (username !== null) {
+				this.$router.push('/users/' + username)
+			}
 		}
 	},
 	mounted() {
