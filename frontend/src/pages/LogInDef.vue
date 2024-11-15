@@ -33,7 +33,6 @@ import FooterComponent from '../components/FooterComponent.vue';
 import TextInput from '../components/form/TextInput.vue';
 import UserService from '../services/user.js'
 import Swal from 'sweetalert2'
-import Cookies from 'js-cookie'
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -64,25 +63,12 @@ function focusSecondText(){
 
 
 function logIn(){
-    UserService.loginAccount(email.value, password.value).then((response) => {
-        const data = response.data;
-        const token = data.access_token;
-        const username = data.username;
-
-        if (!token) {
-            throw new Error('Token not found in the response.');
-        }
-
-        Cookies.set('auth_token', token, {expires: 7});
-        Cookies.set('username', username, {expires: 7});
-
+    UserService.loginAccount(email.value, password.value).then(() => {
         Toast.fire({
             title: 'Log in successful!',
             icon: 'success',
         });
-
         router.push('/') // Go to homepage
-        Cookies.set('logged_in', 'true', { expires: 7 }) // Expire login flag after 7 days
     }).catch((err) => {
         Swal.fire({
             title: 'Log in failed',
