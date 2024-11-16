@@ -29,12 +29,9 @@ ALGORITHM = os.getenv("ALGORITHM")
 EXPIRE_DELTA = timedelta(days=int(os.getenv("ACCESS_TOKEN_EXPIRE_DAYS")))
 
 # Function to create JWT token
-def create_access_token(subject: str, expires_delta: timedelta = None, data: dict = None) -> str:
+def create_access_token(subject: str, expires_delta: timedelta = None) -> str:
     expire = datetime.utcnow() + (expires_delta if expires_delta else EXPIRE_DELTA)
     to_encode = {"exp": expire, "sub": str(subject)}
-
-    if data:
-        to_encode.update(data)
     
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
