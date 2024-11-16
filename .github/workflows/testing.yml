@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - testing
+      - test_27_end_to_end_tests
   pull_request:
     branches:
       - testing
