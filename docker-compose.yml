@@ -62,7 +62,7 @@ services:
       - backend
       - postgres
 
-  playwright-tests:
+  e2e-test:
     build:
       context: ./frontend
       dockerfile: Dockerfile

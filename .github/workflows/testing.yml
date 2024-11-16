@@ -31,6 +31,12 @@ jobs:
         echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> ./backend/.env
         echo "ACCESS_TOKEN_EXPIRE_DAYS=${{ secrets.ACCESS_TOKEN_EXPIRE_DAYS }}" >> ./backend/.env
 
+    - name: Set up frontend environment variables
+      run: |
+        echo "VITE_API_URL=http://backend:8000" >> ./frontend/.env
+        echo "PLAYWRIGHT_URL=http://frontend:80" >> ./frontend/.env
+        echo "PLAYWRIGHT_BACKEND_URL=http://backend:8000" >> ./frontend/.env
+
     - name: Build all Docker containers
       run: |
         docker compose -f docker-compose.yml build
@@ -42,3 +48,7 @@ jobs:
     - name: Run the frontend-test container (Unit Tests + Lint)
       run: |
         docker compose run frontend-test
+
+    - name: Run e2e tests container 
+      run: |
+        docker compose run e2e-test

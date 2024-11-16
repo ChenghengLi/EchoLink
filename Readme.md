@@ -203,6 +203,55 @@ For detailed instructions on defining frontend unit tests, refer to the `dummy.t
    npm run test
    ```
 
+### End-to-End Tests
+
+We have used Playwright to implement end-to-end tests, with an example located in `src/playwright/dummy.specs.js`.
+
+#### Running Tests Locally
+
+1. **Set Up Environment Variables:**
+
+   Before running the tests, ensure that your `.env` file in the frontend directory has the following configuration:
+
+   ```env
+   VITE_API_URL="http://localhost:8000"
+   PLAYWRIGHT_URL="http://frontend:80"
+   PLAYWRIGHT_BACKEND_URL="http://backend:8000"
+   ```
+
+2. **Navigate to the Frontend Directory:**
+
+   ```bash
+   cd frontend
+   ```
+
+3. **Run Tests with UI:**
+
+   You can run the tests with a UI to visualize the results:
+
+   ```bash
+   npx playwright test --ui
+   ```
+
+4. **Run Tests Without UI (Pure Terminal):**
+
+   Alternatively, you can run the tests in the terminal without a UI:
+
+   ```bash
+   npx playwright test
+   ```
+
+#### Running Tests in Docker
+
+To make the tests work in Docker, change the `.env` file in the frontend directory to:
+
+```env
+VITE_API_URL="http://backend:8000"
+PLAYWRIGHT_URL="http://frontend:80"
+PLAYWRIGHT_BACKEND_URL="http://backend:8000"
+```
+
+This setup ensures that your environment variables are correctly configured for Docker-based testing environments.
 
 ## Working Flow
 
