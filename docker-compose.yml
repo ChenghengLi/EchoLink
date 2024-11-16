@@ -62,6 +62,19 @@ services:
       - backend
       - postgres
 
+  playwright-tests:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: playwright
+    env_file:
+    - ./frontend/.env
+    depends_on:
+      - frontend
+      - backend
+      - postgres
+
+
   frontend-test:
     build:
       context: ./frontend

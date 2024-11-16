@@ -33,7 +33,24 @@ COPY . .
 
 # Run tests
 CMD ["npm", "run", "lint-test"]
-#CMD ["npm", "run", "lint-test"]
+
+# Use the official Playwright Docker image
+FROM mcr.microsoft.com/playwright:v1.48.2-jammy   AS playwright
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the application code
+COPY . .
+
+# Run tests
+CMD ["npx", "playwright", "test"]
 
 # Use Caddy to serve the static files
 FROM caddy:alpine

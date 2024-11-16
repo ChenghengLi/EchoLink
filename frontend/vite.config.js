@@ -16,6 +16,7 @@ const viteEnvVariables = Object.keys(process.env)
 export default defineConfig({
   plugins: [vue()],
   test: {
+    include: ['src/tests/**/*.test.js'], // Adjust this pattern to match your test files
     globals: true,
     environment: 'jsdom',
   },
