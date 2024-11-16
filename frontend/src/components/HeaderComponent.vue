@@ -112,12 +112,27 @@ export default {
 		updateScroll() {
 			this.scrollPosition =
 				window.scrollY;
-		}, logout_function() {
+		}, 
+		/*logout_function() {
 			Cookies.remove('auth_token');
 			Cookies.remove('logged_in');
 			this.$router.push('/');
 			this.isLoggedIn = false;
-		},
+		},*/
+		async logout_function() {
+            try {
+                await UserService.logout();
+                
+                Cookies.remove('auth_token');
+                Cookies.remove('logged_in');
+                
+                this.$router.push('/');
+                
+                this.isLoggedIn = false;
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+            }
+        },
 		goToProfile() {
 			const username = UserService.getCurrentUsername()
 			// Sanity check.

@@ -89,3 +89,16 @@ def authenticate(db: Session, user_login: UserLogin) -> str:
 def deauthenticate(db: Session, user: User):
     user.token = None
     db.commit()
+
+# Function to delete a user's account
+def delete_user_account(db: Session, user: User):
+    # Check if the user exists
+    user = get_user_by_id(db, user.id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Account not found.")
+
+    # Delete the user account
+    deauthenticate(db, user)
+    db.delete(user)
+    db.commit()
+    return {"detail": "Account deleted successfully"}
