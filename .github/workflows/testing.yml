@@ -113,7 +113,7 @@ jobs:
 
         # Iterate over each issue number and update the project item
         for num in "${issue_numbers[@]}"; do
-          task_id=$(gh project item-list 4 --owner UB-ES-2024-F3 --format json | jq --argjson num "$num" '.items[] | select(.content.number == $num) | .id')
+          task_id=$(gh project item-list 4 --owner UB-ES-2024-F3 --limit 1000 --format json | jq --argjson num "$num" '.items[] | select(.content.number == $num) | .id')
           if [ -n "$task_id" ]; then
             gh project item-edit --id "$task_id" --field-id PVTSSF_lADOCvtt0s4AqPZczghhQYk --project-id PVT_kwDOCvtt0s4AqPZc --single-select-option-id f48d26e9
           else
