@@ -17,6 +17,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Configure Git Safe Directory
+      run: |
+        git config --global --add safe.directory /__w/EchoLink/EchoLink
+
     - name: Install jq
       run: |
         apt-get update && apt-get install -y jq
