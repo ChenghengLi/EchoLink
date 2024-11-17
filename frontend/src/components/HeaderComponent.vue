@@ -46,7 +46,7 @@
 									-->
 
 									<li v-if="!isLoggedIn" class="nav__menu-item d-block d-md-none">
-										<router-link to="/logIn" class="btn btn--secondary mb-4">
+										<router-link to="/logIn" :data-test="'login-mobile'" class="btn btn--secondary mb-4">
 											Log In
 										</router-link>
 										<router-link to="/register" class="btn btn--secondary">
@@ -57,7 +57,8 @@
 										<button @click="goToProfile" class="btn btn--secondary">
 											My Profile
 										</button>
-										<button @click="logout_function" class="btn btn--secondary" data-test="button-logout">
+										<button @click="logout_function" :data-test="'logout-mobile'" class="btn btn--secondary"
+											data-test="button-logout">
 											Log Out
 										</button>
 									</li>
@@ -65,7 +66,7 @@
 							</div>
 							<div class="nav__uncollapsed">
 								<div class="nav__uncollapsed-item d-none d-md-flex">
-									<router-link v-if="!isLoggedIn" to="/logIn" class="btn btn--secondary">
+									<router-link v-if="!isLoggedIn" :data-test="'login-laptop'" to="/logIn" class="btn btn--secondary">
 										Log In
 									</router-link>
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
@@ -74,7 +75,8 @@
 									<button v-if="isLoggedIn" @click="goToProfile" class="btn btn--secondary">
 										My Profile
 									</button>
-									<button v-if="isLoggedIn" @click="logout_function" class="btn btn--secondary" data-test="button-logout">
+									<button v-if="isLoggedIn" :data-test="'logout-laptop'" @click="logout_function" class="btn btn--secondary"
+										data-test="button-logout">
 										Log Out
 									</button>
 								</div>
@@ -98,6 +100,7 @@ import { ref } from 'vue';
 import logo from '../assets/logo.png';
 import UserService from '../services/user.js'
 import Cookies from 'js-cookie';
+import Swal from 'sweetalert2'
 
 export default {
 	name: "HeaderComponent",
@@ -106,13 +109,24 @@ export default {
 			scrollPosition: null,
 			LogoSrc: logo,
 			isLoggedIn: ref(Boolean(Cookies.get('logged_in'))),
+			Toast: Swal.mixin({
+				toast: true,
+				position: 'top',
+				iconColor: 'white',
+				customClass: {
+					popup: 'colored-toast',
+				},
+				showConfirmButton: false,
+				timer: 1500,
+				timerProgressBar: false,
+			})
 		};
 	},
 	methods: {
 		updateScroll() {
 			this.scrollPosition =
 				window.scrollY;
-		}, 
+		},
 		/*logout_function() {
 			Cookies.remove('auth_token');
 			Cookies.remove('logged_in');
@@ -120,19 +134,28 @@ export default {
 			this.isLoggedIn = false;
 		},*/
 		async logout_function() {
-            try {
-                await UserService.logout();
-                
-                Cookies.remove('auth_token');
-                Cookies.remove('logged_in');
-                
-                this.$router.push('/');
-                
-                this.isLoggedIn = false;
-            } catch (error) {
-                console.error('Error al cerrar sesión:', error);
-            }
-        },
+			try {
+				await UserService.logout();
+
+				Cookies.remove('auth_token');
+				Cookies.remove('logged_in');
+
+				this.$router.push('/logIn');
+
+				this.isLoggedIn = false;
+
+				this.Toast.fire({
+					title: 'Log out successful!',
+					icon: 'success',
+				});
+
+			} catch (error) {
+				console.error('Error al cerrar sesión:', error);
+				Cookies.remove('auth_token');
+				Cookies.remove('logged_in');
+				this.$router.push('/logIn');
+			}
+		},
 		goToProfile() {
 			const username = UserService.getCurrentUsername()
 			// Sanity check.
