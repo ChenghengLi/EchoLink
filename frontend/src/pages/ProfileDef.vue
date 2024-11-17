@@ -160,7 +160,11 @@ function getUsername() {
 function toggleEditMode() {
     // Post to save changes
     if (isEditing.value) {
-        UserService.updateProfile(user).then(() => {
+        UserService.updateProfile({
+            genre: user.genre,
+            description: user.description,
+            visibility: user.visibility,
+        }).then(() => {
             Toast.fire({
                 title: 'Profile updated',
                 icon: 'success',
@@ -217,10 +221,10 @@ const visibilityBadgeClass = computed(() => {
     }
 })
 
-// Refetch user data when navigating to another profile from this page (ex. directly rewriting the URL)
+// Refetch user data when navigating to another profile from this page (ex. directly rewriting the URL or using the header button)
 // This is necessary as the component won't be recreated, thus onMounted() won't fire.
 watch(
-    () => route.params.id,
+    () => route.params,
     (newId) => {
         fetchUserData(newId)
     }
