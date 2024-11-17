@@ -24,6 +24,8 @@
             <button class="btn btn--primary w-100 w-md-60" :disabled="!canLogIn" @click="logIn" :data-test="'button-login'">Log In</button>
 
         </div>
+
+        <FooterComponent class="footer-light mx-10" />
     </div>
 </template>
 
@@ -126,12 +128,17 @@ function logInEnter(){
     margin-top: 50px; /* Add some margin to push the form down slightly from the header */
 }
 
+.footer-light {
+    width: 100vw;
+}
+
 @media (max-width: 768px) {
     .form-container {
-        width: 100vw; /* Full viewport width for small screens */
-        height: 100vh; /* Full viewport height for small screens */
-        margin: 0; /* Remove margin for full screen effect */
+        width: 90vw; /* Full viewport width for small screens */
+        height: auto; /* Full viewport height for small screens */
+        margin-top: 10vh; /* Remove margin for full screen effect */
         border-radius: 0; /* Remove border radius for full screen effect */
     }
+
 }
 </style>
