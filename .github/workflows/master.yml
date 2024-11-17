@@ -84,53 +84,63 @@ jobs:
 
   update_status:
     runs-on: ubuntu-latest
-    needs: deploy  
+    needs: deploy
     container:
       image: ghcr.io/supportpal/github-gh-cli:2.62.0 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
+
+    - name: Configure Git Safe Directory
+      run: |
+        git config --global --add safe.directory /__w/EchoLink/EchoLink
 
     - name: Install jq
       run: |
         apt-get update && apt-get install -y jq
 
-    - name: Extract issue numbers from commit messages
+    - name: Extract issue numbers from new commit messages
       id: extract_issues
       shell: bash
       run: |
-        # Get all commit messages in the current push or pull request
+        # Get all commit messages in the current push
         commit_messages=$(git log --pretty=%B ${{ github.event.before }}..${{ github.sha }})
-        
-        # Initialize an empty array to store issue numbers
-        issue_numbers=()
+
+        # Declare an associative array to store unique issue numbers
+        declare -A issue_numbers_map
 
         # Iterate over each commit message
         while IFS= read -r commit_message; do
           # Extract issue numbers from the commit message
           if [[ $commit_message =~ [^0-9]*([0-9]+) ]]; then
-            issue_numbers+=("${BASH_REMATCH[1]}")
+            issue_number="${BASH_REMATCH[1]}"
+            issue_numbers_map["$issue_number"]=1
           fi
         done <<< "$commit_messages"
 
         # Check if any issue numbers were found
-        if [ ${#issue_numbers[@]} -eq 0 ]; then
+        if [ ${#issue_numbers_map[@]} -eq 0 ]; then
           echo "No issue numbers found in commit messages"
-          exit 1
+          exit 0  # Exit gracefully if no issue numbers are found
         fi
 
-        # Join issue numbers into a comma-separated string
-        issue_numbers_str=$(IFS=,; echo "${issue_numbers[*]}")
+        # Join unique issue numbers into a comma-separated string
+        issue_numbers_str=$(IFS=,; echo "${!issue_numbers_map[*]}")
 
         # Set the issue numbers as an environment variable
         echo "issue_numbers=$issue_numbers_str" >> $GITHUB_ENV
 
     - name: Update project items
+      if: env.issue_numbers != ''  
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        ISSUE_NUMBERS: ${{ env.issue_numbers }}
+      shell: bash
       run: |
         # Split the issue numbers into an array
-        IFS=',' read -r -a issue_numbers <<< "${{ env.issue_numbers }}"
+        IFS=',' read -r -a issue_numbers <<< "$ISSUE_NUMBERS"
 
         # Iterate over each issue number and update the project item
         for num in "${issue_numbers[@]}"; do
