@@ -58,13 +58,16 @@ jobs:
         # Set the issue numbers as an environment variable
         echo "issue_numbers=$issue_numbers_str" >> $GITHUB_ENV
 
+
+
     - name: Update project items
-      if: env.issue_numbers != ''  # Only run if issue_numbers is not empty
+      if: env.issue_numbers != ''  
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        ISSUE_NUMBERS: ${{ env.issue_numbers }}
       run: |
         # Split the issue numbers into an array
-        IFS=',' read -r -a issue_numbers <<< "${{ env.issue_numbers }}"
+        IFS=',' read -r -a issue_numbers <<< "$ISSUE_NUMBERS"
 
         # Iterate over each issue number and update the project item
         for num in "${issue_numbers[@]}"; do
