@@ -243,7 +243,7 @@ We have used Playwright to implement end-to-end tests, with an example located i
 
 #### Running Tests in Docker
 
-To make the tests work in Docker, change the `.env` file in the frontend directory to:
+To make the tests work in Docker at the building stage, change the `.env` file in the frontend directory to:
 
 ```env
 VITE_API_URL="http://backend:8000"
@@ -251,7 +251,14 @@ PLAYWRIGHT_URL="http://frontend:80"
 PLAYWRIGHT_BACKEND_URL="http://backend:8000"
 ```
 
-This setup ensures that your environment variables are correctly configured for Docker-based testing environments.
+
+To run the tests using Docker, simply run the container named `e2e-tests`. Use the following command:
+
+```bash
+docker-compose up e2e-tests
+```
+
+
 
 ## Working Flow
 
@@ -322,8 +329,7 @@ To merge a feature branch into the `dev` branch, follow these steps:
    - Before pushing the merged code, run all test containers to ensure the code is stable and meets quality standards.
    - Use the following commands to run the test containers:
      ```bash
-     docker run backend-test
-     docker run frontend-test
+     docker compose up backend-test frontend-test e2e-test
      ```
 
 5. **Push the Changes:**
