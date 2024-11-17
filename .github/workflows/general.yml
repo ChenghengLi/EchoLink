@@ -1,5 +1,4 @@
-name: Move Tasks to Specific State
-
+name: Move Tasks to In Progress
 on:
   push:
     branches:
@@ -34,25 +33,26 @@ jobs:
         # Get all commit messages in the current push
         commit_messages=$(git log --pretty=%B ${{ github.event.before }}..${{ github.sha }})
 
-        # Initialize an empty array to store issue numbers
-        issue_numbers=()
+        # Declare an associative array to store unique issue numbers
+        declare -A issue_numbers_map
 
         # Iterate over each commit message
         while IFS= read -r commit_message; do
           # Extract issue numbers from the commit message
           if [[ $commit_message =~ [^0-9]*([0-9]+) ]]; then
-            issue_numbers+=("${BASH_REMATCH[1]}")
+            issue_number="${BASH_REMATCH[1]}"
+            issue_numbers_map["$issue_number"]=1
           fi
         done <<< "$commit_messages"
 
         # Check if any issue numbers were found
-        if [ ${#issue_numbers[@]} -eq 0 ]; then
+        if [ ${#issue_numbers_map[@]} -eq 0 ]; then
           echo "No issue numbers found in commit messages"
           exit 1
         fi
 
-        # Join issue numbers into a comma-separated string
-        issue_numbers_str=$(IFS=,; echo "${issue_numbers[*]}")
+        # Join unique issue numbers into a comma-separated string
+        issue_numbers_str=$(IFS=,; echo "${!issue_numbers_map[*]}")
 
         # Set the issue numbers as an environment variable
         echo "issue_numbers=$issue_numbers_str" >> $GITHUB_ENV
