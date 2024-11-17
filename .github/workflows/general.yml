@@ -1,60 +1,16 @@
-name: Unit tests + linting 
+name: Move Tasks to In Progress
+
 on:
   push:
     branches:
-      - testing
+      - 'task_*'
   pull_request:
     branches:
-      - testing
+      - 'task_*'
 
 jobs:
-  tests:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Create empty .env files
-      run: |
-        echo "Creating empty .env files"
-        touch ./frontend/.env
-        touch ./backend/.env
-        echo ".env files created"
-
-    - name: Set up environment variables
-      run: |
-        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> ./backend/.env
-        echo "ALGORITHM=${{ secrets.ALGORITHM }}" >> ./backend/.env
-        echo "ACCESS_TOKEN_EXPIRE_DAYS=${{ secrets.ACCESS_TOKEN_EXPIRE_DAYS }}" >> ./backend/.env
-
-    - name: Set up frontend environment variables
-      run: |
-        echo "VITE_API_URL=http://backend:8000" >> ./frontend/.env
-        echo "PLAYWRIGHT_URL=http://frontend:80" >> ./frontend/.env
-        echo "PLAYWRIGHT_BACKEND_URL=http://backend:8000" >> ./frontend/.env
-
-    - name: Build all Docker containers
-      run: |
-        docker compose -f docker-compose.yml build
-
-    - name: Run the backend-test container (Unit Tests + Lint)
-      run: |
-        docker compose run backend-test
-    
-    - name: Run the frontend-test container (Unit Tests + Lint)
-      run: |
-        docker compose run frontend-test
-
-    - name: Run e2e tests container 
-      run: |
-        docker compose run e2e-test
-
-
   update_status:
     runs-on: ubuntu-latest
-    needs: tests  
     container:
       image: ghcr.io/supportpal/github-gh-cli:2.62.0 
     steps:
@@ -106,7 +62,7 @@ jobs:
         for num in "${issue_numbers[@]}"; do
           task_id=$(gh project item-list 4 --owner UB-ES-2024-F3 --format json | jq --argjson num "$num" '.items[] | select(.content.number == $num) | .id')
           if [ -n "$task_id" ]; then
-            gh project item-edit --id "$task_id" --field-id PVTSSF_lADOCvtt0s4AqPZczghhQYk --project-id PVT_kwDOCvtt0s4AqPZc --single-select-option-id f48d26e9
+            gh project item-edit --id "$task_id" --field-id PVTSSF_lADOCvtt0s4AqPZczghhQYk --project-id PVT_kwDOCvtt0s4AqPZc --single-select-option-id 47fc9ee4
           else
             echo "No task ID found for issue number $num"
           fi
