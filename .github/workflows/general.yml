@@ -1,4 +1,4 @@
-name: Move Tasks to In Progress
+name: Move Tasks to Specific State
 
 on:
   push:
@@ -16,6 +16,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
 
     - name: Configure Git Safe Directory
       run: |
@@ -25,13 +27,13 @@ jobs:
       run: |
         apt-get update && apt-get install -y jq
 
-    - name: Extract issue numbers from commit messages
+    - name: Extract issue numbers from new commit messages
       id: extract_issues
       shell: bash
       run: |
-        # Get all commit messages in the current push or pull request
+        # Get all commit messages in the current push
         commit_messages=$(git log --pretty=%B ${{ github.event.before }}..${{ github.sha }})
-        
+
         # Initialize an empty array to store issue numbers
         issue_numbers=()
 
