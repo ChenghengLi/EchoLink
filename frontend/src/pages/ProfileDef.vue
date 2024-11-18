@@ -167,6 +167,9 @@ async function fetchUserData() {
         // Arguably this checkbox should not have been planned for this sprint and should've been part of the US for profile visibility. 
         if (user.visibility === 'private' && getUsername() !== UserService.getCurrentUsername()) {
             errorMsg.value = 'The profile is private.'
+        } else {
+            // Clear any previous error message so the new profile is shown
+            errorMsg.value = null
         }
     } catch (err) {
         errorMsg.value = (err.response) ? err.response.data.detail : err.message
