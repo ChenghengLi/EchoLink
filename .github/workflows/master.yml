@@ -75,11 +75,10 @@ jobs:
           cd $WORKDIR
           git pull https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/UB-ES-2024-F3/EchoLink.git
 
-
-          # Rebuild Docker images and restart containers
+          # Rebuild specific Docker images and restart containers
           docker compose down --remove-orphans
-          docker compose build  # Rebuilds images with the latest code
-          docker compose up -d  # Starts containers in detached mode
+          docker compose build frontend backend postgres  # Specify the services to build
+          docker compose up -d frontend backend postgres  # Specify the services to start
         EOF
 
   update_status:
