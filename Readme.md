@@ -338,6 +338,32 @@ To merge a feature branch into the `dev` branch, follow these steps:
      git push origin dev
      ```
 
+
+### Automatic Project Kanban
+
+The Automatic Project Kanban system is designed to streamline the workflow and ensure that issues are automatically tracked and updated through various stages of development. Here's how it functions:
+
+1. **Branch Push to `task_*`:**
+   - When a push is made to any branch starting with `task_`, the system automatically reviews all commits since the last push to the branch.
+   - It detects any commit messages containing the pattern `** #NUMBER **` and identifies these as issues.
+   - These identified issues are then automatically moved to the **IN PROGRESS** state.
+
+2. **Branch Push to `dev`:**
+   - On pushing to the `dev` branch, the system runs unit tests and lint checks.
+   - End-to-end (e2e) tests are also executed to prevent non-functional code from entering the testing phase.
+
+3. **Branch Push to `testing`:**
+   - Pushing to the `testing` branch triggers all tests again, including unit tests, lint checks, and e2e tests.
+   - If all tests pass, the system automatically updates the status of the related issues to **READY TO TEST**.
+
+4. **Branch Push to `master`:**
+   - When changes are pushed to the `master` branch, all tests (unit, lint, and e2e) are rerun.
+   - Upon successful completion of these tests, an automatic deployment is initiated.
+   - If the deployment is successful, all commits since the last push to the branch are reviewed, and the corresponding issues are moved to **DONE**.
+
+> [!CAUTION]
+> The system reviews commits made between the last push to the branch and the current push. All commits associated with the task within this interval shall be moved to the new state. **Exercise caution when merging branches and avoid reversing the natural order**, lest you disrupt the harmony of issue state transitions.
+
 ## Contributors
 
 - **Chengheng**: DevOps (Product Owner)

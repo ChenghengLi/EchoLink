@@ -54,7 +54,7 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
-										<button @click="goToProfile" class="btn btn--secondary">
+										<button @click="goToProfile" data-test="profile-mobile"class="btn btn--secondary">
 											My Profile
 										</button>
 										<button @click="logout_function" :data-test="'logout-mobile'" class="btn btn--secondary"
@@ -72,7 +72,7 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
-									<button v-if="isLoggedIn" @click="goToProfile" class="btn btn--secondary">
+									<button v-if="isLoggedIn" :data-test="'profile-laptop'" @click="goToProfile" class="btn btn--secondary">
 										My Profile
 									</button>
 									<button v-if="isLoggedIn" :data-test="'logout-laptop'" @click="logout_function" class="btn btn--secondary"

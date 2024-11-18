@@ -4,35 +4,40 @@
 
         <!-- Show a loading spinner while fetching user data -->
         <div v-if="!isLoaded" class="flex">
-            <LoadingSpinner class="mx-auto"/>
+            <LoadingSpinner class="mx-auto" />
         </div>
         <!-- Profile view -->
-        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg" data-test="container-main">
+        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg"
+            data-test="container-main">
             <!-- Username, badges and banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
                 <div class="sm:flex min-h-32 relative">
                     <!-- Avatar and username -->
                     <div class="flex items-end">
-                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black"
+                            src="../assets/images/avatar.svg" />
                         <!-- TODO ensure contrast vs banner -->
                         <p class="ms-3 font-bold text-lg text-white" data-test="label-username">{{ getUsername() }}</p>
                     </div>
 
-                    <div class="mx-auto my-3"></div> <!-- Spacing between avatar/username and badges, handles both desktop & mobile layouts -->
-                    
+                    <div class="mx-auto my-3"></div>
+                    <!-- Spacing between avatar/username and badges, handles both desktop & mobile layouts -->
+
                     <!-- "Edit Profile" button; always in top-right -->
-                    <div class="absolute right-0 top-0">
-                        <button v-if="isOwnProfile && isEditing" class="btn btn-red max-w-min text-nowrap mr-1" @click="deleteAccount" data-test="button-delete">
-                            <TrashIcon class="icon"/>
+                    <div class="absolute right-0 top-0 d-flex flex-column flex-md-row ml-auto mr-md-0">
+                        <button v-if="isOwnProfile && isEditing"
+                            class="btn btn-red max-w-min text-nowrap mb-2 mb-md-0 me-md-3" @click="deleteAccount"
+                            data-test="button-delete">
+                            <TrashIcon class="icon" />
                             Delete Account
                         </button>
-                        <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode" data-test="button-edit">
-                            <PencilIcon class="icon"/>
+                        <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="toggleEditMode"
+                            data-test="button-edit">
+                            <PencilIcon class="icon" />
                             {{ isEditing ? "Save Changes" : "Edit Profile" }}
                         </button>
                     </div>
-
                     <!-- Right area; badges & owner controls -->
                     <div class="flex flex-col items-end">
 
@@ -43,21 +48,26 @@
                             <!-- Account type badge -->
                             <!-- TODO modify this once we have other user roles -->
                             <div class="badge bg-indigo-500" v-tooltip="accountTypeBadgeTooltip">
-                                <span class="text-white"><MusicalNoteIcon class="icon"/> Music Fan</span>
+                                <span class="text-white">
+                                    <MusicalNoteIcon class="icon" /> Music Fan
+                                </span>
                             </div>
 
                             <!-- Visibility badge -->
-                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500" @click="toggleVisibility" v-tooltip="visibilityBadgeTooltip" data-test="badge-visibility"> <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
+                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500"
+                                @click="toggleVisibility" v-tooltip="visibilityBadgeTooltip"
+                                data-test="badge-visibility">
+                                <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
                                 <span class="text-white">
                                     <span v-if="!isEditing" class="text-white">
-                                        <GlobeAltIcon class="icon"/>
-                                         {{ user.publicProfile ? "Public Profile" : "Private Profile" }}
+                                        <GlobeAltIcon class="icon" />
+                                        {{ user.publicProfile ? "Public Profile" : "Private Profile" }}
                                     </span>
                                     <!-- When editing, show a checkbox instead of the globe icon -->
                                     <span v-else class="flex max-w-fit items-center text-white">
-                                        <input class="size-4 mr-1" type="checkbox" v-model="user.publicProfile"/>
+                                        <input class="size-4 mr-1" type="checkbox" v-model="user.publicProfile" />
                                         <!-- When editing, always show this badge as "Public Profile" to clarify the meaning of on/off for the checkbox. -->
-                                         Public Profile
+                                        Public Profile
                                     </span>
                                 </span>
                             </div>
@@ -71,7 +81,10 @@
                 <div class="content-block flex flex-grow lg:mr-2">
                     <div class="flex flex-column">
                         <h2 class="section-header">About</h2>
-                        <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass" class="details-field text-left flex-grow w-100 min-w-full min-h-60" :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing" v-model="user.description" data-test="field-description"></textarea>
+                        <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass"
+                            class="details-field text-left flex-grow w-100 min-w-full min-h-60"
+                            :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing"
+                            v-model="user.description" data-test="field-description"></textarea>
                     </div>
                 </div>
 
@@ -81,12 +94,17 @@
                 <div class="content-block lg:min-w-96">
                     <h2 class="section-header">Details</h2>
                     <div class="flex">
-                        <p><span class="text-nowrap mr-2"><MusicalNoteIcon class="icon"/> Favorite Genre:</span></p>
+                        <p><span class="text-nowrap mr-2">
+                                <MusicalNoteIcon class="icon" /> Favorite Genre:
+                            </span></p>
                         <div class="mx-auto"></div>
-                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass" class="details-field text-right max-w-min min-w-0" placeholder="Favorite genre" list="genresList" :readonly="!isEditing" v-model="user.genre" data-test="field-genre"></input>
+                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass"
+                            class="details-field text-right max-w-min min-w-0" placeholder="Favorite genre"
+                            list="genresList" :readonly="!isEditing" v-model="user.genre"
+                            data-test="field-genre"></input>
                         <!-- Necessary for browser auto-completion -->
                         <datalist id="genresList">
-                            <option v-for="genre in genres" :value="genre"/>
+                            <option v-for="genre in genres" :value="genre" />
                         </datalist>
                     </div>
                 </div>
@@ -98,9 +116,9 @@
             <p>{{ errorMsg }}</p>
             <RouterLink to="/">Return to homepage</RouterLink>
         </div>
-
-        <FooterComponent class="footer-light mx-10" />
+        <FooterComponent class="footer-light" />
     </div>
+
 </template>
 
 <script setup>
@@ -180,7 +198,7 @@ function toggleEditMode() {
         }).catch((err) => {
             Swal.fire({
                 title: 'Error',
-                text: 'Failed to save changes: ' + ((err.response !== undefined) ? err.response.data.detail : err.message), 
+                text: 'Failed to save changes: ' + ((err.response !== undefined) ? err.response.data.detail : err.message),
                 icon: 'error',
             })
         })
@@ -198,7 +216,7 @@ function toggleVisibility() {
     }
 }
 
-function deleteAccount(){
+function deleteAccount() {
     Swal.fire({
         title: 'Are you sure?',
         text: "This action cannot be undone. You will lose access to EchoLink and your profile will be permanently deleted.",
@@ -209,7 +227,7 @@ function deleteAccount(){
         confirmButtonText: 'Yes, delete it!'
     }).then((result) => {
         if (result.isConfirmed) {
-            UserService.deleteAccount() 
+            UserService.deleteAccount()
                 .then((response) => {
                     Cookies.remove('auth_token');
                     Cookies.remove('logged_in');
@@ -224,7 +242,7 @@ function deleteAccount(){
                 .catch((err) => {
                     Swal.fire({
                         title: 'Error',
-                        text: 'Failed to delete account: ' + (err.response ? err.response.data.detail : err.message),                        icon: 'error',
+                        text: 'Failed to delete account: ' + (err.response ? err.response.data.detail : err.message), icon: 'error',
                     });
                 });
         }
@@ -277,37 +295,59 @@ onMounted(function () {
 </script>
 
 <style scoped>
+
+.container {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the top */
+    min-height: 100vh; /* Ensure the container takes the full height of the viewport */
+}
+
 .btn {
     @apply font-bold py-3 px-4 rounded;
 }
+
 .btn-blue {
     @apply bg-blue-500 text-white;
 }
-.btn-blue:hover, .btn-blue:focus {
+
+.btn-blue:hover,
+.btn-blue:focus {
     @apply bg-blue-700;
 }
+
 .btn-red {
     @apply bg-red-500 text-white;
 }
-.btn-red:hover, .btn-red:focus {
+
+.btn-red:hover,
+.btn-red:focus {
     @apply bg-red-700;
 }
+
 .icon {
     @apply h-4 inline
 }
+
 .badge {
     @apply max-h-max mx-1 rounded-md select-none text-white
 }
-.container{
+
+.container {
     width: 100vw;
 }
+
 .banner {
     background-image: url("../assets/images/broadcast-bg.png");
     @apply bg-cover
 }
+
 .content-block {
     @apply p-4 border-2 rounded-lg border-indigo-100 bg-indigo-200
 }
+
 .section-header {
     @apply text-left font-bold text-xl
 }
@@ -316,6 +356,7 @@ onMounted(function () {
     /* Padding is used for nicer spacing to the input field boundaries; it's declared in this field as well to prevent the text from changing position when toggling edit mode. */
     @apply px-2 bg-transparent max-h-min
 }
+
 .details-field::placeholder {
     @apply text-gray-400
 }
@@ -324,4 +365,13 @@ onMounted(function () {
     @apply bg-gray-50 border border-gray-300 rounded-lg
 }
 
+@media (max-width: 900px) {
+    .container-main {
+        width: 90%; /* Full viewport width for small screens */
+        height: auto; /* Full viewport height for small screens */
+        margin-top: 10vh; /* Remove margin for full screen effect */
+        border-radius: 0; /* Remove border radius for full screen effect */
+    }
+
+}
 </style>
