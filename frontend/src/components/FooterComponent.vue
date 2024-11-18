@@ -3,7 +3,7 @@
     <div class="container">
       <div class="row items-gap-two justify-content-center align-items-center">
         <div class="col-auto logo-container">
-          <router-link to="/" class="logo">
+          <router-link to="/" @click="scrollToTop" class="logo">
             <img src="../assets/logo.png" alt="Logo" style="max-width: 55px;" />
           </router-link>
         </div>
@@ -21,6 +21,11 @@
 <script>
 export default {
   name: "FooterComponent",
+  methods: {
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+  }
 };
 </script>
 

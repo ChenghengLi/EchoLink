@@ -6,7 +6,7 @@
 					<nav class="nav">
 						<div class="nav__content">
 							<div class="nav__logo">
-								<router-link to="/">
+								<router-link to="/" @click="scrollToTop">
 									<img :src="LogoURL" alt="Logo" style="max-width: 55px;" />
 								</router-link>
 							</div>
@@ -123,9 +123,15 @@ export default {
 		};
 	},
 	methods: {
+
+
 		updateScroll() {
 			this.scrollPosition =
 				window.scrollY;
+		},
+
+		scrollToTop(){
+			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
 		/*logout_function() {
 			Cookies.remove('auth_token');

@@ -1,10 +1,7 @@
 <template>
 	<div>
-		<div class="home-two-light my-app home-light">
+		<div class="home-two-light my-app home-light container">
 
-			<!-- 
-			<Header :LogoSrc="'/assets/logo1.png'" />
-			-->
 			<Header />
 			<Banner />
 			<Broadcast />
@@ -62,10 +59,19 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .home-two-dark .anime--light {
 	display: none;
 }
+
+.container {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the top */
+}
+
 
 .home-two-light .anime--dark {
 	display: none;

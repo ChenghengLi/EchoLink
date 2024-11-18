@@ -77,8 +77,8 @@ jobs:
 
           # Rebuild specific Docker images and restart containers
           docker compose down --remove-orphans
-          docker compose build frontend backend postgres  # Specify the services to build
-          docker compose up -d frontend backend postgres  # Specify the services to start
+          docker compose build frontend backend # Specify the services to build
+          docker compose up -d frontend backend # Specify the services to start
         EOF
 
   update_status:
