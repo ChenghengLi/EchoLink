@@ -69,7 +69,7 @@ jobs:
       env:
         USER: root
         HOST: 209.38.168.71
-        WORKDIR: Echolink_devops
+        WORKDIR: Echolink
       run: |
         ssh -o StrictHostKeyChecking=no $USER@$HOST << EOF
           cd $WORKDIR
