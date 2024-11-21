@@ -1,7 +1,7 @@
 <template>
     <div class="home-two-light home-light container">
-
         <HeaderComponent />
+        
         <!-- Set a fixed width for the container -->
         <div class="form-container mx-auto p-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
             <div class="mb-3">
@@ -31,9 +31,10 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import FooterComponent from '../components/FooterComponent.vue';
 import TextInput from '../components/form/TextInput.vue';
 import Selector from '../components/form/Selector.vue';
+import PlaylistService from '../services/playlist.js'
+import Toast from '../utilities/toast.js'
 import Swal from 'sweetalert2'
-import { computed, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed, reactive, ref } from 'vue';
 
 const DESCRIPTION_MAX_LENGTH = 120
 // IDs be coherent with the API.
@@ -47,13 +48,28 @@ const playlist = reactive({
     description: '',
     visibility: VISIBILITY_OPTIONS[0], // Default to first option.
 })
+const requestPending = ref(false)
 
-function createPlaylist(){
-    alert('TODO')
+function createPlaylist() {
+    requestPending.value = true
+    PlaylistService.createPlaylist(playlist).then(() => {
+        Toast.fire({
+            title: 'Playlist created',
+            icon: 'success',
+        })
+    }).catch((err) => {
+        Swal.fire({
+            title: 'Error',
+            text: 'Failed to create playlist: ' + ((err.response !== undefined) ? err.response.data.detail : err.message),
+            icon: 'error',
+        })
+    }).finally(() => {
+        requestPending.value = false
+    })
 }
 
 const canCreate = computed(() => {
-    return playlist.name !== ''
+    return playlist.name !== '' && !requestPending.value // Disallow sending more requests until each has resolved.
 })
 
 </script>
