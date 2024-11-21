@@ -10,6 +10,7 @@ import './assets/vendor/bootstrap/js/bootstrap.bundle.min.js';
 import './assets/css/main.css';
 import './assets/css/common.css'
 import 'floating-vue/dist/style.css'
+import 'vue-multiselect/dist/vue-multiselect.min.css'
 import './assets/vendor/glyphter/css/Glyphter.css';
 
 
