@@ -1,6 +1,6 @@
 import pytest
 from tests.utils import create_random_user, get_session
-from crud.artist import *
+from crud.artist import get_artist_by_user_id, create_artist, get_artist_by_username
 from models.artist import Artist, ArtistInput
 
 @pytest.fixture(scope="function")
