@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime
 from models.question import Question, QuestionInput, QuestionResponse, ResponseEnum
 from crud.question import get_questions_by_listener, get_questions_by_artist, submit_question, get_question_by_id, response_question, reject_question, answer_question
-from tests.utils import create_random_user, create_random_artist, create_random_listener, get_session
+from tests.utils import create_random_artist, create_random_listener, get_session
 
 @pytest.fixture(scope="function")
 def db_session():
