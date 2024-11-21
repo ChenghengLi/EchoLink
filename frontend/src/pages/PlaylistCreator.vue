@@ -16,7 +16,7 @@
                 <TextInput label="Description" placeholder="Describe your playlist..." input-type="text" :value="playlist.name" @changed="playlist.description = $event" :multiline="true" :max-length="DESCRIPTION_MAX_LENGTH"></TextInput>
 
                 <!-- Visibility -->
-                <Selector v-model="playlist.visibility" :options="VISIBILITY_OPTIONS" label="Visibility" track-by="id" option-label-key="label" :allow-empty="false" :can-search="false"></Selector>
+                <OptionSelector v-model="playlist.visibility" :options="VISIBILITY_OPTIONS" label="Visibility" track-by="id" option-label-key="label" :allow-empty="false" :can-search="false"></OptionSelector>
             </div>
 
             <button class="btn btn--primary w-100 w-md-60 mt-3" :disabled="!canCreate" @click="createPlaylist">Create</button>
@@ -30,7 +30,7 @@
 import HeaderComponent from '../components/HeaderComponent.vue';
 import FooterComponent from '../components/FooterComponent.vue';
 import TextInput from '../components/form/TextInput.vue';
-import Selector from '../components/form/Selector.vue';
+import OptionSelector from '../components/form/OptionSelector.vue';
 import PlaylistService from '../services/playlist.js'
 import Toast from '../utilities/toast.js'
 import Swal from 'sweetalert2'

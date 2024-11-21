@@ -25,7 +25,7 @@ defineProps({
     "testId": String,
 })
 
-const model = defineModel()
+const model = defineModel({type: String})
 
 </script>
 
