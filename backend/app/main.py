@@ -7,6 +7,7 @@ from routes import user, test, login
 # Importing them ensures SQLAlchemy creates their tables.
 from models.user import User  # noqa: F401
 from models.artist import Artist  # noqa: F401
+from models.listener import Listener # noqa: F401
 
 # Initialize the FastAPI app with the lifespan context manager
 app = FastAPI(lifespan=lifespan)
