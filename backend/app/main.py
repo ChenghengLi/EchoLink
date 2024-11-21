@@ -4,6 +4,8 @@ from core.lifespan import lifespan
 from core.config import engine
 from core.config import Base
 from routes import user, test, login
+from models.user import User
+from models.artist import Artist
 
 # Initialize the FastAPI app with the lifespan context manager
 app = FastAPI(lifespan=lifespan)
