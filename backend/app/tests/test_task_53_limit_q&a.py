@@ -29,7 +29,7 @@ def test_submit_question_when_waiting_for_response(db_session):
         artist_username=artist.user.username,
         question_text="What is your favorite song?"
     )
-    question = submit_question(db_session, listener, question_input)  # Submit the first question
+    submit_question(db_session, listener, question_input)  # Submit the first question
     
     # Act: Try submitting another question while waiting for a response
     new_question_input = QuestionInput(
