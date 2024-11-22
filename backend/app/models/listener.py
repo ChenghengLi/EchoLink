@@ -2,7 +2,6 @@
 from sqlalchemy import Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import Base
-from pydantic import BaseModel
 
 # Listener table
 class Listener(Base):

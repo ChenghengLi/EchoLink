@@ -2,8 +2,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import Base
-from typing import Optional
-from pydantic import BaseModel
 
 # Artist table
 class Artist(Base):
