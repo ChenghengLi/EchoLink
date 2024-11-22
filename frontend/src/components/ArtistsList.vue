@@ -8,11 +8,22 @@
                     </div>
                 </div>
             </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8">
+                <input 
+                    type="text" 
+                    v-model="searchQuery" 
+                    placeholder="Search for an artist..." 
+                    class="form-control search-input"
+                />
+                </div>
+            </div>
+
             <div class="row items-gap">
                 <ArtistComponent
-                    v-for="artist in artists"
-                    :key="artist.id"
-                    :artist="artist"
+                v-for="artist in filteredArtists"
+                :key="artist.id"
+                :artist="artist"
                 />
             </div>
         </div>
@@ -56,8 +67,41 @@
             image: 'cara4.jpg',
           },
         ],
+        searchQuery: '',
       };
     },
+    computed: {
+        filteredArtists() {
+            const query = this.searchQuery.toLowerCase(); 
+            if (!query) {
+                return this.artists;
+            }
+            return this.artists.filter(
+                artist =>
+                artist.name.toLowerCase().includes(query) || // Filtrar por nombre
+                artist.genre.toLowerCase().includes(query)  // Filtrar por género
+            );
+        },
+    }
   };
   </script>
+
+<style scoped>
+.search-input {
+  margin: 20px 0; 
+  padding: 10px;
+  font-size: 16px; 
+  border: 1px solid #ddd; 
+  border-radius: 5px; 
+  outline: none;
+  width: 100%; 
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #4569e7; 
+  box-shadow: 0 0 5px rgba(69, 105, 231, 0.5);
+}
+</style>
   
