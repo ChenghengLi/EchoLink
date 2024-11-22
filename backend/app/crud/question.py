@@ -29,6 +29,12 @@ def submit_question(db: Session, listener: Listener, question_input: QuestionInp
     # Decide if the listener can ask a question to the artist
     if not can_question(db, listener, artist):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This listener cannot ask this artist.")
+    
+    # Check if a question the listener is waiting for a response from the artist
+    if db.query(Question).filter(Question.listener_id == listener.listener_id, 
+                                 Question.artist_id == artist.artist_id,
+                                 Question.response_status == ResponseEnum.waiting).first():
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="This listener is waiting for a response.")
 
     # Create Question
     question = Question(
@@ -58,6 +64,9 @@ def response_question(db: Session, artist: Artist, response: QuestionResponse, r
     
     if question.artist_id != artist.artist_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This artist cannot answer this question.")
+    
+    if question.response_status != ResponseEnum.waiting:
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="This question has already been responded.")
     
     # Update question
     question.response_text = response.response_text
