@@ -4,8 +4,6 @@ from core.config import get_db
 from main import app
 from fastapi.testclient import TestClient
 from models.user import UserInput, UserLogin
-from models.artist import ArtistInput
-from models.listener import ListenerInput
 from crud.user import authenticate, create_user
 from crud.artist import create_artist
 from crud.listener import create_listener
@@ -38,17 +36,9 @@ def get_session():
 def get_client():
     return TestClient(app)
 
-def make_artist(db, user):
-    artist_input = ArtistInput(username=user.username, name=random_lower_string(), genre=random_lower_string(), bio=random_lower_string())
-    return create_artist(db, artist_input)
-
-def make_listener(db, user):
-    listener_input = ListenerInput(username=user.username)
-    return create_listener(db, listener_input)
-
 def create_random_artist(db):
-    return make_artist(db, create_random_user(db))
+    return create_artist(db, create_random_user(db))
 
 def create_random_listener(db):
-    return make_listener(db, create_random_user(db))
+    return create_listener(db, create_random_user(db))
 

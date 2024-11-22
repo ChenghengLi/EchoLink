@@ -17,10 +17,3 @@ class Artist(Base):
 
     # Relationship to the User table
     user = relationship("User")
-
-# Input artist for creation
-class ArtistInput(BaseModel):
-    username: str
-    name: str
-    genre: Optional[str] = None
-    bio: Optional[str] = None

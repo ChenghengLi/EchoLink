@@ -13,7 +13,3 @@ class Listener(Base):
 
     # Relationship to the User table
     user = relationship("User")
-
-# Input listener for creation
-class ListenerInput(BaseModel):
-    username: str

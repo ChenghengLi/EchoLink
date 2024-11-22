@@ -1,7 +1,7 @@
 import pytest
 from tests.utils import create_random_user, get_session
 from crud.artist import get_artist_by_user_id, create_artist, get_artist_by_username
-from models.artist import Artist, ArtistInput
+from models.artist import Artist
 
 @pytest.fixture(scope="function")
 def db_session():
@@ -33,19 +33,9 @@ def test_get_artist_by_user_id(db_session):
 def test_create_artist(db_session):
     user = create_random_user(db_session)
 
-    artist_input = ArtistInput(
-        username=user.username,
-        name="Test Artist",
-        genre="Pop",
-        bio="This is a test bio."
-    )
-
-    artist = create_artist(db_session, artist_input)
+    artist = create_artist(db_session, user)
 
     db_session.refresh(artist)
-    assert artist.name == artist_input.name
-    assert artist.genre == artist_input.genre
-    assert artist.bio == artist_input.bio
     assert artist.user_id == user.id
 
 # Test: Create artist fails if user is already an artist
@@ -55,23 +45,15 @@ def test_create_artist_already_exists(db_session):
     db_session.add(artist)
     db_session.commit()
 
-    artist_input = ArtistInput(username=user.username, name="Duplicate Artist", genre="Pop", bio="Duplicate bio")
     with pytest.raises(Exception) as exc_info:
-        create_artist(db_session, artist_input)
+        create_artist(db_session, user)
     assert exc_info.value.status_code == 400
     assert "This user is already an artist." in str(exc_info.value.detail)
 
 # Test: Deleting User Cascades to Artist
 def test_cascade_delete_user_deletes_artist(db_session):
     user = create_random_user(db_session)
-
-    artist_input = ArtistInput(
-        username=user.username,
-        name="Cascade Artist",
-        genre="Rock",
-        bio="This artist will be deleted."
-    )
-    create_artist(db_session, artist_input)
+    create_artist(db_session, user)
 
     assert get_artist_by_user_id(db_session, user.id) is not None
 
