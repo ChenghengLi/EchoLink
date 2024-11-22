@@ -1,10 +1,12 @@
 """Models"""
+from datetime import datetime
+from typing import Optional
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from core.config import Base
 import enum
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 # Enum for response status
 class ResponseEnum(enum.Enum):
@@ -31,7 +33,6 @@ class Question(Base):
 
 # Input data for question submission
 class QuestionInput(BaseModel):
-    listener_username: str
     artist_username: str
     question_text: str
 
@@ -39,3 +40,17 @@ class QuestionInput(BaseModel):
 class QuestionResponse(BaseModel):
     question_id: int
     response_text: str
+
+# Pydantic model to return Question data
+class QuestionModel(BaseModel):
+    question_id: int
+    listener_id: int
+    artist_id: int
+    question_text: str
+    response_text: Optional[str]
+    question_date: datetime
+    response_date: Optional[datetime]
+    response_status: ResponseEnum
+
+    # Use ConfigDict for Pydantic v2
+    model_config = ConfigDict(from_attributes=True)

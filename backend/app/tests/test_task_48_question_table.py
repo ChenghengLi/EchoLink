@@ -1,7 +1,8 @@
 import pytest
 from datetime import datetime
+from fastapi import HTTPException
 from models.question import Question, QuestionInput, QuestionResponse, ResponseEnum
-from crud.question import get_questions_by_listener, get_questions_by_artist, submit_question, get_question_by_id, response_question, reject_question, answer_question
+from crud.question import get_questions_by_listener, get_questions_by_artist, submit_question, get_question_by_id, response_question
 from tests.utils import create_random_artist, create_random_listener, get_session
 
 @pytest.fixture(scope="function")
@@ -49,12 +50,11 @@ def test_submit_question(db_session):
     artist = create_random_artist(db_session)
 
     question_input = QuestionInput(
-        listener_username=listener.user.username,
         artist_username=artist.user.username,
         question_text="What is your favorite song?"
     )
 
-    question = submit_question(db_session, question_input)
+    question = submit_question(db_session, listener, question_input)
     db_session.refresh(question)
 
     assert question.listener_id == listener.listener_id
@@ -85,37 +85,32 @@ def test_response_question(db_session):
     db_session.commit()
 
     response = QuestionResponse(question_id=question.question_id, response_text="I love this song!")
-    answered_question = response_question(db_session, response, ResponseEnum.answered)
+    answered_question = response_question(db_session, artist, response, ResponseEnum.answered)
 
     assert answered_question.response_status == ResponseEnum.answered
     assert answered_question.response_text == "I love this song!"
 
-# Test: Reject a question
-def test_reject_question(db_session):
+# Test: Artist not answering others question
+def test_artist_cannot_answer_others_question(db_session):
+    # Create two listeners and two artists
     listener = create_random_listener(db_session)
-    artist = create_random_artist(db_session)
+    artist_1 = create_random_artist(db_session)
+    artist_2 = create_random_artist(db_session)
 
-    question = Question(listener_id=listener.listener_id, artist_id=artist.artist_id, question_text="What is your favorite song?", question_date=datetime.utcnow())
-    db_session.add(question)
-    db_session.commit()
+    # Listener asks a question to artist_1
+    question_input = QuestionInput(
+        listener_username=listener.user.username,
+        artist_username=artist_1.user.username,
+        question_text="What is your favorite genre of music?"
+    )
+    question = submit_question(db_session, listener, question_input)
 
-    response = QuestionResponse(question_id=question.question_id, response_text="I don't want to answer.")
-    rejected_question = reject_question(db_session, response)
+    # Artist_2 tries to answer the question meant for artist_1
+    response = QuestionResponse(question_id=question.question_id, response_text="I love rock music!")
+    
+    with pytest.raises(HTTPException) as excinfo:
+        response_question(db_session, artist_2, response, ResponseEnum.answered)
 
-    assert rejected_question.response_status == ResponseEnum.rejected
-    assert rejected_question.response_text == "I don't want to answer."
-
-# Test: Answer a question
-def test_answer_question(db_session):
-    listener = create_random_listener(db_session)
-    artist = create_random_artist(db_session)
-
-    question = Question(listener_id=listener.listener_id, artist_id=artist.artist_id, question_text="What is your favorite song?", question_date=datetime.utcnow())
-    db_session.add(question)
-    db_session.commit()
-
-    response = QuestionResponse(question_id=question.question_id, response_text="My favorite song is XYZ.")
-    answered_question = answer_question(db_session, response)
-
-    assert answered_question.response_status == ResponseEnum.answered
-    assert answered_question.response_text == "My favorite song is XYZ."
+    # Assert the exception is due to forbidden access
+    assert excinfo.value.status_code == 403
+    assert excinfo.value.detail == "This artist cannot answer this question."
