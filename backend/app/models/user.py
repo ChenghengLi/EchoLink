@@ -11,6 +11,11 @@ class VisibilityEnum(enum.Enum):
     public = "public"
     private = "private"
 
+# Enum for user roles
+class RoleEnum(enum.Enum):
+    listener = "listener"
+    artist = "artist"
+
 # User table
 class User(Base):
     __tablename__ = "users"
@@ -23,6 +28,7 @@ class User(Base):
     description = Column(String, nullable=True)
     genre = Column(String, nullable=True)
     visibility = Column(Enum(VisibilityEnum), default=VisibilityEnum.public)
+    role = Column(Enum(RoleEnum), default=None, nullable=True)
 
 # Validation mixin class
 class UserValidationMixin(BaseModel):

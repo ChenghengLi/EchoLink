@@ -1,8 +1,10 @@
 """ User related CRUD methods """
 from sqlalchemy.orm import Session
-from models.user import User, UserInput, UserLogin, UserUpdate
+from models.user import User, UserInput, UserLogin, UserUpdate, RoleEnum
 from core.security import get_password_hash, verify_password, create_access_token
 from fastapi import HTTPException, status
+from crud.listener import create_listener
+from crud.artist import create_artist
 
 # User creation
 def create_user(db: Session, user_input: UserInput) -> User:
@@ -102,3 +104,25 @@ def delete_user_account(db: Session, user: User):
     db.delete(user)
     db.commit()
     return {"detail": "Account deleted successfully"}
+
+# Assign a role to a user
+def assign_role(db: Session, user: User, role: RoleEnum):
+    if user.role is not None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The user has already a role.")
+    
+    # Create object
+    if role == RoleEnum.listener:
+        create_listener(db, user)
+    elif role == RoleEnum.artist:
+        create_artist(db, user)
+    
+    # Assign role
+    user.role = role
+    db.commit()
+
+# Get a user's role
+def get_role(user: User) -> RoleEnum:
+    if user.role is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The user has no role.")
+    
+    return user.role

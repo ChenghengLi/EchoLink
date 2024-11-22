@@ -2,10 +2,12 @@ from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 from core.security import get_current_user
 from core.config import get_db
+from core.security import CurrentUser
 from crud.user import create_user as create_user_crud, \
     get_user_by_username as get_user_by_username_crud, \
     update_user as update_user_crud, \
-    delete_user_account as delete_user_account_crud
+    delete_user_account as delete_user_account_crud, \
+    assign_role, get_role
 import models.user as user_model
 
 router = APIRouter()
@@ -44,3 +46,10 @@ async def delete_user(
     respose = delete_user_account_crud(db, current_user)
     return respose
     
+@router.post("/role", status_code=status.HTTP_200_OK)
+async def add_role(role: user_model.RoleEnum, user: CurrentUser, db: Session = Depends(get_db)):
+    assign_role(db, user, role)
+
+@router.get("/role", response_model=user_model.RoleEnum)
+async def retrieve_role(user: CurrentUser):
+    return get_role(user)
