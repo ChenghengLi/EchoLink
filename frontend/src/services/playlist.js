@@ -25,6 +25,7 @@ class PlaylistService {
             // return response.data;
             // TODO remove once API is done
             const response = {
+                id: id,
                 name: 'test playlist',
                 description: 'dummy descp',
                 visibility: 'public',

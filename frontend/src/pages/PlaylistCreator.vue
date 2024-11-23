@@ -193,7 +193,7 @@ async function fetchSongs() {
     try {
         const newData = await SongService.getAll()
         // Add an extra field to improve vue-multiselect search support (since it only supports searching by one key)
-        for (let index in newData.songs) {
+        for (const index in newData.songs) {
             const song = newData.songs[index]
             song.fullTitle = `${song.artist} - ${song.title}`
         }
