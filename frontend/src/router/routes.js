@@ -28,8 +28,8 @@ export default  [
             component: ProfileDef,
         },
         {
-            path: '/playlists/new',
-            name: 'New Playlist',
+            path: '/playlists/:id',
+            name: 'Playlist',
             component: PlaylistCreator,
         },
     ];
