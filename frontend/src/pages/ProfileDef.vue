@@ -109,6 +109,15 @@
                     </div>
                 </div>
             </div>
+            <div class="my-2"></div>
+            <!-- User Playlists -->
+            <div class="content-block flex justify-between items-center">
+                <h2 class="section-header">My Playlists</h2>
+                <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap ml-auto" @click="goToPlaylistCreator">
+                    <PlusIcon class="icon" />
+                    Add New Playlist
+                </button>
+            </div>
         </div>
         <!-- Error view -->
         <div v-else class="content-block max-w-sm mx-auto" data-test="container-error">
@@ -130,9 +139,10 @@ import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
 import Cookies from 'js-cookie';
 import { computed, onMounted, ref, watch, reactive } from 'vue';
-import { useRoute } from 'vue-router';
-import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon } from '@heroicons/vue/24/solid'
+import { useRoute, useRouter } from 'vue-router';
+import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/solid'
 
+const router = useRouter()
 const route = useRoute()
 
 // Max lengths of fields, in characters.
@@ -250,6 +260,10 @@ function deleteAccount() {
                 });
         }
     });
+}
+
+function goToPlaylistCreator(){
+    router.push('/playlists/new');
 }
 
 
