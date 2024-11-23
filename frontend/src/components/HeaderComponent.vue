@@ -54,6 +54,9 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
+										<button v-if="isArtist()" @click="goToUploadTrack" data-test="Upload-track-mobile"class="btn btn--secondary">
+											Upload Track
+										</button>
 										<button @click="goToProfile" data-test="profile-mobile"class="btn btn--secondary">
 											My Profile
 										</button>
@@ -72,6 +75,9 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
+									<button v-if="isLoggedIn && isArtist()" :data-test="'upload-track-laptop'" @click="goToUploadTrack" class="btn btn--secondary">
+										Upload Track
+									</button>
 									<button v-if="isLoggedIn" :data-test="'profile-laptop'" @click="goToProfile" class="btn btn--secondary">
 										My Profile
 									</button>
@@ -168,7 +174,20 @@ export default {
 			if (username !== null) {
 				this.$router.push('/users/' + username)
 			}
-		}
+		},
+		goToUploadTrack() {
+			const username = UserService.getCurrentUsername()
+			// Sanity check.
+			if (username !== null) {
+				this.$router.push('/uploadTrack')
+			}
+		},
+		isArtist() {
+			if(UserService.getUserRole() === "listener"){
+				return true
+			}
+			return false;
+		},
 	},
 	mounted() {
 		// Router won't exist in tests
