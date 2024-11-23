@@ -6,7 +6,6 @@
         <div v-if="!isLoaded" class="flex">
             <LoadingSpinner class="mx-auto" />
         </div>
-        <!-- Set a fixed width for the container -->
         <div v-else-if="isLoaded && errorMsg === null" class="form-container relative mx-auto p-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
             <div class="mb-3">
                 <h2>{{ (isCreating() ? 'Create Playlist' : (isEditing ? 'Edit Playlist' : fullTitle)) }}</h2>
@@ -43,6 +42,18 @@
             <!-- Song list; songs are added after creating a playlist, thus this doesn't appear in the creator view -->
             <SongList v-if="!isCreating()" v-model="playlist.songs" :editable="isEditing"></SongList>
 
+            <!-- "Add song" widget -->
+            <div v-if="isEditing" class="mt-3">
+                <label for="songSelector" class="block text-sm font-medium text-left ml-1 mb-2" >Add song</label>
+                <div class="flex items-center">
+                    <Multiselect v-model="songToAdd" :options="songs" :track-by="'id'" :label="'fullTitle'" :allow-empty="false" :searchable="true" id="songSelector"></Multiselect>
+                    <button v-if="isEditing" class="btn btn-save ml-3 mb-0" :disabled="!canAddSong" @click="addSong">
+                        <PlusIcon class="icon" />
+                        Add
+                    </button>
+                </div>
+            </div>
+
             <!-- "Create" button -->
             <button v-if="isCreating()" class="btn btn--primary w-100 w-md-60 mt-3" :disabled="!canCreate" @click="createPlaylist">Create</button>
         </div>
@@ -61,10 +72,12 @@ import LoadingSpinner from '../components/LoadingSpinner.vue';
 import SongList from '../components/SongList.vue';
 import ErrorPanel from '../components/ErrorPanel.vue';
 import PlaylistService from '../services/playlist.js'
+import Multiselect from 'vue-multiselect'
+import SongService from '../services/song.js'
 import UserService from '../services/user.js'
 import Toast from '../utilities/toast.js'
 import Swal from 'sweetalert2'
-import { PencilIcon } from '@heroicons/vue/24/solid'
+import { PencilIcon, PlusIcon } from '@heroicons/vue/24/solid'
 import { useRoute, useRouter } from 'vue-router';
 import { computed, reactive, ref, watch, onMounted } from 'vue';
 
@@ -85,6 +98,8 @@ const playlist = reactive({
     owner: 'pip',
     songs: [],
 })
+const songs = reactive([])
+const songToAdd = ref(null)
 const isEditing = ref(false)
 const errorMsg = ref(null) // Error message from playlist load request.
 const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
@@ -115,6 +130,20 @@ function createPlaylist() {
         requestPending.value = false
     })
 }
+
+function addSong() {
+    const newSong = songToAdd.value
+
+    // Prevent adding a song twice
+    if (canAddSong.value) {
+        playlist.songs.push(newSong)
+    }
+}
+
+const canAddSong = computed(() => {
+    const newSong = songToAdd.value
+    return newSong !== null && playlist.songs.find((song) => song.id === newSong.id) === undefined
+})
 
 function saveChanges() {
     PlaylistService.update({
@@ -160,6 +189,20 @@ async function fetchPlaylistData(id) {
     }
 }
 
+async function fetchSongs() {
+    try {
+        const newData = await SongService.getAll()
+        // Add an extra field to improve vue-multiselect search support (since it only supports searching by one key)
+        for (let index in newData.songs) {
+            const song = newData.songs[index]
+            song.fullTitle = `${song.artist} - ${song.title}`
+        }
+        Object.assign(songs, newData.songs)
+    } catch (err) {
+        errorMsg.value = (err.response) ? err.response.data.detail : err.message
+    }
+}
+
 // Refetch playlist data when navigating to another playlist from this page (ex. directly rewriting the URL)
 // This is necessary as the component won't be recreated, thus onMounted() won't fire.
 watch(
@@ -173,6 +216,7 @@ watch(
 onMounted(function () {
     if (!isCreating()) {
         fetchPlaylistData(route.params.id)
+        fetchSongs() // Only needs to be done once (ie. no need to refetch if the URL is rewritten by router)
     } else {
         isLoaded.value = true
     }
