@@ -1,0 +1,216 @@
+<template>
+    <div class="home-two-light home-light container">
+        <HeaderComponent />
+
+        <!-- Show a loading spinner while fetching user data -->
+        <div v-if="!isLoaded" class="flex">
+            <LoadingSpinner class="mx-auto" />
+        </div>
+        <!-- Profile view -->
+        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg">
+            <!-- Username, badges and banner area -->
+            <div class="banner content-block mx-auto w-100 mt-8 mb-2">
+                <!-- Inner banner area -->
+                <div class="sm:flex min-h-32 relative">
+                    <!-- Avatar and username -->
+                    <div class="flex items-end">
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
+                        
+                        <!-- TODO ensure contrast vs banner -->
+                        <div class="flex flex-col items-start ms-3">
+                            <p class="font-bold text-lg text-white">Welcome back, {{ getUsername() }}</p>
+                            <p class="text-md text-white">We've missed your rhythm and creativity!</p>
+                        </div>
+                    </div>
+
+                    <div class="mx-auto my-3"></div>
+                    <!-- Spacing between avatar/username and badges, handles both desktop & mobile layouts -->
+
+                    <div class="absolute right-0 top-0 d-flex flex-column flex-md-row ml-auto mr-md-0">
+                        <button class="btn btn-blue max-w-min text-nowrap" @click="router.push('/users/' + getUsername())"
+                            data-test="button-edit">
+                            <GlobeAltIcon class="icon" />
+                            View public profile
+                        </button>
+                    </div>
+                    <!-- Right area; badges & owner controls -->
+                    <div class="flex flex-col items-end">
+
+                        <div class="my-auto"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Metrics and activities -->
+            <div class="lg:flex">
+                <!-- Metrics -->
+                <div class="content-block flex flex-grow lg:mr-2">
+                    <div class="flex flex-column w-100">
+                        <h2 class="section-header">Metrics</h2>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div v-for="metric in metrics" class="metric flex-col items-center rounded border-2 w-full p-2 border-indigo-200 bg-indigo-300 hover:shadow-lg" v-tooltip="metric.tooltip">
+                                <!-- TODO add icons, tooltips -->
+                                <p class="text-lg font-bold">{{ metric.label }}</p>
+                                <p>{{ metric.prefix || '' }}{{ metric.value }}{{ metric.suffix || '' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="my-2"></div> <!-- Used for spacing in column layout (low viewport width) -->
+
+                <!-- Activities -->
+                <div class="content-block lg:min-w-80">
+                    <h2 class="section-header">Growth</h2>
+                    <p>Interact with your fans to boost your growth</p>
+
+                    <div class="my-3"></div>
+
+                    <!-- TODO setup links -->
+                    <div class="flex flex-col items-center">
+                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
+                            <GlobeAltIcon class="icon" />
+                            View public profile
+                        </button>
+                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
+                            <QuestionMarkCircleIcon class="icon" />
+                            Answer fan questions
+                        </button>
+                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
+                            <MegaphoneIcon class="icon" />
+                            Send fan acknowledgements
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ErrorPanel v-else header="The dashboard could not be loaded:" :reason="errorMsg"></ErrorPanel>
+
+        <FooterComponent class="footer-light" />
+    </div>
+</template>
+
+<script setup>
+import HeaderComponent from '../components/HeaderComponent.vue';
+import FooterComponent from '../components/FooterComponent.vue';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
+import ErrorPanel from '../components/ErrorPanel.vue';
+import UserService from '../services/user.js'
+import { onMounted, ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { GlobeAltIcon, QuestionMarkCircleIcon, MegaphoneIcon } from '@heroicons/vue/24/solid'
+
+const router = useRouter()
+
+// TODO pull from API
+const metrics = reactive([
+    {id: 'fans', label: 'Fans', tooltip: 'Amount of listeners that follow you.', value: 20},
+    {id: 'answer_rate', label: 'Answer Rate', tooltip: 'Percentage of questions from fans you\'ve answered.', value: 20, suffix: '%'},
+    {id: 'engagement', label: 'Engagement', tooltip: 'TODO what is this lol', value: 0.8},
+    {id: 'ranking', label: 'Ranking', tooltip: 'How you compare against other EchoLink artists.', value: 22, prefix: 'Top '},
+])
+const questions = reactive([])
+const errorMsg = ref(null) // Error message from profile load request.
+const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
+
+// Profile data. Field names should match the API ones.
+const artist = reactive({
+    genre: '',
+    description: '',
+})
+
+function getUsername() {
+    return UserService.getCurrentUsername()
+}
+
+async function fetchArtistData() {
+    try {
+        Object.assign(artist, await UserService.get(getUsername()))
+        Object.assign(questions, await QuestionService.getUserQuestions())
+
+        // Clear any previous error message so the new profile is shown
+        errorMsg.value = null
+    } catch (err) {
+        errorMsg.value = (err.response) ? err.response.data.detail : err.message
+    } finally {
+        // Mark the page as loaded in either case
+        isLoaded.value = true
+    }
+}
+
+// Fetch artist data when the page is accessed.
+onMounted(function () {
+    fetchArtistData()
+})
+
+</script>
+
+<style scoped>
+
+.container {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the top */
+    min-height: 100vh; /* Ensure the container takes the full height of the viewport */
+}
+
+.banner {
+    background-image: url("../assets/images/broadcast-bg.png");
+    @apply bg-cover
+}
+
+.content-block {
+    @apply p-4 border-2 rounded-lg border-indigo-100 bg-indigo-200
+}
+
+.section-header {
+    @apply text-left font-bold text-xl mb-2
+}
+
+.btn {
+    @apply font-bold py-3 px-4 rounded;
+}
+
+.btn-blue {
+    @apply bg-blue-500 text-white;
+}
+
+.btn-blue:hover,
+.btn-blue:focus {
+    @apply bg-blue-700;
+}
+
+.btn-red {
+    @apply bg-red-500 text-white;
+}
+
+.btn-red:hover,
+.btn-red:focus {
+    @apply bg-red-700;
+}
+
+.container {
+    width: 100vw;
+}
+
+.banner {
+    background-image: url("../assets/images/broadcast-bg.png");
+    @apply bg-cover
+}
+
+.metric {
+    @apply text-white
+}
+
+@media (max-width: 900px) {
+    .container-main {
+        width: 90%; /* Full viewport width for small screens */
+        height: auto; /* Full viewport height for small screens */
+        margin-top: 10vh; /* Remove margin for full screen effect */
+        border-radius: 0; /* Remove border radius for full screen effect */
+    }
+}
+
+</style>
