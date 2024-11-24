@@ -70,19 +70,21 @@
                     <div class="flex flex-col items-center">
                         <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
                             <GlobeAltIcon class="icon" />
-                            View public profile
+                            View & edit public profile
                         </button>
-                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
+                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="scrollToQuestions">
                             <QuestionMarkCircleIcon class="icon" />
                             Answer fan questions
                         </button>
-                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
+                        <!-- <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
                             <MegaphoneIcon class="icon" />
                             Send fan acknowledgements
-                        </button>
+                        </button> -->
                     </div>
                 </div>
             </div>
+
+            <!-- Questions -->
             <div class="content-block my-2">
                 <h2 class="section-header">Fan Questions</h2>
                 <p class="text-left">Answer questions from your fans to boost your engagement.</p>
@@ -165,6 +167,11 @@ async function fetchArtistData() {
 
 function answerQuestion(question) {
     alert('TODO')
+}
+
+function scrollToQuestions() {
+    // TODO change this to use hashes/anchors once we have more elements on the page 
+    window.scrollTo(0, document.body.scrollHeight);
 }
 
 // Fetch artist data when the page is accessed.
