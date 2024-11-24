@@ -268,18 +268,29 @@ function deleteAccount() {
     });
 }
 
-function askQuestion(){
+function askQuestion() {
     Swal.fire({
         title: 'Ask me something!',
-        input: 'textarea',
-        inputAttributes: {
-            maxlength: 500,
-            placeholder: 'Type your question here...',
-        },
+        html: `
+           <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+               <textarea 
+                   id="swal-input" 
+                   class="swal2-textarea" 
+                   maxlength="500" 
+                   style="width: 100%; max-width: 500px; height: 100px; resize: none; padding: 10px; box-sizing: border-box;" 
+                   placeholder="Type your question here..."></textarea>
+               <div 
+                   id="char-counter" 
+                   style="width: 100%; max-width: 500px; text-align: right; font-size: 0.9em; color: #555; margin-top: 5px;">
+                   0/500 characters
+               </div>
+           </div>
+        `,
         showCancelButton: true,
         confirmButtonText: 'Send',
         cancelButtonText: 'Cancel',
-        preConfirm: (question) => {
+        preConfirm: () => {
+            const question = document.getElementById('swal-input').value;
             // Check text (can't be empty)
             if (!question || question.trim().length === 0) {
                 Swal.showValidationMessage('The question cannot be empty');
@@ -287,13 +298,20 @@ function askQuestion(){
             } else {
                 return question;
             }
+        },
+        didOpen: () => {
+            const input = document.getElementById('swal-input');
+            const counter = document.getElementById('char-counter');
+
+            input.addEventListener('input', () => {
+                const charCount = input.value.length;
+                counter.textContent = `${charCount}/500 characters`;
+            });
         }
     }).then((result) => {
         if (result.isConfirmed && result.value) {
-            // Send question to backend
             QuestionService.newQuestion(getUsername(), result.value)
                 .then(() => {
-                    // Confirmation toast
                     Toast.fire({
                         title: 'Your question has been sent successfully!',
                         icon: 'success',
@@ -309,6 +327,8 @@ function askQuestion(){
         }
     });
 }
+
+
 
 function goToPlaylistCreator(){
     router.push('/playlists/new');
@@ -428,6 +448,16 @@ onMounted(function () {
 
 .details-field-editable {
     @apply bg-gray-50 border border-gray-300 rounded-lg
+}
+
+.center-swal-popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* Esto puede ser ajustado si es necesario */
+    min-width: 320px; /* Un ancho mínimo para la ventana emergente */
+    max-width: 600px; /* Ancho máximo de la ventana emergente */
+    width: 90%; /* Puedes ajustarlo según lo que prefieras */
 }
 
 @media (max-width: 900px) {
