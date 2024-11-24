@@ -46,11 +46,17 @@
                 <div class="content-block flex flex-grow lg:mr-2">
                     <div class="flex flex-column w-100">
                         <h2 class="section-header">Metrics</h2>
+                        <p class="text-left">See how you compare against other artists.</p>
 
                         <div class="grid grid-cols-2 gap-2">
                             <div v-for="metric in metrics" class="metric flex-col items-center rounded border-2 w-full p-2 border-indigo-200 bg-indigo-300 hover:shadow-lg" v-tooltip="metric.tooltip">
-                                <!-- TODO add icons, tooltips -->
-                                <p class="text-lg font-bold">{{ metric.label }}</p>
+                                <p class="text-lg font-bold">
+                                    <!-- Holy fuck, each of these being a separate component is annoying as shit. TODO What's a better way of doing this? -->
+                                    <UserIcon v-if="metric.id === 'fans'" class="icon"/>
+                                    <PencilIcon v-if="metric.id === 'answer_rate'" class="icon"/>
+                                    <StarIcon v-if="metric.id === 'engagement'" class="icon"/>
+                                    <TrophyIcon v-if="metric.id === 'ranking'" class="icon"/>
+                                    {{ metric.label }}</p>
                                 <p>{{ metric.prefix || '' }}{{ metric.value }}{{ metric.suffix || '' }}</p>
                             </div>
                         </div>
@@ -62,7 +68,7 @@
                 <!-- Activities -->
                 <div class="content-block lg:min-w-80">
                     <h2 class="section-header">Growth</h2>
-                    <p>Interact with your fans to boost your growth</p>
+                    <p>Interact with your fans to boost your growth.</p>
 
                     <div class="my-3"></div>
 
@@ -127,7 +133,7 @@ import UserService from '../services/user.js'
 import QuestionService from '../services/questions.js'
 import { onMounted, ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { GlobeAltIcon, QuestionMarkCircleIcon, MegaphoneIcon, PencilIcon } from '@heroicons/vue/24/solid'
+import { GlobeAltIcon, QuestionMarkCircleIcon, UserIcon, StarIcon, TrophyIcon, PencilIcon } from '@heroicons/vue/24/solid'
 
 const router = useRouter()
 
