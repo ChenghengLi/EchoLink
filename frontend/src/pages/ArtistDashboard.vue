@@ -91,7 +91,7 @@
 
                 <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
                     <!-- TODO better accessibility -->
-                    <div v-for="(question, i) in questions" class="question relative group" @mouseover="hoveredQuestions.add(i)" @mouseleave="hoveredQuestions.delete(i)" @click="answerQuestion(question)" :tabindex="i">
+                    <div v-for="(question, i) in unansweredQuestions" v-if="unansweredQuestions.length > 0" class="question relative group" @mouseover="hoveredQuestions.add(i)" @mouseleave="hoveredQuestions.delete(i)" @click="answerQuestion(question)" :tabindex="i">
                         <div class="absolute right-2 top-2 d-flex flex-column flex-md-row ml-auto mr-md-0" >
                             <button class="btn btn-blue p-2 max-w-min text-nowrap" :class="{'invisible': !hoveredQuestions.has(i)}"
                                 data-test="button-edit">
@@ -105,6 +105,9 @@
                             <p>A fan asks:</p>
                         </div>
                         <p>{{ question.question_text }}</p>
+                    </div>
+                    <div v-else>
+                        <p class="text-left text-gray-500">You have no unanswered questions.</p>
                     </div>
                 </div>
             </div>
@@ -122,7 +125,7 @@ import LoadingSpinner from '../components/LoadingSpinner.vue';
 import ErrorPanel from '../components/ErrorPanel.vue';
 import UserService from '../services/user.js'
 import QuestionService from '../services/questions.js'
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { GlobeAltIcon, QuestionMarkCircleIcon, MegaphoneIcon, PencilIcon } from '@heroicons/vue/24/solid'
 
@@ -164,6 +167,11 @@ async function fetchArtistData() {
         isLoaded.value = true
     }
 }
+
+const unansweredQuestions = computed(() => {
+    const unansweredQuestions = questions.filter((question) => question.response_status === 'waiting')
+    return unansweredQuestions
+})
 
 function answerQuestion(question) {
     alert('TODO')
