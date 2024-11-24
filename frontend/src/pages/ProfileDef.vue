@@ -13,12 +13,17 @@
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
                 <div class="sm:flex min-h-32 relative">
-                    <!-- Avatar and username -->
+                    <!-- Avatar and username -->                        
                     <div class="flex items-end">
-                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black"
-                            src="../assets/images/avatar.svg" />
-                        <!-- TODO ensure contrast vs banner -->
-                        <p class="ms-3 font-bold text-lg text-white" data-test="label-username">{{ getUsername() }}</p>
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
+                        <div class="ms-3 flex flex-col items-start">
+                            <!-- TODO ensure contrast vs banner -->
+                            <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
+                            <button v-if="!isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
+                                <ChatBubbleBottomCenterTextIcon class="icon" />
+                                Ask me something!
+                            </button>
+                        </div>
                     </div>
 
                     <div class="mx-auto my-3"></div>
@@ -135,12 +140,13 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import FooterComponent from '../components/FooterComponent.vue';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 import UserService from '../services/user.js'
+import QuestionService from '../services/question.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
 import Cookies from 'js-cookie';
 import { computed, onMounted, ref, watch, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/solid'
+import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon, PlusIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/vue/24/solid'
 
 const router = useRouter()
 const route = useRoute()
@@ -256,6 +262,48 @@ function deleteAccount() {
                     Swal.fire({
                         title: 'Error',
                         text: 'Failed to delete account: ' + (err.response ? err.response.data.detail : err.message), icon: 'error',
+                    });
+                });
+        }
+    });
+}
+
+function askQuestion(){
+    Swal.fire({
+        title: 'Ask me something!',
+        input: 'textarea',
+        inputAttributes: {
+            maxlength: 500,
+            placeholder: 'Type your question here...',
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Send',
+        cancelButtonText: 'Cancel',
+        preConfirm: (question) => {
+            // Check text (can't be empty)
+            if (!question || question.trim().length === 0) {
+                Swal.showValidationMessage('The question cannot be empty');
+                return false;
+            } else {
+                return question;
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            // Send question to backend
+            QuestionService.newQuestion(getUsername(), result.value)
+                .then(() => {
+                    // Confirmation toast
+                    Toast.fire({
+                        title: 'Your question has been sent successfully!',
+                        icon: 'success',
+                    });
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to send the question: ' + (err.response ? err.response.data.detail : err.message),
+                        icon: 'error',
                     });
                 });
         }
