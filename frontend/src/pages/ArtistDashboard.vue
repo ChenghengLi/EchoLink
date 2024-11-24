@@ -7,7 +7,7 @@
             <LoadingSpinner class="mx-auto" />
         </div>
         <!-- Profile view -->
-        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg">
+        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg w-100">
             <!-- Username, badges and banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
@@ -83,6 +83,29 @@
                     </div>
                 </div>
             </div>
+            <div class="content-block my-2">
+                <h2 class="section-header">Fan Questions</h2>
+                <p class="text-left">Answer questions from your fans to boost your engagement.</p>
+
+                <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                    <!-- TODO better accessibility -->
+                    <div v-for="(question, i) in questions" class="question relative group" @mouseover="hoveredQuestions.add(i)" @mouseleave="hoveredQuestions.delete(i)" @click="answerQuestion(question)" :tabindex="i">
+                        <div class="absolute right-2 top-2 d-flex flex-column flex-md-row ml-auto mr-md-0" >
+                            <button class="btn btn-blue p-2 max-w-min text-nowrap" :class="{'invisible': !hoveredQuestions.has(i)}"
+                                data-test="button-edit">
+                                <PencilIcon class="icon" />
+                                Answer
+                            </button>
+                        </div>
+                        <div class="flex items-center">
+                            <img class="size-8 mr-3" src="../assets/images/avatar.svg"/>
+                            <!-- TODO show username? -->
+                            <p>A fan asks:</p>
+                        </div>
+                        <p>{{ question.question_text }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
         <ErrorPanel v-else header="The dashboard could not be loaded:" :reason="errorMsg"></ErrorPanel>
 
@@ -96,9 +119,10 @@ import FooterComponent from '../components/FooterComponent.vue';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 import ErrorPanel from '../components/ErrorPanel.vue';
 import UserService from '../services/user.js'
+import QuestionService from '../services/questions.js'
 import { onMounted, ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { GlobeAltIcon, QuestionMarkCircleIcon, MegaphoneIcon } from '@heroicons/vue/24/solid'
+import { GlobeAltIcon, QuestionMarkCircleIcon, MegaphoneIcon, PencilIcon } from '@heroicons/vue/24/solid'
 
 const router = useRouter()
 
@@ -110,6 +134,7 @@ const metrics = reactive([
     {id: 'ranking', label: 'Ranking', tooltip: 'How you compare against other EchoLink artists.', value: 22, prefix: 'Top '},
 ])
 const questions = reactive([])
+const hoveredQuestions = ref(new Set())
 const errorMsg = ref(null) // Error message from profile load request.
 const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
 
@@ -136,6 +161,10 @@ async function fetchArtistData() {
         // Mark the page as loaded in either case
         isLoaded.value = true
     }
+}
+
+function answerQuestion(question) {
+    alert('TODO')
 }
 
 // Fetch artist data when the page is accessed.
@@ -202,6 +231,10 @@ onMounted(function () {
 
 .metric {
     @apply text-white
+}
+
+.question {
+    @apply rounded border-2 w-full p-3 border-indigo-200 bg-indigo-300 shadow-lg cursor-pointer
 }
 
 @media (max-width: 900px) {
