@@ -22,11 +22,21 @@ def create_user(db: Session, user_input: UserInput) -> User:
     user = User(
         username=user_input.username,
         email=user_input.email,
-        hashed_password=get_password_hash(user_input.password)
+        hashed_password=get_password_hash(user_input.password),
+        description=user_input.description,
+        genre=user_input.genre,
+        visibility=user_input.visibility,
+        role=user_input.role
     )
-
     db.add(user)
     db.commit()
+
+    # Create role object
+    if user_input.role == RoleEnum.listener:
+        create_listener(db, user)
+    elif user_input.role == RoleEnum.artist:
+        create_artist(db, user)
+
     db.refresh(user)
     return user
 
@@ -104,21 +114,6 @@ def delete_user_account(db: Session, user: User):
     db.delete(user)
     db.commit()
     return {"detail": "Account deleted successfully"}
-
-# Assign a role to a user
-def assign_role(db: Session, user: User, role: RoleEnum):
-    if user.role is not None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The user has already a role.")
-    
-    # Create object
-    if role == RoleEnum.listener:
-        create_listener(db, user)
-    elif role == RoleEnum.artist:
-        create_artist(db, user)
-    
-    # Assign role
-    user.role = role
-    db.commit()
 
 # Get a user's role
 def get_role(user: User) -> RoleEnum:

@@ -15,7 +15,7 @@ from crud.artist import get_artist_by_username
 
 router = APIRouter()
     
-@router.get("/questions", response_model=List[QuestionModel])
+@router.get("/", response_model=List[QuestionModel])
 def get_questions(user: CurrentUser, db: Session = Depends(get_db)):
     """
     Retrieve questions for a listener or artist (the user is derived from the Authorization token).
@@ -36,7 +36,7 @@ def get_questions(user: CurrentUser, db: Session = Depends(get_db)):
             )
 
 
-@router.post("/questions", response_model=QuestionModel)
+@router.post("/", response_model=QuestionModel)
 def create_question(question_input: QuestionInput, user: CurrentUser, db: Session = Depends(get_db)):
     """
     Submit a new question to an artist (the listener is derived from the Authorization token).
@@ -44,7 +44,7 @@ def create_question(question_input: QuestionInput, user: CurrentUser, db: Sessio
     return submit_question(db, get_listener_by_username(db, user.username), question_input)
 
 
-@router.post("/questions/reject", response_model=QuestionModel)
+@router.post("/reject", response_model=QuestionModel)
 def reject_question_endpoint(response: QuestionResponse, user: CurrentUser, db: Session = Depends(get_db)):
     """
     Reject a question by its ID (it must be assigned to the artist derived from the Authorization token).
@@ -53,7 +53,7 @@ def reject_question_endpoint(response: QuestionResponse, user: CurrentUser, db: 
                              response, response_status=ResponseEnum.rejected)
 
 
-@router.post("/questions/answer", response_model=QuestionModel)
+@router.post("/answer", response_model=QuestionModel)
 def answer_question_endpoint(response: QuestionResponse, user: CurrentUser, db: Session = Depends(get_db)):
     """
     Answer a question by its ID (it must be assigned to the artist derived from the Authorization token).

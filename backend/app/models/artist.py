@@ -1,9 +1,8 @@
 """ Models """
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import Base
-from typing import Optional
-from pydantic import BaseModel
 
 # Artist table
 class Artist(Base):
@@ -17,3 +16,12 @@ class Artist(Base):
 
     # Relationship to the User table
     user = relationship("User")
+
+
+# Pydantic model for the response
+class ArtistOutput(BaseModel):
+    username: str
+    genre: str
+
+    # Use ConfigDict for Pydantic v2
+    model_config = ConfigDict(from_attributes=True)

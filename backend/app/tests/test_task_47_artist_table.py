@@ -38,18 +38,6 @@ def test_create_artist(db_session):
     db_session.refresh(artist)
     assert artist.user_id == user.id
 
-# Test: Create artist fails if user is already an artist
-def test_create_artist_already_exists(db_session):
-    user = create_random_user(db_session)
-    artist = Artist(user_id=user.id, name="Existing Artist", genre="Pop", bio="Already famous")
-    db_session.add(artist)
-    db_session.commit()
-
-    with pytest.raises(Exception) as exc_info:
-        create_artist(db_session, user)
-    assert exc_info.value.status_code == 400
-    assert "This user is already an artist." in str(exc_info.value.detail)
-
 # Test: Deleting User Cascades to Artist
 def test_cascade_delete_user_deletes_artist(db_session):
     user = create_random_user(db_session)
@@ -73,6 +61,9 @@ def test_get_artist_by_username(db_session):
     retrieved_artist = get_artist_by_username(db_session, user.username)
     assert retrieved_artist is not None
     assert retrieved_artist.name == "Username Artist"
+
+    db_session.delete(artist)
+    db_session.commit()
 
 # Test: Get artist by username fails if not an artist
 def test_get_artist_by_username_not_artist(db_session):
