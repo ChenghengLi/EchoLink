@@ -6,6 +6,7 @@ import ProfileDef from '../pages/ProfileDef.vue'
 import LogInDef from '../pages/LogInDef.vue';
 import PlaylistCreator from '../pages/PlaylistCreator.vue';
 import UploadTrack from '../pages/UploadTrack.vue';
+import UserService from '../services/user.js'
 
 export default  [
         {
@@ -35,15 +36,27 @@ export default  [
         },
         {
             path: '/uploadTrack',
-            name: 'Upload Track',
+            name: 'UploadTrack',
             component: UploadTrack,
-            beforeEnter: (to, from, next) => {
-                const isArtist = UserService.getUserRole() === 'artist'; // Verifica si el usuario es un artista
-                if (isArtist) {
-                  next(); // Si es artista, deja pasar a la ruta
-                } else {
-                  next('/'); // Si no es artista, redirige a la home u otra página
+            beforeEnter: async (to, from, next) => {
+                try {
+                    const username = UserService.getCurrentUsername();
+                    if (!username) {
+                        // Redirect to login page if no user is authenticated
+                        next('/login');
+                        return;
+                    }
+        
+                    const role = await UserService.getUserRole(username); 
+                    if (role === 'artist') {
+                        next(); 
+                    } else {
+                        next('/'); // Redirect to the homepage if the user is not an artist
+                    }
+                } catch (error) {
+                    console.error('Error comprobando el rol del usuario:', error);
+                    next('/'); // Redirect to the homepage in case of an error
                 }
-              },
+            },
         },
     ];

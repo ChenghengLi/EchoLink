@@ -85,26 +85,15 @@ class UserService {
             throw error.response ? error.response.data : new Error('Error deleting account');
         });
     }
-    getUserRole(){
-        /*return axios.get('/users/role')
-        .then(response => {
-            return response.data;
-        })
-        .catch(error => {
-            throw error.response ? error.response.data : new Error('Error getting role');
-        });*/
-        const config = this.getConfig(); // Obtiene la configuración del token
-        console.log("Config enviada al backend:", config); // Verifica el encabezado
-
-        return axios.get('/users/role', config)
-            .then(response => {
-                console.log("Respuesta del backend:", response.data); // Depura la respuesta
-                return response.data;
-            })
-            .catch(error => {
-                console.error("Error al obtener el rol:", error.response ? error.response.data : error);
-                throw error.response ? error.response.data : new Error('Error getting role');
-            });
+    async getUserRole(username) {
+        try {
+            const response = await axios.get(`/users/${username}`);
+            console.log('Response data:', response); 
+            const role = response.data.role;
+            return role;
+        } catch (error) {
+            throw error.response ? error.response.data : new Error('Error getting user role');
+        }
     }
 }
 

@@ -125,7 +125,8 @@ export default {
 				showConfirmButton: false,
 				timer: 1500,
 				timerProgressBar: false,
-			})
+			}),
+			userRole: null,
 		};
 	},
 	methods: {
@@ -182,14 +183,23 @@ export default {
 				this.$router.push('/uploadTrack')
 			}
 		},
-		isArtist() {
-			if(UserService.getUserRole() === "listener"){
-				return true
+		async fetchUserRole() {
+			const username = UserService.getCurrentUsername();
+			if (username) {
+				try {
+					this.userRole = await UserService.getUserRole(username); 
+				} catch (error) {
+					console.error("Error obteniendo el rol del usuario:", error);
+					this.userRole = null; 
+				}
 			}
-			return false;
+		},
+		isArtist() {
+			return this.userRole === "artist";
 		},
 	},
 	mounted() {
+		this.fetchUserRole();
 		// Router won't exist in tests
 		if (this.$router) {
 			this.$router.beforeEach((to, from, next) => {
