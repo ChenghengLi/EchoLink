@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.artist import Artist
-from models.user import User
+from models.user import User, RoleEnum
 
 # Get artist by user_id
 def get_artist_by_user_id(db: Session, user_id: int) -> Artist:
@@ -38,3 +38,7 @@ def get_artist_by_username(db: Session, username: str) -> Artist:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This user is not an artist.")
     
     return artist
+
+# Get artists
+def get_all_artists(db: Session):
+    return db.query(User).filter(User.role == RoleEnum.artist).all()
