@@ -25,3 +25,4 @@ def test_get_all_artists():
     # Delete data created
     session.delete(artist)
     session.delete(listener.user)
+    session.commit()

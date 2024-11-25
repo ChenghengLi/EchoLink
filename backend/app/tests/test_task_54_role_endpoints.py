@@ -42,6 +42,10 @@ def test_create_user_assigns_artist(db_session):
     # Artist created
     assert get_artist_by_user_id(db_session, user.id) is not None
 
+    # Delete data created
+    db_session.delete(user)
+    db_session.commit()
+
 ### Tests for get_role ###
 
 def test_get_role_of_user_with_role(db_session):

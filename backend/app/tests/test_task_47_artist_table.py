@@ -62,6 +62,9 @@ def test_get_artist_by_username(db_session):
     assert retrieved_artist is not None
     assert retrieved_artist.name == "Username Artist"
 
+    db_session.delete(artist)
+    db_session.commit()
+
 # Test: Get artist by username fails if not an artist
 def test_get_artist_by_username_not_artist(db_session):
     user = create_random_user(db_session)
