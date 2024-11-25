@@ -74,6 +74,7 @@ class UserInput(UserLogin):
     description: Optional[str] = None
     genre: Optional[str] = None
     visibility: Optional[VisibilityEnum] = VisibilityEnum.public
+    role: Optional[RoleEnum] = RoleEnum.listener
 
 # Output user
 class UserOutput(BaseModel):
@@ -82,6 +83,7 @@ class UserOutput(BaseModel):
     description: Optional[str] = None
     genre: Optional[str] = None
     visibility: VisibilityEnum
+    role: RoleEnum
 
     # Pydantic V2 configuration for ORM mode
     model_config = {'from_attributes': True}
