@@ -22,7 +22,10 @@ def create_user(db: Session, user_input: UserInput) -> User:
     user = User(
         username=user_input.username,
         email=user_input.email,
-        hashed_password=get_password_hash(user_input.password)
+        hashed_password=get_password_hash(user_input.password),
+        description=user_input.description,
+        genre=user_input.genre,
+        visibility=user_input.visibility
     )
 
     db.add(user)
