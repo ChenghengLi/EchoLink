@@ -2,7 +2,7 @@
 from typing import Optional
 from sqlalchemy import Column, Integer, String, Enum
 from core.config import Base
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, HttpUrl
 import re
 import enum
 
@@ -29,6 +29,7 @@ class User(Base):
     genre = Column(String, nullable=True)
     visibility = Column(Enum(VisibilityEnum), default=VisibilityEnum.public)
     role = Column(Enum(RoleEnum), default=None, nullable=True)
+    image_url = Column(String, default=None, nullable=True)
 
 # Validation mixin class
 class UserValidationMixin(BaseModel):
@@ -51,6 +52,19 @@ class UserValidationMixin(BaseModel):
     def validate_username(cls, v):
         if not re.match(r'^[a-zA-Z_0-9]{4,16}$', v):
             raise ValueError('Username must be 4-16 characters long, containing only letters, numbers, and underscores.')
+        return v
+    
+    # Validator for image URL
+    @field_validator('image_url', check_fields=False)
+    def validate_image_url(cls, v):
+        if v is not None:
+            # Convert HttpUrl object to string
+            url_str = str(v)
+
+            # Check if the URL ends with a valid image extension
+            valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg')
+            if not url_str.lower().endswith(valid_extensions):
+                raise ValueError("Invalid image URL format.")
         return v
 
 # Input user for login
@@ -75,6 +89,7 @@ class UserInput(UserLogin):
     genre: Optional[str] = None
     visibility: Optional[VisibilityEnum] = VisibilityEnum.public
     role: Optional[RoleEnum] = RoleEnum.listener
+    image_url: Optional[HttpUrl] = None
 
 # Output user
 class UserOutput(BaseModel):
