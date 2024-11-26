@@ -139,10 +139,10 @@ const router = useRouter()
 
 // TODO pull from API
 const metrics = reactive([
-    {id: 'fans', label: 'Fans', tooltip: 'Amount of listeners that follow you.', value: 20},
+    {id: 'fans', label: 'Fans', tooltip: 'Amount of fans that follow you.', value: 20},
     {id: 'answer_rate', label: 'Answer Rate', tooltip: 'Percentage of questions from fans you\'ve answered.', value: 20, suffix: '%'},
-    {id: 'engagement', label: 'Engagement', tooltip: 'TODO what is this lol', value: 0.8},
-    {id: 'ranking', label: 'Ranking', tooltip: 'How you compare against other EchoLink artists.', value: 22, prefix: 'Top '},
+    {id: 'engagement', label: 'Engagement', tooltip: 'How much your fans have interacted with your content. Follows, questions asked and other fan activity all boost your engagement score.', value: 8227},
+    {id: 'ranking', label: 'Ranking', tooltip: 'How your Engagement score compares against other EchoLink artists.', value: 22, prefix: 'Top '},
 ])
 const questions = reactive([])
 const hoveredQuestions = ref(new Set())
