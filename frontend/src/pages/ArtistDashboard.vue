@@ -74,13 +74,17 @@
 
                     <!-- TODO setup links -->
                     <div class="flex flex-col items-center">
-                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
-                            <GlobeAltIcon class="icon" />
-                            View & edit public profile
+                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/uploadTrack')">
+                            <MusicalNoteIcon class="icon" />
+                            Upload a new track
                         </button>
                         <button class="btn btn-blue w-80 text-nowrap my-1" @click="scrollToQuestions">
                             <QuestionMarkCircleIcon class="icon" />
                             Answer fan questions
+                        </button>
+                        <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
+                            <GlobeAltIcon class="icon" />
+                            View & edit public profile
                         </button>
                         <!-- <button class="btn btn-blue w-80 text-nowrap my-1" @click="router.push('/users/' + getUsername())">
                             <MegaphoneIcon class="icon" />
@@ -133,7 +137,7 @@ import UserService from '../services/user.js'
 import QuestionService from '../services/questions.js'
 import { onMounted, ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { GlobeAltIcon, QuestionMarkCircleIcon, UserIcon, StarIcon, TrophyIcon, PencilIcon } from '@heroicons/vue/24/solid'
+import { GlobeAltIcon, QuestionMarkCircleIcon, UserIcon, StarIcon, TrophyIcon, PencilIcon, MusicalNoteIcon } from '@heroicons/vue/24/solid'
 
 const router = useRouter()
 
