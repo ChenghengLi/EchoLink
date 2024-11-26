@@ -5,6 +5,7 @@ import RegisterDef from '../pages/RegisterDef.vue'
 import ProfileDef from '../pages/ProfileDef.vue'
 import LogInDef from '../pages/LogInDef.vue';
 import PlaylistCreator from '../pages/PlaylistCreator.vue';
+import ArtistDashboard from '../pages/ArtistDashboard.vue';
 
 export default  [
         {
@@ -31,5 +32,10 @@ export default  [
             path: '/playlists/:id',
             name: 'Playlist',
             component: PlaylistCreator,
+        },
+        {
+            path: '/dashboard/',
+            name: 'Artist Dashboard',
+            component: ArtistDashboard,
         },
     ];
