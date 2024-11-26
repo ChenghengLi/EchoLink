@@ -1,10 +1,19 @@
 """ Models """
 from typing import Optional
-from sqlalchemy import Column, Integer, String, Enum
+from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime
+from sqlalchemy.sql import func
 from core.config import Base
 from pydantic import BaseModel, field_validator, HttpUrl
 import re
 import enum
+
+# Follow relationship between listeners and artists
+class ListenerArtistLink(Base):
+    __tablename__ = "listener_artist_link"
+
+    listener_id = Column(Integer, ForeignKey('listeners.listener_id', ondelete="CASCADE"), primary_key=True)
+    artist_id = Column(Integer, ForeignKey('artists.artist_id', ondelete="CASCADE"), primary_key=True)
+    follow_date = Column(DateTime, default=func.now(), nullable=False)
 
 # Enum for profile visibility
 class VisibilityEnum(enum.Enum):

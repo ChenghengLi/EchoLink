@@ -5,7 +5,7 @@ from core.config import engine
 from core.config import Base
 from routes import user, test, login, question, artist
 # Importing them ensures SQLAlchemy creates their tables.
-from models.user import User  # noqa: F401
+from models.user import User, ListenerArtistLink  # noqa: F401
 from models.artist import Artist  # noqa: F401
 from models.listener import Listener # noqa: F401
 from models.question import Question # noqa: F401
