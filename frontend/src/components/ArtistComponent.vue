@@ -2,11 +2,11 @@
     <div class="col-12 col-md-6 col-xl-4">
       <div class="team-main-single wow fadeInUp" data-wow-duration="600ms" data-wow-delay="300ms">
         <div class="thumb">
-            <router-link :to="`/users/${artist.name}`">
-                <img :src="`/images/${artist.image}`" :alt="artist.name" class="clickable-image" />
+            <router-link :to="`/users/${artist.username}`">
+                <img :src="`frontend/src/assets/images/${artist.image}`" :alt="artist.name" class="clickable-image" />
             </router-link>
             <div class="content">
-                <h5 class="h5">{{ artist.name }}</h5>
+                <h5 class="h5">{{ artist.username }}</h5>
                 <p>{{ artist.genre }}</p>
             </div>
         </div>

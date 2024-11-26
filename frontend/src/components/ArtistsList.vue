@@ -33,7 +33,8 @@
   
   <script>
   import ArtistComponent from './ArtistComponent.vue';
-  
+  import ArtistService from '../services/artist.js'
+
   export default {
     components: {
       ArtistComponent,
@@ -41,7 +42,7 @@
     data() {
       return {
         // Lista de artistas, cada uno con propiedades "name", "genre" e "image"
-        artists: [
+        /*artists: [
           {
             id: 1,
             name: 'Sam',
@@ -66,7 +67,8 @@
             genre: 'Pop',
             image: 'cara4.jpg',
           },
-        ],
+        ],*/
+        artists: [],
         searchQuery: '',
       };
     },
@@ -82,6 +84,23 @@
                 artist.genre.toLowerCase().includes(query)  // Filtrar por género
             );
         },
+    },
+    methods: {
+      async fetchArtists(){
+        try {
+          const data = await ArtistService.getArtists();
+          const fixedImage = 'cara1.jpg';
+          this.artists = data.map(artist => ({
+            ...artist,
+            image: fixedImage 
+          }));
+        } catch (error) {
+          console.error('Error fetching artists:', error);
+        }
+      }
+    },
+    created(){
+      this.fetchArtists();
     }
   };
   </script>
