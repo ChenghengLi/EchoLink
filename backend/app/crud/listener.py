@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.listener import Listener
-from models.user import User
+from models.user import ListenerArtistLink, User
+from crud.artist import get_artist_by_username
 
 # Get listener by user_id
 def get_listener_by_user_id(db: Session, user_id: int) -> Listener:
@@ -36,3 +37,39 @@ def get_listener_by_username(db: Session, username: str) -> Listener:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This user is not a listener.")
     
     return listener
+
+# Follow an artist
+def follow_artist(db: Session, listener: Listener, artist_username: str) -> ListenerArtistLink:
+    artist = get_artist_by_username(db, artist_username)
+
+    # Check if the listener is already following the artist
+    existing_follow = db.query(ListenerArtistLink).filter(
+        ListenerArtistLink.listener_id == listener.listener_id,
+        ListenerArtistLink.artist_id == artist.artist_id
+    ).first()
+    if existing_follow:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The listener follows the artist.")
+
+    # Create the follow link
+    follow_link = ListenerArtistLink(listener_id=listener.listener_id, artist_id=artist.artist_id)
+    db.add(follow_link)
+    db.commit()
+    db.refresh(follow_link)
+
+    return follow_link
+
+# Unfollow an artist
+def unfollow_artist(db: Session, listener: Listener, artist_username: str):
+    artist = get_artist_by_username(db, artist_username)
+
+    # Check if the listener is following the artist
+    follow = db.query(ListenerArtistLink).filter(
+        ListenerArtistLink.listener_id == listener.listener_id,
+        ListenerArtistLink.artist_id == artist.artist_id
+    ).first()
+    if not follow:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The listener does not follow the artist.")
+
+    # Delete the follow link
+    db.delete(follow)
+    db.commit()
