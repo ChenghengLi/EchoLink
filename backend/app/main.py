@@ -34,4 +34,4 @@ app.include_router(test.router, prefix="/test", tags=["Test"])
 app.include_router(login.router, prefix="/login", tags=["Login"])
 app.include_router(question.router, prefix="/questions", tags=["Questions"])
 app.include_router(artist.router, prefix="/artists", tags=["Artists"])
-
+app.include_router(artist.router, prefix="/songs", tags=["Songs"])
