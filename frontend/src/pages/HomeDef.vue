@@ -5,6 +5,7 @@
 			<Header />
 			<Banner />
 			<Broadcast />
+			<ArtistsList />
 			<Footer class="footer-light mx-10" />
 		</div>
 		<div class="progress-wrap active-progress" @click="scrollToTop">
@@ -21,6 +22,7 @@ import Header from '../components/HeaderComponent.vue';
 import Footer from '../components/FooterComponent.vue';
 import Banner from '../components/BannerComponent.vue';
 import Broadcast from '../components/BroadcastComponent.vue';
+import ArtistsList from '../components/ArtistsList.vue';
 export default {
 	name: "HomeLight",
 	components: {
@@ -28,6 +30,7 @@ export default {
 		Footer,
 		Banner,
 		Broadcast,
+		ArtistsList,
 
 	}, mounted(){
 		const progressPath = this.$el.querySelector(".progress-wrap path");

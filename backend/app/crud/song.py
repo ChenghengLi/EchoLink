@@ -3,6 +3,7 @@ from fastapi import HTTPException, status
 from models.song import Song
 from models.artist import Artist
 from models.song import SongInput
+from crud.artist import get_artist_by_username
 
 # Get song by ID
 def get_song_by_id(db: Session, song_id: int) -> Song:
@@ -26,12 +27,13 @@ def get_all_songs(db: Session):
 
 # Create a song
 def create_song(db: Session, song_data: SongInput) -> Song:
+    artist = get_artist_by_username(db, song_data.artist_name)
     new_song = Song(
         title=song_data.title,
         album=song_data.album,
         genre=song_data.genre,
         release_date=song_data.release_date,
-        artist_id=song_data.artist_id
+        artist_id=artist.artist_id
     )
     db.add(new_song)
     db.commit()
