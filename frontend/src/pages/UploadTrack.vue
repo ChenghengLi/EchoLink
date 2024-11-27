@@ -54,6 +54,7 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import FooterComponent from '../components/FooterComponent.vue';
 import TextInput from '../components/form/TextInput.vue';
 import UserService from '../services/user.js'
+import SongService from '../services/song.js';
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
 import { computed, ref } from 'vue';
@@ -70,8 +71,24 @@ const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "
 
 
 function uploadTrack() {
-    // Ara està fent la crida a registerAccount perque es d'on he pillat el codi, quan estigui el backend fet per pujar cançons canviar-ho
-    UserService.registerAccount(username.value, email.value, password.value).then(() => {
+    const username = UserService.getCurrentUsername();
+    if (!username) {
+    Swal.fire({
+        title: 'Error',
+        text: 'You need to be logged in to upload a track.',
+        icon: 'error',
+    });
+    return;
+    }
+    const songInput = {
+        title: songtitle.value,
+        album: album.value,
+        genre: genre.value,
+        release_date: releaseDate.value,
+        artist_name: username,
+    };
+    console.log('Song input:', songInput);
+    SongService.addSong(songInput).then(() => {
         Toast.fire({
             title: 'Track uploaded successfully!',
             icon: 'success',
