@@ -6,6 +6,7 @@ from crud.song import get_song_by_id as get_song_by_id_crud, \
     create_song as create_song_crud, \
     update_song as update_song_crud, \
     delete_song as delete_song_crud
+from crud.artist import get_artist_by_username
 import models.song as song_model
 
 router = APIRouter()
@@ -34,7 +35,14 @@ async def add_song(
     db: Session = Depends(get_db)
 ):
     song = create_song_crud(db, song_input)
-    return song_model.SongOutput.model_validate(song)
+    artist = get_artist_by_username(db, song_input.artist_name)
+    return song_model.SongOutput(
+        title=song.title,
+        album=song.album,
+        genre=song.genre,
+        release_date=song.release_date,
+        artist_name=artist.user.username
+    ) 
 
 # PUT /songs/{song_id} -> Update a song
 @router.put("/{song_id}", response_model=song_model.SongOutput)
