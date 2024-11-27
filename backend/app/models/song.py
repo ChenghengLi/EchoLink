@@ -26,7 +26,7 @@ class SongInput(BaseModel):
     release_date: str
     album: Optional[str] = None
     genre: Optional[str] = None
-    artist_id: int
+    artist_name: str
 
     # Use ConfigDict for Pydantic v2
     model_config = ConfigDict(from_attributes=True)
