@@ -3,7 +3,7 @@
       <div class="team-main-single wow fadeInUp" data-wow-duration="600ms" data-wow-delay="300ms">
         <div class="thumb">
             <router-link :to="`/users/${artist.username}`">
-                <img :src="`frontend/src/assets/images/${artist.image}`" :alt="artist.name" class="clickable-image" />
+                <img :src="`/images/${artist.image}`" :alt="artist.name" class="clickable-image" />
             </router-link>
             <div class="content">
                 <h5 class="h5">{{ artist.username }}</h5>

@@ -89,7 +89,7 @@
       async fetchArtists(){
         try {
           const data = await ArtistService.getArtists();
-          const fixedImage = 'cara1.jpg';
+          const fixedImage = 'cara3.jpg';
           this.artists = data.map(artist => ({
             ...artist,
             image: fixedImage 
