@@ -19,7 +19,7 @@
                         <div class="ms-3 flex flex-col items-start">
                             <!-- TODO ensure contrast vs banner -->
                             <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
-                            <button v-if="!isOwnProfile" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
+                            <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
                                 <ChatBubbleBottomCenterTextIcon class="icon" />
                                 Ask me something!
                             </button>
@@ -162,6 +162,8 @@ const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "
 const errorMsg = ref(null) // Error message from profile load request.
 const isEditing = ref(false) // Whether the profile is being edited.
 const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
+const isArtist = ref(null);
+
 // Profile data. Field names should match the API ones.
 const user = reactive({
     genre: '',
@@ -192,6 +194,15 @@ async function fetchUserData() {
     } finally {
         // Mark the page as loaded in either case
         isLoaded.value = true
+    }
+}
+
+async function fetchUserRole() {
+    try {
+        const userRole = await UserService.getUserRole(getUsername());
+        isArtist.value = userRole === "artist";
+    } catch (error) {
+        console.error("Error fetching user role:", error);
     }
 }
 
@@ -369,12 +380,14 @@ watch(
     () => route.params,
     (newId) => {
         fetchUserData(newId)
+        fetchUserRole()
     }
 )
 
 // Fetch user data when the page is accessed from another one.
 onMounted(function () {
     fetchUserData(getUsername())
+    fetchUserRole()
 })
 
 </script>

@@ -1,4 +1,5 @@
 import axios from './baseAxiosClient';
+import Cookies from 'js-cookie';
 
 class QuestionService{
     async newQuestion(artistUsername, questionText){
