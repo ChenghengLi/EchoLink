@@ -1,8 +1,6 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
-from core.security import get_current_user
 from core.config import get_db
-from core.security import CurrentUser
 from crud.song import get_song_by_id as get_song_by_id_crud, \
     get_all_songs as get_all_songs_crud, \
     create_song as create_song_crud, \
