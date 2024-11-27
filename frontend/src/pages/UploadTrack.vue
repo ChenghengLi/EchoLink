@@ -12,8 +12,32 @@
             <div class="px-4 mx-auto">
                 <!-- Basic info -->
                 <TextInput label="Title" :required="true" placeholder="Title" input-type="text" :value="songtitle" @changed="songtitle = $event" :warning="titleWarning" :test-id="'field-title'"></TextInput>
-                <TextInput label="Genre" :required="true" placeholder="Genre" input-type="text" :value="genre" @changed="genre = $event" :warning="genreWarning" :test-id="'field-genre'"></TextInput>
-                <TextInput label="Link" :required="true" placeholder="Link" input-type="text" :value="link" @changed="link = $event" :warning="linkWarning" :test-id="'field-link'"></TextInput>
+                <TextInput label="Album" :required="true" placeholder="Album" input-type="text" :value="album" @changed="album = $event" :warning="albumWarning" :test-id="'field-album'"></TextInput>
+                <!--<TextInput label="Genre" :required="true" placeholder="Genre" input-type="text" :value="genre" @changed="genre = $event" :warning="genreWarning" :test-id="'field-genre'"></TextInput>-->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center">
+                        <label for="genre" class="block text-sm font-medium text-gray-900">Genre <span class="text-black-600">*</span></label>                        
+                        <p v-if="genreWarning" class="text-sm text-red-600 font-medium mt-1">{{ genreWarning }}</p>
+                    </div>
+                    <div class="mt-1">
+                        <input
+                            type="text"
+                            id="genre"
+                            maxlength="50"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Select a genre"
+                            list="genresList"
+                            v-model="genre"
+                            data-test="field-genre"
+                        />
+                        <datalist id="genresList">
+                            <option v-for="genre in genres" :key="genre" :value="genre" />
+                        </datalist>
+                    </div>
+                </div>
+
+
+                <TextInput label="Release Date" :required="true" placeholder="Select a date" input-type="date" :value="releaseDate" @changed="releaseDate = $event" :warning="dateWarning" :test-id="'field-release-date'"></TextInput>                
                 <hr class="h-divider"/>
 
                 <button class="btn btn--primary w-100 w-md-60" :disabled="!canUpload" @click="uploadTrack" :data-test="'button-uploadTrack'">Upload Track</button>
@@ -39,7 +63,11 @@ const router = useRouter()
 
 const songtitle = ref('')
 const genre = ref('')
-const link = ref('')
+const album = ref('')
+const releaseDate = ref('')
+
+const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "House", "Jazz", "Folk", "Hip hop", "Metal", "Gnomestep", "Nightcore", "Vaporwave", "Synthwave", "Classic"].sort()
+
 
 function uploadTrack() {
     // Ara està fent la crida a registerAccount perque es d'on he pillat el codi, quan estigui el backend fet per pujar cançons canviar-ho
@@ -63,11 +91,14 @@ const isTitleValid = computed(() => {
 const isGenreValid = computed(() => {
     return (genre.value !== '')
 })
-const isLinkValid = computed(() => {
-    return (link.value !== '')
+const isAlbumValid = computed(() => {
+    return (album.value !== '')
+})
+const isDateValid = computed(() => {
+    return (releaseDate.value !== '')
 })
 const canUpload = computed(() => {
-    return isTitleValid.value && isGenreValid.value && isLinkValid.value
+    return isTitleValid.value && isGenreValid.value && isAlbumValid.value && isDateValid.value
 })
 
 // Warnings for invalid fields
@@ -76,13 +107,18 @@ const titleWarning = computed(() => {
         return 'This field is required';
     }
 })
+const albumWarning = computed(() => {
+    if (album.value === '') {
+        return 'This field is required';
+    }
+})
 const genreWarning = computed(() => {
     if (genre.value === '') {
         return 'This field is required';
     }
 })
-const linkWarning = computed(() => {
-    if (link.value === '') {
+const dateWarning = computed(() => {
+    if (releaseDate.value === '') {
         return 'This field is required';
     }
 })
