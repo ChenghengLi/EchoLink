@@ -85,6 +85,16 @@ class UserService {
             throw error.response ? error.response.data : new Error('Error deleting account');
         });
     }
+    async getUserRole(username) {
+        try {
+            const response = await axios.get(`/users/${username}`);
+            console.log('Response data:', response); 
+            const role = response.data.role;
+            return role;
+        } catch (error) {
+            throw error.response ? error.response.data : new Error('Error getting user role');
+        }
+    }
 }
 
 export default new UserService()

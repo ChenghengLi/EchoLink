@@ -11,16 +11,27 @@
                 <h2>{{ (isCreating() ? 'Create Playlist' : (isEditing ? 'Edit Playlist' : fullTitle)) }}</h2>
             </div>
 
-            <!-- Edit button -->
-            <div v-if="canEdit" class="absolute right-0 top-0 p-3 d-flex flex-column flex-md-row ml-auto mr-md-0">
-                <button v-if="isEditing" class="btn btn-save" @click="saveChanges">
-                    <PencilIcon class="icon" />
-                    Save
-                </button>
-                <button v-else class="btn btn-edit" @click="isEditing = !isEditing">
-                    <PencilIcon class="icon" />
-                    Edit
-                </button>
+            <!-- Edit and share buttons -->
+            <!-- Top-right absolute on desktop layout -->
+            <div class="lg:absolute right-0 top-0 p-3">
+                <div class="flex justify-center items-center">
+                    <div v-if="!isCreating()" class="h-12 px-2">
+                        <button class="btn btn-edit" @click="share">
+                            <LinkIcon class="icon" />
+                            Share
+                        </button>
+                    </div>
+                    <div v-if="canEdit" class="h-12 px-2">
+                        <button v-if="isEditing" class="btn btn-save" @click="saveChanges">
+                            <PencilIcon class="icon" />
+                            Save
+                        </button>
+                        <button v-else class="btn btn-edit" @click="isEditing = !isEditing">
+                            <PencilIcon class="icon" />
+                            Edit
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Form field container -->
@@ -77,7 +88,7 @@ import SongService from '../services/song.js'
 import UserService from '../services/user.js'
 import Toast from '../utilities/toast.js'
 import Swal from 'sweetalert2'
-import { PencilIcon, PlusIcon } from '@heroicons/vue/24/solid'
+import { PencilIcon, PlusIcon, LinkIcon } from '@heroicons/vue/24/solid'
 import { useRoute, useRouter } from 'vue-router';
 import { computed, reactive, ref, watch, onMounted } from 'vue';
 
@@ -115,10 +126,7 @@ function createPlaylist() {
         visibility: playlist.visibility,
     }
     PlaylistService.createPlaylist(playlistData).then((data) => {
-        Toast.fire({
-            title: 'Playlist created',
-            icon: 'success',
-        })
+        Toast.fireSuccess('Playlist created')
         router.push('playlists/' + data.id) // Go to the playlists's page
     }).catch((err) => {
         Swal.fire({
@@ -152,10 +160,7 @@ function saveChanges() {
         visibility: playlist.visibility.id,
         songs: playlist.songs,
     }).then(() => {
-        Toast.fire({
-            title: 'Playlist updated',
-            icon: 'success',
-        })
+        Toast.fireSuccess('Playlist updated')
         // Only exit edit mode if the request was successful,
         // so the user can quickly retry in case of failure.
         isEditing.value = !isEditing.value
@@ -166,6 +171,15 @@ function saveChanges() {
             icon: 'error',
         })
     })
+}
+
+async function share() {
+    try {
+        await navigator.clipboard.writeText(window.location.href);
+        Toast.fireSuccess('Link copied to clipboard')
+    } catch {
+        Toast.fireError('Failed to copy link')
+    }
 }
 
 // Fetches and assigns playlist data reactive,

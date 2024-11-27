@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import HTTPException
 from models.question import Question, QuestionInput, QuestionResponse, ResponseEnum
 from crud.question import get_questions_by_listener, get_questions_by_artist, submit_question, get_question_by_id, response_question
-from tests.utils import create_random_artist, create_random_listener, get_session
+from tests.utils import create_artist, create_listener, get_session
 
 @pytest.fixture(scope="function")
 def db_session():
@@ -20,8 +20,8 @@ def db_session():
 
 # Test: Get questions by listener username
 def test_get_questions_by_listener(db_session):
-    listener = create_random_listener(db_session)
-    artist = create_random_artist(db_session)
+    listener = create_listener(db_session)
+    artist = create_artist(db_session)
 
     question = Question(listener_id=listener.listener_id, artist_id=artist.artist_id, question_text="What is your favorite song?", question_date=datetime.utcnow())
     db_session.add(question)
@@ -31,10 +31,15 @@ def test_get_questions_by_listener(db_session):
     assert len(retrieved_questions) > 0
     assert retrieved_questions[0].listener_id == listener.listener_id
 
+    # Delete data created
+    db_session.delete(listener.user)
+    db_session.delete(artist.user)
+    db_session.commit()
+
 # Test: Get questions by artist username
 def test_get_questions_by_artist(db_session):
-    listener = create_random_listener(db_session)
-    artist = create_random_artist(db_session)
+    listener = create_listener(db_session)
+    artist = create_artist(db_session)
 
     question = Question(listener_id=listener.listener_id, artist_id=artist.artist_id, question_text="What is your favorite song?", question_date=datetime.utcnow())
     db_session.add(question)
@@ -44,10 +49,15 @@ def test_get_questions_by_artist(db_session):
     assert len(retrieved_questions) > 0
     assert retrieved_questions[0].artist_id == artist.artist_id
 
+    # Delete data created
+    db_session.delete(listener.user)
+    db_session.delete(artist.user)
+    db_session.commit()
+
 # Test: Submit a question
 def test_submit_question(db_session):
-    listener = create_random_listener(db_session)
-    artist = create_random_artist(db_session)
+    listener = create_listener(db_session)
+    artist = create_artist(db_session)
 
     question_input = QuestionInput(
         artist_username=artist.user.username,
@@ -62,10 +72,15 @@ def test_submit_question(db_session):
     assert question.question_text == "What is your favorite song?"
     assert question.response_status == ResponseEnum.waiting
 
+    # Delete data created
+    db_session.delete(listener.user)
+    db_session.delete(artist.user)
+    db_session.commit()
+
 # Test: Get question by id
 def test_get_question_by_id(db_session):
-    listener = create_random_listener(db_session)
-    artist = create_random_artist(db_session)
+    listener = create_listener(db_session)
+    artist = create_artist(db_session)
 
     question = Question(listener_id=listener.listener_id, artist_id=artist.artist_id, question_text="What is your favorite song?", question_date=datetime.utcnow())
     db_session.add(question)
@@ -75,10 +90,15 @@ def test_get_question_by_id(db_session):
     assert retrieved_question is not None
     assert retrieved_question.question_id == question.question_id
 
+    # Delete data created
+    db_session.delete(listener.user)
+    db_session.delete(artist.user)
+    db_session.commit()
+
 # Test: Response to a question
 def test_response_question(db_session):
-    listener = create_random_listener(db_session)
-    artist = create_random_artist(db_session)
+    listener = create_listener(db_session)
+    artist = create_artist(db_session)
 
     question = Question(listener_id=listener.listener_id, artist_id=artist.artist_id, question_text="What is your favorite song?", question_date=datetime.utcnow())
     db_session.add(question)
@@ -90,12 +110,17 @@ def test_response_question(db_session):
     assert answered_question.response_status == ResponseEnum.answered
     assert answered_question.response_text == "I love this song!"
 
+    # Delete data created
+    db_session.delete(listener.user)
+    db_session.delete(artist.user)
+    db_session.commit()
+
 # Test: Artist not answering others question
 def test_artist_cannot_answer_others_question(db_session):
-    # Create two listeners and two artists
-    listener = create_random_listener(db_session)
-    artist_1 = create_random_artist(db_session)
-    artist_2 = create_random_artist(db_session)
+    # Create listeners and two artists
+    listener = create_listener(db_session)
+    artist_1 = create_artist(db_session)
+    artist_2 = create_artist(db_session, "artist2")
 
     # Listener asks a question to artist_1
     question_input = QuestionInput(
@@ -114,3 +139,9 @@ def test_artist_cannot_answer_others_question(db_session):
     # Assert the exception is due to forbidden access
     assert excinfo.value.status_code == 403
     assert excinfo.value.detail == "This artist cannot answer this question."
+
+    # Delete data created
+    db_session.delete(listener.user)
+    db_session.delete(artist_1.user)
+    db_session.delete(artist_2.user)
+    db_session.commit()

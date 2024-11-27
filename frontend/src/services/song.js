@@ -1,5 +1,5 @@
 // TODO readd when integrating API
-// import axios from './baseAxiosClient';
+import axios from './baseAxiosClient';
 // import UserService from './user'
 
 class SongService {
@@ -22,6 +22,41 @@ class SongService {
         } catch (error) {
             throw error;
         }
+    }
+    /*async addSong(songInput) {
+        try {
+            const response = await axios.post('/songs/', songInput, this.getConfig());
+            return response.data; // Retorna los datos de la respuesta
+        } catch (error) {
+            throw error; // Lanza el error para manejarlo en el frontend
+        }
+    }*/
+   async addSong(songInput) {
+    axios.post('/api/songs', songInput)
+    .then(response => {
+        if (response && response.data) {
+            console.log('Song created successfully:', response.data);
+        } else {
+            console.error('Unexpected response format:', response);
+        }
+    })
+    .catch(error => {
+        if (error.response) {
+            console.error('Backend error:', error.response.data); // Error desde el servidor
+        } else if (error.request) {
+            console.error('No response received:', error.request); // El servidor no respondió
+        } else {
+            console.error('Error setting up the request:', error.message); // Error en el frontend
+        }
+    });
+   }
+
+    getConfig() {
+        return {
+            headers: {
+                Authorization: `Bearer ${Cookies.get('auth_token')}`,
+            }
+        };
     }
 }
 

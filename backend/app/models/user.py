@@ -1,10 +1,19 @@
 """ Models """
 from typing import Optional
-from sqlalchemy import Column, Integer, String, Enum
+from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime
+from sqlalchemy.sql import func
 from core.config import Base
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, HttpUrl
 import re
 import enum
+
+# Follow relationship between listeners and artists
+class ListenerArtistLink(Base):
+    __tablename__ = "listener_artist_link"
+
+    listener_id = Column(Integer, ForeignKey('listeners.listener_id', ondelete="CASCADE"), primary_key=True)
+    artist_id = Column(Integer, ForeignKey('artists.artist_id', ondelete="CASCADE"), primary_key=True)
+    follow_date = Column(DateTime, default=func.now(), nullable=False)
 
 # Enum for profile visibility
 class VisibilityEnum(enum.Enum):
@@ -29,6 +38,7 @@ class User(Base):
     genre = Column(String, nullable=True)
     visibility = Column(Enum(VisibilityEnum), default=VisibilityEnum.public)
     role = Column(Enum(RoleEnum), default=None, nullable=True)
+    image_url = Column(String, default=None, nullable=True)
 
 # Validation mixin class
 class UserValidationMixin(BaseModel):
@@ -52,6 +62,19 @@ class UserValidationMixin(BaseModel):
         if not re.match(r'^[a-zA-Z_0-9]{4,16}$', v):
             raise ValueError('Username must be 4-16 characters long, containing only letters, numbers, and underscores.')
         return v
+    
+    # Validator for image URL
+    @field_validator('image_url', check_fields=False)
+    def validate_image_url(cls, v):
+        if v is not None:
+            # Convert HttpUrl object to string
+            url_str = str(v)
+
+            # Check if the URL ends with a valid image extension
+            valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg')
+            if not url_str.lower().endswith(valid_extensions):
+                raise ValueError("Invalid image URL format.")
+        return v
 
 # Input user for login
 class UserLogin(UserValidationMixin):
@@ -74,6 +97,8 @@ class UserInput(UserLogin):
     description: Optional[str] = None
     genre: Optional[str] = None
     visibility: Optional[VisibilityEnum] = VisibilityEnum.public
+    role: Optional[RoleEnum] = RoleEnum.listener
+    image_url: Optional[HttpUrl] = None
 
 # Output user
 class UserOutput(BaseModel):
@@ -82,6 +107,7 @@ class UserOutput(BaseModel):
     description: Optional[str] = None
     genre: Optional[str] = None
     visibility: VisibilityEnum
+    role: RoleEnum
 
     # Pydantic V2 configuration for ORM mode
     model_config = {'from_attributes': True}

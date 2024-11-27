@@ -3,10 +3,12 @@ import string
 from core.config import get_db
 from main import app
 from fastapi.testclient import TestClient
-from models.user import UserInput, UserLogin
+from models.user import UserInput, UserLogin, RoleEnum
 from crud.user import authenticate, create_user
-from crud.artist import create_artist
-from crud.listener import create_listener
+from crud.listener import get_listener_by_user_id
+from crud.artist import get_artist_by_user_id
+from models.song import SongInput
+from crud.song import create_song
 
 def random_lower_string() -> str:
     return "".join(random.choices(string.ascii_lowercase, k=10))
@@ -36,9 +38,32 @@ def get_session():
 def get_client():
     return TestClient(app)
 
+def create_artist(db, name="artist"):
+    user_input = UserInput(email=f"{name}@{name}.com", username=name, password=name, role=RoleEnum.artist)
+    user = create_user(db, user_input)
+    return get_artist_by_user_id(db, user.id)
+
+def create_listener(db, name="listener"):
+    user_input = UserInput(email=f"{name}@{name}.com", username=name, password=name, role=RoleEnum.listener)
+    user = create_user(db, user_input)
+    return get_listener_by_user_id(db, user.id)
+
 def create_random_artist(db):
-    return create_artist(db, create_random_user(db))
+    username = random_lower_string()
+    password = random_lower_string()
+    email = f"{username}@{username}.com"
 
-def create_random_listener(db):
-    return create_listener(db, create_random_user(db))
+    user_input = UserInput(username=username, email=email, password=password, role=RoleEnum.artist)
+    user = create_user(db, user_input)
 
+    return get_artist_by_user_id(db, user.id)
+
+def create_random_song(db, artist_name):
+    song_data = {
+        "title": random_lower_string(),
+        "album": random_lower_string(),
+        "genre": random_lower_string(),
+        "release_date": "2024-11-26",
+        "artist_name": artist_name
+    }
+    return create_song(db, SongInput(**song_data))
