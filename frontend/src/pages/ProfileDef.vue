@@ -13,12 +13,17 @@
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
                 <div class="sm:flex min-h-32 relative">
-                    <!-- Avatar and username -->
+                    <!-- Avatar and username -->                        
                     <div class="flex items-end">
-                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black"
-                            src="../assets/images/avatar.svg" />
-                        <!-- TODO ensure contrast vs banner -->
-                        <p class="ms-3 font-bold text-lg text-white" data-test="label-username">{{ getUsername() }}</p>
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
+                        <div class="ms-3 flex flex-col items-start">
+                            <!-- TODO ensure contrast vs banner -->
+                            <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
+                            <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
+                                <ChatBubbleBottomCenterTextIcon class="icon" />
+                                Ask me something!
+                            </button>
+                        </div>
                     </div>
 
                     <div class="mx-auto my-3"></div>
@@ -135,12 +140,13 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import FooterComponent from '../components/FooterComponent.vue';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 import UserService from '../services/user.js'
+import QuestionService from '../services/question.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
 import Cookies from 'js-cookie';
 import { computed, onMounted, ref, watch, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/solid'
+import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon, PlusIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/vue/24/solid'
 
 const router = useRouter()
 const route = useRoute()
@@ -156,6 +162,8 @@ const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "
 const errorMsg = ref(null) // Error message from profile load request.
 const isEditing = ref(false) // Whether the profile is being edited.
 const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
+const isArtist = ref(null);
+
 // Profile data. Field names should match the API ones.
 const user = reactive({
     genre: '',
@@ -186,6 +194,15 @@ async function fetchUserData() {
     } finally {
         // Mark the page as loaded in either case
         isLoaded.value = true
+    }
+}
+
+async function fetchUserRole() {
+    try {
+        const userRole = await UserService.getUserRole(getUsername());
+        isArtist.value = userRole === "artist";
+    } catch (error) {
+        console.error("Error fetching user role:", error);
     }
 }
 
@@ -262,6 +279,68 @@ function deleteAccount() {
     });
 }
 
+function askQuestion() {
+    Swal.fire({
+        title: 'Ask me something!',
+        html: `
+           <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+               <textarea 
+                   id="swal-input" 
+                   class="swal2-textarea" 
+                   maxlength="500" 
+                   style="width: 100%; max-width: 500px; height: 100px; resize: none; padding: 10px; box-sizing: border-box;" 
+                   placeholder="Type your question here..."></textarea>
+               <div 
+                   id="char-counter" 
+                   style="width: 100%; max-width: 500px; text-align: right; font-size: 0.9em; color: #555; margin-top: 5px;">
+                   0/500 characters
+               </div>
+           </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Send',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const question = document.getElementById('swal-input').value;
+            // Check text (can't be empty)
+            if (!question || question.trim().length === 0) {
+                Swal.showValidationMessage('The question cannot be empty');
+                return false;
+            } else {
+                return question;
+            }
+        },
+        didOpen: () => {
+            const input = document.getElementById('swal-input');
+            const counter = document.getElementById('char-counter');
+
+            input.addEventListener('input', () => {
+                const charCount = input.value.length;
+                counter.textContent = `${charCount}/500 characters`;
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            QuestionService.newQuestion(getUsername(), result.value)
+                .then(() => {
+                    Toast.fire({
+                        title: 'Your question has been sent successfully!',
+                        icon: 'success',
+                    });
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to send the question: ' + (err.response ? err.response.data.detail : err.message),
+                        icon: 'error',
+                    });
+                });
+        }
+    });
+}
+
+
+
 function goToPlaylistCreator(){
     router.push('/playlists/new');
 }
@@ -301,12 +380,14 @@ watch(
     () => route.params,
     (newId) => {
         fetchUserData(newId)
+        fetchUserRole()
     }
 )
 
 // Fetch user data when the page is accessed from another one.
 onMounted(function () {
     fetchUserData(getUsername())
+    fetchUserRole()
 })
 
 </script>
@@ -380,6 +461,16 @@ onMounted(function () {
 
 .details-field-editable {
     @apply bg-gray-50 border border-gray-300 rounded-lg
+}
+
+.center-swal-popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* Esto puede ser ajustado si es necesario */
+    min-width: 320px; /* Un ancho mínimo para la ventana emergente */
+    max-width: 600px; /* Ancho máximo de la ventana emergente */
+    width: 90%; /* Puedes ajustarlo según lo que prefieras */
 }
 
 @media (max-width: 900px) {
