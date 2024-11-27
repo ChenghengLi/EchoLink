@@ -26,7 +26,8 @@ def create_user(db: Session, user_input: UserInput) -> User:
         description=user_input.description,
         genre=user_input.genre,
         visibility=user_input.visibility,
-        role=user_input.role
+        role=user_input.role,
+        image_url=str(user_input.image_url) if user_input.image_url else None
     )
     db.add(user)
     db.commit()

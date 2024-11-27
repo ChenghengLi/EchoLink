@@ -5,10 +5,11 @@ from core.config import engine
 from core.config import Base
 from routes import user, test, login, question, artist
 # Importing them ensures SQLAlchemy creates their tables.
-from models.user import User  # noqa: F401
+from models.user import User, ListenerArtistLink  # noqa: F401
 from models.artist import Artist  # noqa: F401
 from models.listener import Listener # noqa: F401
 from models.question import Question # noqa: F401
+from models.song import Song # noqa: F401
 
 # Initialize the FastAPI app with the lifespan context manager
 app = FastAPI(lifespan=lifespan)
@@ -33,4 +34,4 @@ app.include_router(test.router, prefix="/test", tags=["Test"])
 app.include_router(login.router, prefix="/login", tags=["Login"])
 app.include_router(question.router, prefix="/questions", tags=["Questions"])
 app.include_router(artist.router, prefix="/artists", tags=["Artists"])
-
+app.include_router(artist.router, prefix="/songs", tags=["Songs"])
