@@ -15,4 +15,18 @@ const Toast = Swal.mixin({
     timerProgressBar: false,
 })
 
+// Shorthands for common configs.
+Toast.fireSuccess = function (msg) {
+    this.fire({
+        title: msg,
+        icon: 'success',
+    })
+}
+Toast.fireError = function (msg) {
+    this.fire({
+        title: msg,
+        icon: 'error',
+    })
+}
+
 export default Toast
