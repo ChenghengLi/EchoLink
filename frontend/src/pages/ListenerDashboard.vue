@@ -2,7 +2,21 @@
     <div class="home-two-light home-light container">
         <HeaderComponent />
         <div class="mx-auto w-100">
-            <!-- TODO welcome back message -->
+            <div class="banner content-block mx-auto w-100 mt-8 mb-4">
+                <!-- Inner banner area -->
+                <div class="sm:flex min-h-32 relative">
+                    <!-- Avatar and username -->
+                    <div class="flex items-center mx-auto">
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
+                        
+                        <!-- TODO ensure contrast vs banner -->
+                        <div class="flex flex-col items-start ms-3">
+                            <p class="font-bold text-lg text-white">Welcome back, {{ getUsername() }}</p>
+                            <p class="text-md text-white">See what's new on EchoLink.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Latest tracks -->
             <div class="px-4 mx-auto">
@@ -14,10 +28,10 @@
                     <div class="flex-grow"/>
 
                     <!-- Song list -->
-                    <div class="flex flex-col items-center flex-grow">
+                    <div class="flex flex-col items-center flex-grow max-w-xl">
                         <!-- TODO if empty, show message -->
-                        <SongList v-model="shownSongs" :editable=false />
-                        <button v-if="shownSongsAmount <= songs.length" class="btn btn-blue w-32 mt-2" @click="showMoreSongs"> <!-- Don't show the button if all tracks are already being shown. -->
+                        <SongList class="flex-grow" v-model="shownSongs" :editable=false />
+                        <button v-if="shownSongsAmount < validSongs.length" class="btn btn-blue w-32 mt-2" @click="showMoreSongs"> <!-- Don't show the button if all tracks are already being shown. -->
                             <PlusIcon class="icon" />
                             Show more
                         </button>
@@ -26,7 +40,7 @@
                     <div class="mx-2 my-2"/> <!-- Spacing -->
 
                     <!-- Search and filters -->
-                    <div class="content-block max-h-min flex-grow max-w-lg">
+                    <div class="content-block max-h-min max-w-lg lg:min-w-96">
                         <p class="section-header mb-2">Filter</p>
                         
                         <TextInput label="Search" placeholder="Search by name or artist..." input-type="text" :value="search.text" @changed="search.text = $event"></TextInput>
@@ -37,9 +51,9 @@
                     <div class="flex-grow"/>
                 </div>
                 <p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
-
-                <hr class="h-divider"/>
             </div>
+
+            <hr class="h-divider my-5"/>
 
             <!-- Browse artists -->
             <div class="mx-auto">
@@ -63,6 +77,7 @@ import { PlusIcon } from '@heroicons/vue/24/solid'
 import OptionSelector from '../components/form/OptionSelector.vue';
 import ArtistsList from '../components/ArtistsList.vue';
 import SongList from '../components/SongList.vue';
+import UserService from '../services/user.js'
 import SongService from '../services/song.js'
 import { computed, ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -105,14 +120,21 @@ function showMoreSongs() {
     shownSongsAmount.value += LATEST_SONGS_STEP
 }
 
-const shownSongs = computed(() => {
-    console.log(search.genre)
-    let results = songs.filter((song) => {
+const validSongs = computed(() => {
+    const results = songs.filter((song) => {
         return (search.text === '' || song.fullTitle.includes(search.text)) && (search.genre === null || search.genre.id === song.genre)
     })
-    results = results.slice(0, shownSongsAmount.value)
     return results
 })
+
+const shownSongs = computed(() => {
+    const results =  validSongs.value.slice(0, shownSongsAmount.value)
+    return results
+})
+
+function getUsername() {
+    return UserService.getCurrentUsername()
+}
 
 // Fetch song data when the page is accessed.
 onMounted(function () {
@@ -132,10 +154,6 @@ onMounted(function () {
     min-height: 100vh; /* Ensure the container takes the full height of the viewport */
 }
 
-.content-block {
-    @apply p-4 border-2 rounded-lg border-indigo-100 bg-indigo-200
-}
-
 .footer-light {
     width: 100vw;
 }
@@ -152,6 +170,11 @@ onMounted(function () {
 .btn-blue:hover,
 .btn-blue:focus {
     @apply bg-blue-700;
+}
+
+.banner {
+    background-image: url("../assets/images/broadcast-bg.png");
+    @apply bg-cover
 }
 
 </style>
