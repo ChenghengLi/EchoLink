@@ -101,7 +101,7 @@
 
                 <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
                     <!-- TODO better accessibility -->
-                    <div v-for="(question, i) in unansweredQuestions" v-if="unansweredQuestions.length > 0" class="question relative group" @mouseover="hoveredQuestions.add(i)" @mouseleave="hoveredQuestions.delete(i)" @click="answerQuestion(question)" :tabindex="i">
+                    <div v-for="(question, i) in unansweredQuestions" v-if="unansweredQuestions.length > 0" class="question relative group" @mouseover="hoveredQuestions.add(i)" @mouseleave="hoveredQuestions.delete(i)" @click="answerQuestion(question.question_text, question.question_id)" :tabindex="i">
                         <div class="absolute right-2 top-2 d-flex flex-column flex-md-row ml-auto mr-md-0" >
                             <button class="btn btn-blue p-2 max-w-min text-nowrap" :class="{'invisible': !hoveredQuestions.has(i)}"
                                 data-test="button-edit">
@@ -133,6 +133,8 @@ import HeaderComponent from '../components/HeaderComponent.vue';
 import FooterComponent from '../components/FooterComponent.vue';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 import ErrorPanel from '../components/ErrorPanel.vue';
+import Swal from 'sweetalert2';
+import Toast from '../utilities/toast.js'
 import UserService from '../services/user.js'
 import QuestionService from '../services/questions.js'
 import { onMounted, ref, reactive, computed } from 'vue';
@@ -177,14 +179,112 @@ async function fetchArtistData() {
         isLoaded.value = true
     }
 }
+async function fetchQuestions() {
+    try {
+        Object.assign(questions, await QuestionService.getUserQuestions());
+        errorMsg.value = null; 
+    } catch (err) {
+        errorMsg.value = err.response ? err.response.data.detail : err.message;
+    }
+}
 
 const unansweredQuestions = computed(() => {
     const unansweredQuestions = questions.filter((question) => question.response_status === 'waiting')
     return unansweredQuestions
 })
 
-function answerQuestion(question) {
-    alert('TODO')
+function answerQuestion(questionText, questionId) {
+    Swal.fire({
+        html: `
+           <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+               <div 
+                   style="width: 100%; max-width: 500px; padding: 10px; background-color: #f9f9f9; border-radius: 5px; margin-bottom: 15px; box-sizing: border-box; text-align: left;">
+                   <strong>Question:</strong>
+                   <p style="margin: 0; font-size: 1em; color: #333;">${questionText}</p>
+               </div>
+               <textarea 
+                   id="swal-input" 
+                   class="swal2-textarea" 
+                   maxlength="500" 
+                   style="width: 100%; max-width: 500px; height: 100px; resize: none; padding: 10px; box-sizing: border-box;" 
+                   placeholder="Type your response here..."></textarea>
+               <div 
+                   id="char-counter" 
+                   style="width: 100%; max-width: 500px; text-align: right; font-size: 0.9em; color: #555; margin-top: 5px;">
+                   0/500 characters
+               </div>
+           </div>
+        `,
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: 'Send Response',
+        denyButtonText: 'Reject Question',
+        cancelButtonText: 'Cancel',
+        preConfirm: () => {
+            const response = document.getElementById('swal-input').value;
+            if (!response || response.trim().length === 0) {
+                Swal.showValidationMessage('The response cannot be empty');
+                return false;
+            } else {
+                return response;
+            }
+        },
+        didOpen: () => {
+            const input = document.getElementById('swal-input');
+            const counter = document.getElementById('char-counter');
+
+            input.addEventListener('input', () => {
+                const charCount = input.value.length;
+                counter.textContent = `${charCount}/500 characters`;
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed && result.value) {
+            QuestionService.answerQuestion(result.value, questionId)
+                .then(() => {
+                    Toast.fire({
+                        title: 'Your response has been sent successfully!',
+                        icon: 'success',
+                    });
+                    fetchQuestions();
+                })
+                .catch((err) => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Failed to send the response: ' + (err.response ? err.response.data.detail : err.message),
+                        icon: 'error',
+                    });
+                });
+        } else if (result.isDenied) {
+            // Reject the question
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This will reject the question and it cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, reject it',
+                cancelButtonText: 'No, keep it'
+            }).then((confirmation) => {
+                if (confirmation.isConfirmed) {
+                    QuestionService.rejectQuestion("", questionId)
+                        .then(() => {
+                            Toast.fire({
+                                title: 'The question has been rejected.',
+                                icon: 'success',
+                            });
+                            fetchQuestions();
+                        })
+                        .catch((err) => {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to reject the question: ' + (err.response ? err.response.data.detail : err.message),
+                                icon: 'error',
+                            });
+                        });
+                }
+            });
+        }
+    });
 }
 
 function scrollToQuestions() {
