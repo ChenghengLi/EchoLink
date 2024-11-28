@@ -9,10 +9,12 @@
                 <h2>Explore tracks</h2>
                 <p>Be the first to hear what's new on EchoLink, or find new tracks from your favourite genres.</p>
 
-                <div v-if="songsError === null" class="flex">
-                    <!-- TODO mobile layout -->
+                <div v-if="songsError === null" class="flex flex-col-reverse lg:flex-row content-center w-100">
+                    <!-- I actually have no idea why I cannot get the children to be centered. Had to rely on this ugly hack of having 2 growing elems on the sides. TODO -->
+                    <div class="flex-grow"/>
+
                     <!-- Song list -->
-                    <div class="flex flex-col items-center">
+                    <div class="flex flex-col items-center flex-grow">
                         <!-- TODO if empty, show message -->
                         <SongList v-model="shownSongs" :editable=false />
                         <button v-if="shownSongsAmount <= songs.length" class="btn btn-blue w-32 mt-2" @click="showMoreSongs"> <!-- Don't show the button if all tracks are already being shown. -->
@@ -21,7 +23,7 @@
                         </button>
                     </div>
 
-                    <div class="mx-2"/>
+                    <div class="mx-2 my-2"/> <!-- Spacing -->
 
                     <!-- Search and filters -->
                     <div class="content-block max-h-min flex-grow max-w-lg">
@@ -31,6 +33,8 @@
 
                         <OptionSelector v-model="search.genre" :options="genres" label="Genre" track-by="id" option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
                     </div>
+
+                    <div class="flex-grow"/>
                 </div>
                 <p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
 
