@@ -70,8 +70,8 @@ function logIn(){
             title: 'Log in successful!',
             icon: 'success',
         });
-        router.push('/') // Go to homepage
         Cookies.set('logged_in', 'true', { expires: 7 }) // Expire login flag after 7 days
+        router.push('/') // Go to homepage
     }).catch((err) => {
         Swal.fire({
             title: 'Log in failed',
