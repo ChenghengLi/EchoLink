@@ -16,7 +16,7 @@ def create_artist(db: Session, user: User) -> Artist:
     # Create a new artist
     artist = Artist(
         user_id=user.id,
-        name="TBD"
+        name=user.username
     )
 
     # Save to the database

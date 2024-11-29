@@ -58,6 +58,16 @@ def create_random_artist(db):
 
     return get_artist_by_user_id(db, user.id)
 
+def create_random_listener(db):
+    username = random_lower_string()
+    password = random_lower_string()
+    email = f"{username}@{username}.com"
+
+    user_input = UserInput(username=username, email=email, password=password, role=RoleEnum.listener)
+    user = create_user(db, user_input)
+
+    return get_listener_by_user_id(db, user.id)
+
 def create_random_song(db, artist_name):
     song_data = {
         "title": random_lower_string(),
