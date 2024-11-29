@@ -39,6 +39,24 @@ export default  [
             path: '/dashboard/',
             name: 'Artist Dashboard',
             component: ArtistDashboard,
+            beforeEnter: async (to, from, next) => {
+                try {
+                    if (!UserService.isLoggedIn()) {
+                        // Redirect to login page if no user is authenticated
+                        next('/login');
+                        return;
+                    }
+        
+                    const role = await UserService.getUserRole(UserService.getCurrentUsername()); 
+                    if (role === 'artist') {
+                        next(); 
+                    } else {
+                        next('/'); // Redirect to the homepage if the user is not an artist
+                    }
+                } catch (error) {
+                    next('/'); // Redirect to the homepage in case of an error
+                }
+            },
         },
         {
             path: '/uploadTrack',
