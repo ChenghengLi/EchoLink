@@ -34,6 +34,7 @@ class SongInput(BaseModel):
 
 # Pydantic model for song output
 class SongOutput(BaseModel):
+    song_id: int
     title: str
     album: Optional[str] = None
     genre: Optional[str] = None
@@ -42,3 +43,4 @@ class SongOutput(BaseModel):
 
     # Use ConfigDict for Pydantic v2
     model_config = ConfigDict(from_attributes=True)
+    

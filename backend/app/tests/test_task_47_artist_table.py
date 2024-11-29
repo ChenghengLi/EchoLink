@@ -29,6 +29,11 @@ def test_get_artist_by_user_id(db_session):
     assert retrieved_artist is not None
     assert retrieved_artist.name == "Test Artist"
 
+    # Clean up
+    db_session.delete(artist)
+    db_session.delete(user)
+    db_session.commit()
+
 # Test: Create an Artist
 def test_create_artist(db_session):
     user = create_random_user(db_session)
@@ -37,6 +42,11 @@ def test_create_artist(db_session):
 
     db_session.refresh(artist)
     assert artist.user_id == user.id
+
+    # Clean up
+    db_session.delete(artist)
+    db_session.delete(user)
+    db_session.commit()
 
 # Test: Deleting User Cascades to Artist
 def test_cascade_delete_user_deletes_artist(db_session):
