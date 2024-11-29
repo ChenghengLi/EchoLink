@@ -1,7 +1,7 @@
 <template>
-    <section class="section artists pb-0">
+    <section class="section artists pb-0 pt-0">
         <div class="container">
-            <div class="row justify-content-center">
+            <div v-if="showHeader" class="row justify-content-center">
                 <div class="col-12 col-xl-8">
                     <div data-wow-duration="600ms" data-wow-delay="300ms" class="section__header wow fadeInUp">
                         <h2 class="h2">Artists</h2>
@@ -80,7 +80,7 @@
             }
             return this.artists.filter(
                 artist =>
-                artist.name.toLowerCase().includes(query) || // Filtrar por nombre
+                artist.username.toLowerCase().includes(query) || // Filtrar por nombre
                 artist.genre.toLowerCase().includes(query)  // Filtrar por género
             );
         },
@@ -99,6 +99,7 @@
         }
       }
     },
+    props: ['showHeader'],
     created(){
       this.fetchArtists();
     }
