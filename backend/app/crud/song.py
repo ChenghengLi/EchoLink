@@ -36,8 +36,19 @@ def get_artist_by_song_id(db: Session, song_id: int) -> Artist:
     return song.artist
 
 # Get all songs
-def get_all_songs(db: Session):
-    return db.query(Song).all()
+def get_all_songs(db: Session) -> list[SongOutput]:
+    songs = db.query(Song).all()
+    return [
+        SongOutput(
+            song_id=song.song_id,
+            title=song.title,
+            album=song.album,
+            genre=song.genre,
+            release_date=song.release_date,
+            artist_name=song.artist.user.username
+        )
+        for song in songs
+    ]
 
 # Create a song
 def create_song(db: Session, song_data: SongInput) -> SongOutput:
