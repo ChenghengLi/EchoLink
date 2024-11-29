@@ -53,7 +53,7 @@ export default  [
                     } else {
                         next('/'); // Redirect to the homepage if the user is not an artist
                     }
-                } catch (error) {
+                } catch {
                     next('/'); // Redirect to the homepage in case of an error
                 }
             },
