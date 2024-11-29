@@ -99,7 +99,9 @@
         }
       }
     },
-    props: ['showHeader'],
+    props: {
+      showHeader: Boolean
+    },
     created(){
       this.fetchArtists();
     }

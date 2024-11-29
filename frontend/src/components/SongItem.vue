@@ -31,20 +31,20 @@
 
 <script setup>
 import { MusicalNoteIcon, TrashIcon, Bars3Icon } from '@heroicons/vue/24/solid'
-import { computed } from 'vue';
 
-const props = defineProps({
+defineProps({
     "song": Object, // TODO adjust all usages once specs are final
     "showHandle": Boolean, // Whether to show a drag handle.
     "showDelete": Boolean, // Whether to show a delete button.
     "prefix": String, // String to prefix before artist and title.
 })
 
-const duration = computed(() => {``
-    let seconds = `${props.song.duration % 60}`
-    seconds = seconds.padStart(3 - seconds.length, 0)
-    return `${Math.floor(props.song.duration / 60)}:${seconds}` // Assumes duration is in seconds
-})
+// TODO readd once we add song durations to API
+// const duration = computed(() => {``
+//     let seconds = `${props.song.duration % 60}`
+//     seconds = seconds.padStart(3 - seconds.length, 0)
+//     return `${Math.floor(props.song.duration / 60)}:${seconds}` // Assumes duration is in seconds
+// })
 
 </script>
 
