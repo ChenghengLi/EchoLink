@@ -97,12 +97,12 @@ const search = reactive({
 
 async function fetchSongs() {
     try {
-        const newData = await SongService.getAll()
-        for (const index in newData.songs) {
-            const song = newData.songs[index]
+        const fetchedSongs = await SongService.getAll()
+        for (const index in fetchedSongs) {
+            const song = fetchedSongs[index]
 
             // Add an extra field to improve vue-multiselect search support (since it only supports searching by one key)
-            song.fullTitle = `${song.artist} - ${song.title}`
+            song.fullTitle = `${song.artist_name} - ${song.title}`
 
             // Track all used genres
             if (!registeredGenres.value.has(song.genre)) {
@@ -110,7 +110,7 @@ async function fetchSongs() {
                 registeredGenres.value.add(song.genre)
             }
         }
-        Object.assign(songs, newData.songs)
+        Object.assign(songs, fetchedSongs)
     } catch (err) {
         songsError.value = (err.response) ? err.response.data.detail : err.message
     }
