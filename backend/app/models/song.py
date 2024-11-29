@@ -19,6 +19,9 @@ class Song(Base):
     # Relationship with Artist
     artist = relationship("Artist", back_populates="songs")
 
+    # Relationship with Playlist
+    playlists = relationship("Playlist", secondary="playlist_songs", back_populates="songs")
+
 
 # Pydantic model for song input
 class SongInput(BaseModel):

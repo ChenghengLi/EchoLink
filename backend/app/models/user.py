@@ -2,6 +2,7 @@
 from typing import Optional
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 from core.config import Base
 from pydantic import BaseModel, field_validator, HttpUrl
 import re
@@ -39,6 +40,9 @@ class User(Base):
     visibility = Column(Enum(VisibilityEnum), default=VisibilityEnum.public)
     role = Column(Enum(RoleEnum), default=None, nullable=True)
     image_url = Column(String, default=None, nullable=True)
+
+    # Relationship with Playlist
+    playlists = relationship("Playlist", back_populates="user", cascade="all, delete-orphan")
 
 # Validation mixin class
 class UserValidationMixin(BaseModel):
