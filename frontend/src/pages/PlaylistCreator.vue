@@ -57,7 +57,7 @@
             <div v-if="isEditing" class="mt-3">
                 <label for="songSelector" class="block text-sm font-medium text-left ml-1 mb-2" >Add song</label>
                 <div class="flex items-center">
-                    <Multiselect v-model="songToAdd" :options="songs" :track-by="'id'" :label="'fullTitle'" :allow-empty="false" :searchable="true" id="songSelector"></Multiselect>
+                    <Multiselect v-model="songToAdd" :options="songs" :track-by="'song_id'" :label="'fullTitle'" :allow-empty="false" :searchable="true" id="songSelector"></Multiselect>
                     <button v-if="isEditing" class="btn btn-save ml-3 mb-0" :disabled="!canAddSong" @click="addSong">
                         <PlusIcon class="icon" />
                         Add

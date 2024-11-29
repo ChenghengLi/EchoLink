@@ -9,12 +9,14 @@
 
             <!-- Artist & title -->
             <span class="mx-3">
-                {{ prefix ? prefix : ''}} {{ song.artist }} - {{  song.title }}
+                {{ prefix ? prefix : ''}} {{ song.artist_name }} - {{  song.title }}
             </span>
 
             <div class="mx-auto"></div>
 
-            <span class="mx-3">{{ duration }}</span>
+            <!-- TODO readd when we get duration field -->
+            <!-- <span class="mx-3">{{ duration }}</span> -->
+            <span class="mx-3">{{ song.genre }}</span>
 
             <!-- Edition controls -->
             <!-- TODO how the fuck could reorder be made accessible? -->
