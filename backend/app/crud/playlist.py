@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from models.playlist import Playlist, PlaylistInput, PlaylistUpdate
 from typing import Optional
+from models.user import User
 
 # Create a new playlist
 def create_playlist(db: Session, playlist_data: PlaylistInput, user_id: int) -> Playlist:
@@ -18,6 +19,14 @@ def create_playlist(db: Session, playlist_data: PlaylistInput, user_id: int) -> 
 # Retrieve a playlist by ID
 def get_playlist_by_id(db: Session, playlist_id: int) -> Optional[Playlist]:
     return db.query(Playlist).filter(Playlist.playlist_id == playlist_id).first()
+
+# Retrieve all playlists
+def get_playlists(db: Session) -> Optional[Playlist]:
+    return db.query(Playlist).all()
+
+# Retrieve all playlists by username
+def get_playlists_by_username(db: Session, username: str) -> Optional[Playlist]:
+    return db.query(Playlist).join(User).filter(User.username == username).all()
 
 # Update an existing playlist
 def update_playlist(db: Session, playlist_id: int, update_data: PlaylistUpdate, user_id: int) -> Optional[Playlist]:
