@@ -23,13 +23,10 @@
                 <h2>Explore tracks</h2>
                 <p>Be the first to hear what's new on EchoLink, or find new tracks from your favourite genres.</p>
 
-                <div v-if="songsError === null" class="flex flex-col-reverse lg:flex-row content-center w-100">
-                    <!-- I actually have no idea why I cannot get the children to be centered. Had to rely on this ugly hack of having 2 growing elems on the sides. TODO -->
-                    <div class="flex-grow"/>
-
+                <div v-if="songsError === null" class="flex flex-col-reverse lg:flex-row place-content-center w-100 mt-3">
                     <!-- Song list -->
-                    <div class="flex flex-col items-center flex-grow max-w-xl">
-                        <!-- TODO if empty, show message -->
+                    <div class="flex flex-col flex-grow max-w-xl">
+                        <p v-if="shownSongs.length === 0" class="text-gray-500 w-100">There are no songs that match your search criteria.</p>
                         <SongList class="flex-grow" v-model="shownSongs" :editable=false />
                         <button v-if="shownSongsAmount < validSongs.length" class="btn btn-blue w-32 mt-2" @click="showMoreSongs"> <!-- Don't show the button if all tracks are already being shown. -->
                             <PlusIcon class="icon" />
@@ -47,8 +44,6 @@
 
                         <OptionSelector v-model="search.genre" :options="genres" label="Genre" track-by="id" option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
                     </div>
-
-                    <div class="flex-grow"/>
                 </div>
                 <p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
             </div>
@@ -58,7 +53,7 @@
             <!-- Browse artists -->
             <div class="mx-auto">
                 <h2>Explore artists</h2>
-                <p>Connect with your favorite musicians on EchoLink.</p>
+                <p>Connect with your favorite musicians on EchoLink by asking them questions and staying up to date with their latest releases.</p>
 
                 <ArtistsList/>
             </div>
@@ -80,7 +75,6 @@ import SongList from '../components/SongList.vue';
 import UserService from '../services/user.js'
 import SongService from '../services/song.js'
 import { computed, ref, reactive, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 
 const LATEST_SONGS_STEP = 5 // Amount of additional songs to display when clicking "Show more"
 
