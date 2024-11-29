@@ -3,20 +3,21 @@
         <div class="flex items-center echolink-container">
 
             <!-- Song icon (would be ex. album cover) -->
-            <div class="flex size-10 rounded bg-indigo-400">
+            <!-- min-w is necessary to avoid the box being compressed if title is too long -->
+            <div class="flex size-10 min-w-10 rounded bg-indigo-400">
                 <MusicalNoteIcon class="icon-h5 my-auto mx-auto"/>
             </div>
 
             <!-- Artist & title -->
-            <span class="mx-3">
-                {{ prefix ? prefix : ''}} {{ song.artist_name }} - {{  song.title }}
+            <span class="mx-3 text-left">
+                {{ prefix ? prefix : ''}} <router-link :to="`/users/${song.artist_name}`">{{ song.artist_name }}</router-link> - {{  song.title }}
             </span>
 
             <div class="mx-auto"></div>
 
             <!-- TODO readd when we get duration field -->
             <!-- <span class="mx-3">{{ duration }}</span> -->
-            <span class="mx-3">{{ song.genre }}</span>
+            <span class="mx-3" v-tooltip="'Genre'">{{ song.genre }}</span>
 
             <!-- Edition controls -->
             <!-- TODO how the fuck could reorder be made accessible? -->
