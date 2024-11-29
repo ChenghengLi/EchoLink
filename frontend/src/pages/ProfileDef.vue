@@ -54,15 +54,17 @@
                             <!-- TODO modify this once we have other user roles -->
                             <div class="badge bg-indigo-500" v-tooltip="accountTypeBadgeTooltip">
                                 <span class="text-white">
-                                    <MusicalNoteIcon class="icon" /> Music Fan
+                                    <MusicalNoteIcon class="icon" /> {{ roleName }}
                                 </span>
                             </div>
 
                             <!-- Visibility badge -->
-                            <div v-if="isOwnProfile" :class="visibilityBadgeClass" class="badge bg-blue-500"
+                            <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
+                            <!-- Artists are considered always public, thus they don't need this widget. -->
+                            <div v-if="isOwnProfile && !isArtist" :class="visibilityBadgeClass" class="badge bg-blue-500"
                                 @click="toggleVisibility" v-tooltip="visibilityBadgeTooltip"
                                 data-test="badge-visibility">
-                                <!-- Redundant to show this for other users; if their profile is accessible, then it means it's already public (or from a friend user) -->
+                                
                                 <span class="text-white">
                                     <span v-if="!isEditing" class="text-white">
                                         <GlobeAltIcon class="icon" />
@@ -100,7 +102,7 @@
                     <h2 class="section-header">Details</h2>
                     <div class="flex">
                         <p><span class="text-nowrap mr-2">
-                                <MusicalNoteIcon class="icon" /> Favorite Genre:
+                                <MusicalNoteIcon class="icon" /> {{ isArtist ? 'Main Genre' : 'Favorite Genre' }}:
                             </span></p>
                         <div class="mx-auto"></div>
                         <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass"
@@ -162,7 +164,6 @@ const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "
 const errorMsg = ref(null) // Error message from profile load request.
 const isEditing = ref(false) // Whether the profile is being edited.
 const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
-const isArtist = ref(null);
 
 // Profile data. Field names should match the API ones.
 const user = reactive({
@@ -170,6 +171,7 @@ const user = reactive({
     description: '',
     visibility: 'public',
     publicProfile: true, // Alias of visibility; exists to simplify reactivity of the visibility checkbox.
+    role: 'listener',
 })
 
 // Fetches and assigns user data reactive,
@@ -197,18 +199,13 @@ async function fetchUserData() {
     }
 }
 
-async function fetchUserRole() {
-    try {
-        const userRole = await UserService.getUserRole(getUsername());
-        isArtist.value = userRole === "artist";
-    } catch (error) {
-        console.error("Error fetching user role:", error);
-    }
-}
-
 function getUsername() {
     return route.params.username
 }
+
+const isArtist = computed(() => {
+    return user.role === 'artist'
+})
 
 function toggleEditMode() {
     // Post to save changes
@@ -351,7 +348,11 @@ const isOwnProfile = computed(() => {
 })
 
 const accountTypeBadgeTooltip = computed(() => {
-    return 'This is a personal account.' // TODO modify once more user types are implemented
+    return isArtist.value ? 'This is an artist account.' : 'This is a personal account.'
+})
+
+const roleName = computed(() => {
+    return isArtist.value ? 'Artist' : 'Music Fan'
 })
 
 const visibilityBadgeTooltip = computed(() => {
@@ -380,14 +381,12 @@ watch(
     () => route.params,
     (newId) => {
         fetchUserData(newId)
-        fetchUserRole()
     }
 )
 
 // Fetch user data when the page is accessed from another one.
 onMounted(function () {
     fetchUserData(getUsername())
-    fetchUserRole()
 })
 
 </script>

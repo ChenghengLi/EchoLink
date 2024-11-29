@@ -14,7 +14,8 @@ const USER_DATA = {
     username: USERNAME,
     description: DESCRIPTION,
     genre: GENRE,
-    visibility: VISIBILITY
+    visibility: VISIBILITY,
+    role: 'listener',
 }
 
 const mockRouter = createRouter({ history: createWebHistory(), routes: [] });

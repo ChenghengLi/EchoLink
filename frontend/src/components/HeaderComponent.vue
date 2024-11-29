@@ -54,6 +54,9 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
+										<button v-if="isArtist()" @click="goToDashboard" class="btn btn--secondary">
+											Dashboard
+										</button>
 										<button v-if="isArtist()" @click="goToUploadTrack" data-test="Upload-track-mobile"class="btn btn--secondary">
 											Upload Track
 										</button>
@@ -75,6 +78,9 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
+									<button v-if="isArtist()" @click="goToDashboard" class="btn btn--secondary">
+										Dashboard
+									</button>
 									<button v-if="isLoggedIn && isArtist()" :data-test="'upload-track-laptop'" @click="goToUploadTrack" class="btn btn--secondary">
 										Upload Track
 									</button>
@@ -175,6 +181,9 @@ export default {
 			if (username !== null) {
 				this.$router.push('/users/' + username)
 			}
+		},
+		goToDashboard() {
+			this.$router.push('/dashboard')
 		},
 		goToUploadTrack() {
 			const username = UserService.getCurrentUsername()

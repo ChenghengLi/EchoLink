@@ -10,6 +10,7 @@ from models.artist import Artist  # noqa: F401
 from models.listener import Listener # noqa: F401
 from models.question import Question # noqa: F401
 from models.song import Song # noqa: F401
+from models.playlist import Playlist # noqa: F401
 
 # Initialize the FastAPI app with the lifespan context manager
 app = FastAPI(lifespan=lifespan)
