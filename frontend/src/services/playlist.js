@@ -34,6 +34,14 @@ class PlaylistService {
             throw error;
         }
     }
+    async reorderSongs(playlistID, songIDs) {
+        try {
+            const response = await axios.put('/playlist/' + playlistID + '/reorder', {song_ids: songIDs}, UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
     async delete(id) {
         try {
             const response = await axios.delete('/playlist/' + id, UserService.getConfig());

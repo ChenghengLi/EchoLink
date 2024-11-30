@@ -50,7 +50,8 @@
             </div>
 
             <!-- Song list; songs are added after creating a playlist, thus this doesn't appear in the creator view -->
-            <SongList v-if="!isCreating()" v-model="playlist.songs" :editable="isEditing" @removed="onSongDeleted($event)"></SongList>
+            <SongList v-if="!isCreating()" v-model="playlist.songs" :editable="isEditing" @removed="onSongDeleted($event)" @reordered="onSongsReordered()"></SongList>
+            <p class="text-gray-500" v-if="!isCreating() && playlist.songs.length == 0">This playlist has no songs yet.<br>{{ canEdit ? 'Edit the playlist to start adding songs.' : '' }}</p>
 
             <!-- "Add song" widget -->
             <div v-if="isEditing" class="mt-3">
@@ -159,7 +160,21 @@ function onSongDeleted(song) {
     PlaylistService.removeSong(route.params.id, song).catch((err) => {
         Swal.fire({
             title: 'Error',
-            text: 'Failed to remove song: ' + ((err.response !== undefined) ? err.response.data.detail : err.message) + '. Please refresh the page.', // This fucking sucks but API usability is not my job and we're in a hurry
+            text: 'Failed to remove song: ' + ((err.response !== undefined) ? err.response.data.detail : err.message) + '. Please refresh the page.', // This fucking sucks
+            icon: 'error',
+        })
+    })
+}
+
+function onSongsReordered() {
+    const songIDs = new Array()
+    for (const index in playlist.songs) {
+        songIDs.push(playlist.songs[index].song_id)
+    }
+    PlaylistService.reorderSongs(route.params.id, songIDs).catch((err) => {
+        Swal.fire({
+            title: 'Error',
+            text: 'Failed to reorder songs: ' + ((err.response !== undefined) ? err.response.data.detail : err.message) + '. Please refresh the page.', // This fucking sucks
             icon: 'error',
         })
     })

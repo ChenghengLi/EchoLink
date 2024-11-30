@@ -1,6 +1,6 @@
 <template>
 	<div class="w-100">
-        <draggable v-model="songs" group="songs" @start="dragging=true" @end="dragging=false" item-key="song_id" handle=".handle">
+        <draggable v-model="songs" group="songs" @start="dragging=true" @end="dragging=false" item-key="song_id" handle=".handle" @update="$emit('reordered')">
             <template #item="{element}">
                 <SongItem class="my-1" :song="element" :show-handle="props.editable" :show-delete="props.editable" :prefix="getSongPrefix(element)" @removed="removeSong($event)"></SongItem>
             </template>
@@ -15,7 +15,7 @@ import { ref } from 'vue';
 
 const songs = defineModel({type: Array})
 
-const emit = defineEmits(['removed'])
+const emit = defineEmits(['removed', 'reordered'])
 
 const props = defineProps({
     "editable": Boolean, // Whether songs can be reordered and deleted. Adding songs is an external responsibility.
