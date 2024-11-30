@@ -7,13 +7,12 @@
             <LoadingSpinner class="mx-auto" />
         </div>
         <div v-else-if="isLoaded && errorMsg === null" class="form-container relative mx-auto p-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
-            <div class="mb-3">
-                <h2>{{ (isCreating() ? 'Create Playlist' : (isEditing ? 'Edit Playlist' : fullTitle)) }}</h2>
-            </div>
-
-            <!-- Edit and share buttons -->
-            <!-- Top-right absolute on desktop layout -->
-            <div class="lg:absolute right-0 top-0 p-3">
+            <!-- Header, edit and share buttons -->
+            <!-- Buttons appear on same line as title on desktop, below on mobile -->
+            <div class="lg:flex">
+                <div class="mb-3 flex-grow">
+                    <h2>{{ (isCreating() ? 'Create Playlist' : (isEditing ? 'Edit Playlist' : fullTitle)) }}</h2>
+                </div>
                 <div class="flex justify-center items-center">
                     <div v-if="!isCreating()" class="h-12 px-2">
                         <button class="btn btn-edit" @click="share">
@@ -51,7 +50,7 @@
             </div>
 
             <!-- Song list; songs are added after creating a playlist, thus this doesn't appear in the creator view -->
-            <SongList v-if="!isCreating()" v-model="playlist.songs" :editable="isEditing"></SongList>
+            <SongList v-if="!isCreating()" v-model="playlist.songs" :editable="isEditing" @removed="onSongDeleted($event)"></SongList>
 
             <!-- "Add song" widget -->
             <div v-if="isEditing" class="mt-3">
@@ -106,7 +105,7 @@ const playlist = reactive({
     name: '',
     description: '',
     visibility: VISIBILITY_OPTIONS[0], // Default to first option.
-    user_id: 'pip',
+    username: 'pip',
     songs: [],
 })
 const songs = reactive([])
@@ -144,20 +143,40 @@ function addSong() {
 
     // Prevent adding a song twice
     if (canAddSong.value) {
-        playlist.songs.push(newSong)
+        PlaylistService.addSong(route.params.id, newSong).then(() => {
+            playlist.songs.push(newSong)
+        }).catch((err) => {
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to add song: ' + ((err.response !== undefined) ? err.response.data.detail : err.message),
+                icon: 'error',
+            })
+        })
     }
+}
+
+function onSongDeleted(song) {
+    PlaylistService.removeSong(route.params.id, song).catch((err) => {
+        Swal.fire({
+            title: 'Error',
+            text: 'Failed to remove song: ' + ((err.response !== undefined) ? err.response.data.detail : err.message) + '. Please refresh the page.', // This fucking sucks but API usability is not my job and we're in a hurry
+            icon: 'error',
+        })
+    })
 }
 
 const canAddSong = computed(() => {
     const newSong = songToAdd.value
-    return newSong !== null && playlist.songs.find((song) => song.id === newSong.id) === undefined
+    return newSong !== null && playlist.songs.find((song) => song.song_id === newSong.song_id) === undefined
 })
 
+// Updates the details of the playlist only;
+// songs are handled separately due to API quirks.
 function saveChanges() {
     PlaylistService.update(route.params.id, {
+        name: playlist.name,
         description: playlist.description,
         visibility: playlist.visibility.id,
-        songs: playlist.songs,
     }).then(() => {
         Toast.fireSuccess('Playlist updated')
         // Only exit edit mode if the request was successful,
@@ -189,8 +208,16 @@ async function fetchPlaylistData(id) {
         playlist.name = newData.name
         playlist.description = newData.description
         playlist.visibility = VISIBILITY_OPTIONS.find((el) => el.id === newData.visibility)
-        playlist.user_id = newData.user_id
-        playlist.songs = newData.songs ?? []
+        playlist.username = newData.username
+
+        // Yep. I'm expected to go and fetch each song individually. Yep.
+        const songs = await SongService.getAll()
+        const songsArray = new Array()
+        for (const index in newData.songs) {
+            songsArray.push(songs.find((el) => el.song_id === newData.songs[index].song_id))
+        }
+
+        playlist.songs = songsArray
 
         // Clear any previous error message so the new playlist is shown
         errorMsg.value = null
@@ -204,13 +231,13 @@ async function fetchPlaylistData(id) {
 
 async function fetchSongs() {
     try {
-        const newData = await SongService.getAll()
+        const fetchedSongs = await SongService.getAll()
         // Add an extra field to improve vue-multiselect search support (since it only supports searching by one key)
-        for (const index in newData.songs) {
-            const song = newData.songs[index]
-            song.fullTitle = `${song.artist} - ${song.title}`
+        for (const index in fetchedSongs) {
+            const song = fetchedSongs[index]
+            song.fullTitle = `${song.artist_name} - ${song.title}`
         }
-        Object.assign(songs, newData.songs)
+        Object.assign(songs, fetchedSongs)
     } catch (err) {
         errorMsg.value = (err.response) ? err.response.data.detail : err.message
     }
@@ -236,7 +263,7 @@ onMounted(function () {
 })
 
 const canEdit = computed(() => {
-    return !isCreating() && playlist.user_id === UserService.getCurrentUsername()
+    return !isCreating() && playlist.username === UserService.getCurrentUsername()
 })
 
 const canCreate = computed(() => {
@@ -248,7 +275,7 @@ function isCreating() {
 }
 
 const fullTitle = computed(() => {
-    return `${playlist.name} by ${playlist.user_id}` // TODO edit to username once we have those accessible
+    return `${playlist.name} by ${playlist.username}` // TODO edit to username once we have those accessible
 })
 
 </script>

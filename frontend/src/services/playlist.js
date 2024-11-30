@@ -18,6 +18,22 @@ class PlaylistService {
             throw error;
         }
     }
+    async addSong(playlistID, song) {
+        try {
+            const response = await axios.post('/playlist/' + playlistID + '/song/' + song.song_id, {}, UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async removeSong(playlistID, song) {
+        try {
+            const response = await axios.delete('/playlist/' + playlistID + '/song/' + song.song_id, UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
     async delete(id) {
         try {
             const response = await axios.delete('/playlist/' + id, UserService.getConfig());

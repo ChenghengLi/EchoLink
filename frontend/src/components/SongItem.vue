@@ -22,7 +22,7 @@
             <!-- Edition controls -->
             <!-- TODO how the fuck could reorder be made accessible? -->
             <Bars3Icon v-if="showHandle" class="icon handle mx-3" />
-            <button v-if="showDelete" class="btn btn-delete text-nowrap p-2" @click="$emit('removed')">
+            <button v-if="showDelete" class="btn btn-delete text-nowrap p-2" @click="$emit('removed', song)">
                 <TrashIcon class="icon-h5" />
             </button>
         </div>

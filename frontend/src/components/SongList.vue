@@ -15,6 +15,8 @@ import { ref } from 'vue';
 
 const songs = defineModel({type: Array})
 
+const emit = defineEmits(['removed'])
+
 const props = defineProps({
     "editable": Boolean, // Whether songs can be reordered and deleted. Adding songs is an external responsibility.
 })
@@ -29,6 +31,7 @@ function getSongPrefix(song) {
 function removeSong(song) {
     // TODO maybe prompt the user first?
     songs.value.splice(songs.value.indexOf(song), 1)
+    emit('removed', song)
 }
 
 </script>
