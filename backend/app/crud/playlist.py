@@ -30,7 +30,7 @@ def get_playlist_by_id(db: Session, playlist_id: int, user_id: int) -> Optional[
     if not playlist:
         raise ValueError("Playlist not found")
 
-    if playlist.user_id != user_id and playlist.visibility == "private":
+    if playlist.user_id != user_id and playlist.visibility.value == "private":
         raise ValueError("User does not have permission to view this playlist")
 
     return playlist
@@ -45,7 +45,7 @@ def get_playlists_by_username(db: Session, username: str, user_id: int) -> List[
     playlists = db.query(Playlist).filter(Playlist.user_id == user.id).all()
 
     if user.id != user_id:
-        playlists = [playlist for playlist in playlists if playlist.visibility == "public"]
+        playlists = [playlist for playlist in playlists if playlist.visibility.value == "public"]
 
     return playlists
 

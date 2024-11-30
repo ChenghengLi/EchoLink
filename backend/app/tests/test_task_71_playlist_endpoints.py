@@ -50,14 +50,13 @@ def test_get_playlist_by_id():
     playlist_data = PlaylistInput(
         name="Retrieve Playlist",
         description="Test retrieve",
-        visibility=str(VisibilityEnum.private.value)
+        visibility=str(VisibilityEnum.public.value)
     )
     playlist = create_playlist(db, playlist_data, user.id)
 
     # Send GET request to retrieve the playlist
     response = client.get(
-        f"/playlist/{playlist.playlist_id}",
-        headers={"Authorization": f"Bearer {user.token}"}
+        f"/playlist/{playlist.playlist_id}"
     )
 
     # Assert response status and content

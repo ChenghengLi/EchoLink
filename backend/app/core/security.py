@@ -38,10 +38,14 @@ def create_access_token(subject: str, expires_delta: timedelta = None) -> str:
 
 # Security scheme for token authentication
 security = HTTPBearer()
+optional_security = HTTPBearer(auto_error=False)
 
 # Dependency to get user and verify token
-def get_current_user(db: Session = Depends(get_db), 
-                     credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
+def get_current_user(
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+) -> User:
+    
     token = credentials.credentials
 
     try:
@@ -61,5 +65,14 @@ def get_current_user(db: Session = Depends(get_db),
     
     return user
 
+def get_current_user_optional(
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(optional_security)
+) -> User:
+    if not credentials:
+        return None
+    return get_current_user(db, credentials)
+
 # User annotation
 CurrentUser = Annotated[User, Depends(get_current_user)]
+OptionalCurrentUser = Annotated[User, Depends(get_current_user_optional)]

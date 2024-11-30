@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel
 from pytest import Session
 from core.config import get_db
-from core.security import CurrentUser
+from core.security import CurrentUser, OptionalCurrentUser
 from typing import List
 from models.playlist import Playlist, PlaylistInput, PlaylistOutput, PlaylistUpdate
 from crud.playlist import (
@@ -31,19 +31,19 @@ def transform_playlist_to_output(playlist: Playlist) -> PlaylistOutput:
 @router.get("/{playlist_id}", response_model=PlaylistOutput)
 def get_playlist_by_id(
     playlist_id: int,
-    current_user: CurrentUser,
+    current_user: OptionalCurrentUser,
     db: Session = Depends(get_db)
 ):
     """
     Retrieve a playlist by ID.
     """
-    playlist = get_playlist_by_id_crud(db, playlist_id, current_user.id)
+    playlist = get_playlist_by_id_crud(db, playlist_id, current_user.id if current_user else None)
     return transform_playlist_to_output(playlist)
 
 @router.get("/user/{username}", response_model=List[PlaylistOutput])
 def get_playlists_by_username(
     username: str,
-    current_user: CurrentUser,
+    current_user: OptionalCurrentUser,
     db: Session = Depends(get_db)
 ):
     """
