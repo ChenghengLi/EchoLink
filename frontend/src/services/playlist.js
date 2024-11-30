@@ -4,16 +4,20 @@ import UserService from './user'
 class PlaylistService {
     async createPlaylist(data) {
         try {
-            // TODO adjust once specifications are final
-            const response = await axios.post('/users/playlists/', data, UserService.getConfig());
+            const response = await axios.post('/playlist/', data, UserService.getConfig());
             return response.data;
         } catch (err) {
-            throw new Error(err.response ? err.response.data.detail : err.message); // Fallback to HTTP error message if no detail is provided.
+            throw err.response ? err.response.data.detail[0].msg : err.message; // Fallback to HTTP error message if no detail is provided.
         }
     }
-    async update(data) {
+    async update(id, data) {
         try {
-            const response = await axios.put('/users/playlists', data, UserService.getConfig());
+            const response = await axios.put('/playlist/' + id, data, UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
     async delete(id) {
         try {
             const response = await axios.delete('/playlist/' + id, UserService.getConfig());

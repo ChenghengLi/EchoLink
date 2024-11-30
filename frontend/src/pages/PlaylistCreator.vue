@@ -106,7 +106,7 @@ const playlist = reactive({
     name: '',
     description: '',
     visibility: VISIBILITY_OPTIONS[0], // Default to first option.
-    owner: 'pip',
+    user_id: 'pip',
     songs: [],
 })
 const songs = reactive([])
@@ -123,15 +123,15 @@ function createPlaylist() {
     const playlistData = {
         name: playlist.name,
         description: playlist.description,
-        visibility: playlist.visibility,
+        visibility: playlist.visibility.id,
     }
     PlaylistService.createPlaylist(playlistData).then((data) => {
         Toast.fireSuccess('Playlist created')
-        router.push('playlists/' + data.id) // Go to the playlists's page
+        router.push('/playlists/' + data.playlist_id) // Go to the playlists's page
     }).catch((err) => {
         Swal.fire({
             title: 'Error',
-            text: 'Failed to create playlist: ' + ((err.response !== undefined) ? err.response.data.detail : err.message),
+            text: 'Failed to create playlist: ' + err,
             icon: 'error',
         })
     }).finally(() => {
@@ -154,8 +154,7 @@ const canAddSong = computed(() => {
 })
 
 function saveChanges() {
-    PlaylistService.update({
-        id: route.params.id,
+    PlaylistService.update(route.params.id, {
         description: playlist.description,
         visibility: playlist.visibility.id,
         songs: playlist.songs,
@@ -190,8 +189,8 @@ async function fetchPlaylistData(id) {
         playlist.name = newData.name
         playlist.description = newData.description
         playlist.visibility = VISIBILITY_OPTIONS.find((el) => el.id === newData.visibility)
-        playlist.owner = newData.owner
-        playlist.songs = newData.songs
+        playlist.user_id = newData.user_id
+        playlist.songs = newData.songs ?? []
 
         // Clear any previous error message so the new playlist is shown
         errorMsg.value = null
@@ -221,8 +220,8 @@ async function fetchSongs() {
 // This is necessary as the component won't be recreated, thus onMounted() won't fire.
 watch(
     () => route.params,
-    (newId) => {
-        fetchPlaylistData(newId)
+    (newParams) => {
+        fetchPlaylistData(newParams.id)
     }
 )
 
@@ -237,7 +236,7 @@ onMounted(function () {
 })
 
 const canEdit = computed(() => {
-    return !isCreating() && playlist.owner === UserService.getCurrentUsername()
+    return !isCreating() && playlist.user_id === UserService.getCurrentUsername()
 })
 
 const canCreate = computed(() => {
@@ -249,7 +248,7 @@ function isCreating() {
 }
 
 const fullTitle = computed(() => {
-    return `${playlist.name} by ${playlist.owner}`
+    return `${playlist.name} by ${playlist.user_id}` // TODO edit to username once we have those accessible
 })
 
 </script>
