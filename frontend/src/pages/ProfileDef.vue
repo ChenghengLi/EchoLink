@@ -212,9 +212,6 @@ async function fetchUserData() {
         Object.assign(user, await UserService.get(getUsername()))
         user.publicProfile = user.visibility === 'public'
 
-        // Fetch playlists
-        Object.assign(playlists, await PlaylistService.getUserPlaylists(getUsername()))
-
         // Don't show private profiles unless they belong to the user.
         // TODO this should be done in the backend, but I felt like "mocking" it now
         // so we don't get embarrassed in the demo over a checkbox for a not-fully-implemented feature.
@@ -230,6 +227,12 @@ async function fetchUserData() {
     } finally {
         // Mark the page as loaded in either case
         isLoaded.value = true
+    }
+    try {
+        // Fetch playlists
+        Object.assign(playlists, await PlaylistService.getUserPlaylists(getUsername()))
+    } catch (err) {
+        Toast.fireError('Failed to load playlists')
     }
 }
 

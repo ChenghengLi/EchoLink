@@ -4,6 +4,7 @@ import Profile from '../pages/ProfileDef.vue'
 import { ref, reactive, nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import UserService from '../services/user.js'
+import PlaylistService from '../services/playlist.js'
 
 const USERNAME = "Pip"
 const DESCRIPTION = "Test desc"
@@ -34,6 +35,9 @@ describe('When profile is accessed', () => {
         }
         UserService.getCurrentUsername = function() {
             return USERNAME
+        }
+        PlaylistService.getUserPlaylists = function() {
+            return new Array()
         }
 
         const wrapper = mount(Profile, {
@@ -79,6 +83,9 @@ describe('When profile is accessed', () => {
         UserService.getCurrentUsername = function() {
             return USERNAME
         }
+        PlaylistService.getUserPlaylists = function() {
+            return new Array()
+        }
 
         const wrapper = mount(Profile, {
             global: {
@@ -123,6 +130,9 @@ describe('When profile is accessed', () => {
         }
         UserService.getCurrentUsername = function() {
             return null
+        }
+        PlaylistService.getUserPlaylists = function() {
+            return new Array()
         }
 
         const wrapper = mount(Profile, {
