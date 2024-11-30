@@ -118,12 +118,41 @@
             </div>
             <div class="my-2"></div>
             <!-- User Playlists -->
-            <div class="content-block flex justify-between items-center">
-                <h2 class="section-header">My Playlists</h2>
-                <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap ml-auto" @click="goToPlaylistCreator">
-                    <PlusIcon class="icon" />
-                    Add New Playlist
-                </button>
+            <div class="content-block flex-col">
+                <!-- Header -->
+                <div class="flex justify-between items-center">
+                    <h2 class="section-header">My Playlists</h2>
+                    <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap ml-auto" @click="goToPlaylistCreator">
+                        <PlusIcon class="icon" />
+                        Add New Playlist
+                    </button>
+                </div>
+                <!-- Playlist list -->
+                <div class="flex flex-col py-3">
+                    <div v-for="playlist in playlists" class="rounded">
+                        <div class="flex items-center echolink-container my-1">
+                            <!-- Playlist icon (would be ex. album cover) -->
+                            <!-- min-w is necessary to avoid the box being compressed if title is too long -->
+                            <div class="flex size-10 min-w-10 rounded bg-indigo-400">
+                                <MusicalNoteIcon class="icon-h5 my-auto mx-auto"/>
+                            </div>
+
+                            <!-- Playlist title -->
+                            <span class="mx-3 text-left">
+                                <router-link :to="`/playlists/${playlist.playlist_id}`">{{ playlist.name }}</router-link>
+                            </span>
+
+                            <div class="mx-auto"></div>
+
+                            <!-- TODO show song count -->
+
+                            <!-- Delete button -->
+                            <button v-if="isOwnProfile" class="btn btn-delete text-nowrap p-2" @click="deletePlaylist(playlist.playlist_id)">
+                                <TrashIcon class="icon-h5" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- Error view -->
@@ -143,6 +172,7 @@ import FooterComponent from '../components/FooterComponent.vue';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 import UserService from '../services/user.js'
 import QuestionService from '../services/question.js'
+import PlaylistService from '../services/playlist.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
 import Cookies from 'js-cookie';
@@ -173,6 +203,7 @@ const user = reactive({
     publicProfile: true, // Alias of visibility; exists to simplify reactivity of the visibility checkbox.
     role: 'listener',
 })
+const playlists = reactive([])
 
 // Fetches and assigns user data reactive,
 // as well as marking the page as loaded and storing error message, if any.
@@ -180,6 +211,9 @@ async function fetchUserData() {
     try {
         Object.assign(user, await UserService.get(getUsername()))
         user.publicProfile = user.visibility === 'public'
+
+        // Fetch playlists
+        Object.assign(playlists, await PlaylistService.getUserPlaylists(getUsername()))
 
         // Don't show private profiles unless they belong to the user.
         // TODO this should be done in the backend, but I felt like "mocking" it now
@@ -233,6 +267,26 @@ function toggleEditMode() {
         // Enter edit mode immediately
         isEditing.value = !isEditing.value
     }
+}
+
+function deletePlaylist(id) {
+    Swal.fire({
+        title: "Delete playlist",
+        inputLabel: "Are you sure you want to delete this playlist?",
+        showCancelButton: true,
+    }).then((response) => {
+        if (response.isConfirmed) {
+            PlaylistService.delete(id).then(() => {
+                playlists.splice(playlists.findIndex((el) => el.playlist_id === id), 1)
+            }).catch((err) => {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Failed to delete playlist: ' + err,
+                    icon: 'error',
+                })
+            })
+        }
+    })
 }
 
 function toggleVisibility() {
@@ -336,12 +390,9 @@ function askQuestion() {
     });
 }
 
-
-
 function goToPlaylistCreator(){
     router.push('/playlists/new');
 }
-
 
 const isOwnProfile = computed(() => {
     return UserService.isLoggedIn() && UserService.getCurrentUsername() === getUsername()
@@ -421,6 +472,15 @@ onMounted(function () {
 
 .btn-red:hover,
 .btn-red:focus {
+    @apply bg-red-700;
+}
+
+.btn-delete {
+    @apply bg-blue-500 text-white;
+}
+
+.btn-delete:hover,
+.btn-delete:focus {
     @apply bg-red-700;
 }
 

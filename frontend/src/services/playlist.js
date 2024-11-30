@@ -14,6 +14,9 @@ class PlaylistService {
     async update(data) {
         try {
             const response = await axios.put('/users/playlists', data, UserService.getConfig());
+    async delete(id) {
+        try {
+            const response = await axios.delete('/playlist/' + id, UserService.getConfig());
             return response.data;
         } catch (error) {
             throw error;
@@ -21,23 +24,16 @@ class PlaylistService {
     }
     async get(id) {
         try {
-            // const response = await axios.get('/users/playlists/' + id, UserService.getConfig());
-            // return response.data;
-            // TODO remove once API is done
-            const response = {
-                id: id,
-                name: 'test playlist',
-                description: 'dummy descp',
-                visibility: 'public',
-                owner: 'pip',
-                songs: [
-                    {id: 1, artist: 'some artist', title: 'some title', duration: 124},
-                    {id: 2, artist: 'some artist 2', title: 'some title 2', duration: 144},
-                    {id: 3, artist: 'some artist 3', title: 'some title 3', duration: 114},
-                    {id: 4, artist: 'some artist 4', title: 'some title 4', duration: 84},
-                ]
-            }
-            return response
+            const response = await axios.get('/playlist/' + id, UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getUserPlaylists(username) {
+        try {
+            const response = await axios.get('/playlist/user/' + username, UserService.getConfig());
+            return response.data;
         } catch (error) {
             throw error;
         }
