@@ -1,6 +1,5 @@
 name: Move Tasks to Specific State
 
-
 on:
   push:
     branches:
@@ -18,7 +17,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        fetch-depth: 0  # Fetch all history for all branches and tags
+        fetch-depth: 1  # Fetch only the latest commit
 
     - name: Configure Git Safe Directory
       run: |
@@ -28,28 +27,25 @@ jobs:
       run: |
         apt-get update && apt-get install -y jq
 
-    - name: Extract issue numbers from new commit messages
+    - name: Extract issue numbers from the last commit message
       id: extract_issues
       shell: bash
       run: |
-        # Get all commit messages in the current push
-        commit_messages=$(git log --pretty=%B ${{ github.event.before }}..${{ github.sha }})
+        # Get the last commit message
+        last_commit_message=$(git log -1 --pretty=%B)
 
         # Declare an associative array to store unique issue numbers
         declare -A issue_numbers_map
 
-        # Iterate over each commit message
-        while IFS= read -r commit_message; do
-          # Extract issue numbers from the commit message
-          if [[ $commit_message =~ [^0-9]*([0-9]+) ]]; then
-            issue_number="${BASH_REMATCH[1]}"
-            issue_numbers_map["$issue_number"]=1
-          fi
-        done <<< "$commit_messages"
+        # Extract issue numbers from the last commit message
+        if [[ $last_commit_message =~ [^0-9]*([0-9]+) ]]; then
+          issue_number="${BASH_REMATCH[1]}"
+          issue_numbers_map["$issue_number"]=1
+        fi
 
         # Check if any issue numbers were found
         if [ ${#issue_numbers_map[@]} -eq 0 ]; then
-          echo "No issue numbers found in commit messages"
+          echo "No issue numbers found in the last commit message"
           exit 0  # Exit gracefully if no issue numbers are found
         fi
 
