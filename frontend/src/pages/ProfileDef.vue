@@ -121,7 +121,7 @@
             <div class="content-block flex-col">
                 <!-- Header -->
                 <div class="flex justify-between items-center">
-                    <h2 class="section-header">My Playlists</h2>
+                    <h2 class="section-header">{{ isOwnProfile ? 'My Playlists' : 'Playlists' }}</h2>
                     <button v-if="isOwnProfile" class="btn btn-blue max-w-min text-nowrap ml-auto" @click="goToPlaylistCreator">
                         <PlusIcon class="icon" />
                         Add New Playlist
@@ -129,7 +129,7 @@
                 </div>
                 <!-- Playlist list -->
                 <div class="flex flex-col py-3">
-                    <div v-for="playlist in playlists" class="rounded">
+                    <div v-for="playlist in visiblePlaylists" class="rounded">
                         <div class="flex items-center echolink-container my-1">
                             <!-- Playlist icon (would be ex. album cover) -->
                             <!-- min-w is necessary to avoid the box being compressed if title is too long -->
@@ -272,7 +272,7 @@ function toggleEditMode() {
 function deletePlaylist(id) {
     Swal.fire({
         title: "Delete playlist",
-        inputLabel: "Are you sure you want to delete this playlist?",
+        text: "Are you sure you want to delete this playlist?",
         showCancelButton: true,
     }).then((response) => {
         if (response.isConfirmed) {
@@ -393,6 +393,12 @@ function askQuestion() {
 function goToPlaylistCreator(){
     router.push('/playlists/new');
 }
+
+const visiblePlaylists = computed(() => {
+    // Only show private playlists for their creator
+    // TODO this should be done by backend instead for security reasons
+    return isOwnProfile.value ? playlists : playlists.filter((playlist) => playlist.visibility === 'public')
+})
 
 const isOwnProfile = computed(() => {
     return UserService.isLoggedIn() && UserService.getCurrentUsername() === getUsername()
