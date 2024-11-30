@@ -52,7 +52,7 @@ def test_get_playlist_by_id():
     db.refresh(playlist)
 
     # Retrieve the playlist by ID
-    retrieved_playlist = get_playlist_by_id(db, playlist.playlist_id)
+    retrieved_playlist = get_playlist_by_id(db, playlist.playlist_id, user.id)
 
     # Validate the retrieved playlist
     assert retrieved_playlist is not None

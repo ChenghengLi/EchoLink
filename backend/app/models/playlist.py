@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Enum
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
+from typing import Optional, List
 from core.config import Base
 import enum
 
@@ -17,6 +17,7 @@ playlist_songs = Table(
     Base.metadata,
     Column('playlist_id', Integer, ForeignKey('playlists.playlist_id', ondelete="CASCADE"), primary_key=True),
     Column('song_id', Integer, ForeignKey('songs.song_id', ondelete="CASCADE"), primary_key=True),
+    Column('order', Integer, nullable=False)
 )
 
 # Playlist table
@@ -33,7 +34,7 @@ class Playlist(Base):
     user = relationship("User", back_populates="playlists")
 
     # Relationship with Song
-    songs = relationship("Song", secondary=playlist_songs, back_populates="playlists")
+    songs = relationship("Song", secondary=playlist_songs, back_populates="playlists", order_by=playlist_songs.c.order)
 
 # Pydantic model for playlist input
 class PlaylistInput(BaseModel):
@@ -44,13 +45,21 @@ class PlaylistInput(BaseModel):
     # Use ConfigDict for Pydantic v2
     model_config = ConfigDict(from_attributes=True)
 
+# Pydantic model for song output
+class SongOutput(BaseModel):
+    song_id: int
+
+    # Use ConfigDict for Pydantic v2
+    model_config = ConfigDict(from_attributes=True)
+
 # Pydantic model for playlist output
 class PlaylistOutput(BaseModel):
     playlist_id: int
     name: str
     description: Optional[str] = None
     visibility: VisibilityEnum
-    user_id: int
+    username: str
+    songs: List[SongOutput]
 
     # Use ConfigDict for Pydantic v2
     model_config = ConfigDict(from_attributes=True)

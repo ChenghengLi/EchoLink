@@ -86,7 +86,6 @@ def test_successful_login():
     # Successful login
     response = client.post("/login", json={"email": user_input.email, "password": user_input.password})
 
-    print(response.json())
     assert response.status_code == 200
     assert "access_token" in response.json()
     assert response.json()["access_token"] is not None

@@ -33,7 +33,7 @@ def test_create_playlist():
     assert data["name"] == "Test Playlist"
     assert data["description"] == "Test description"
     assert data["visibility"] == "public"
-    assert data["user_id"] == user.id  # Assert that the playlist is associated with the user
+    assert data["username"] == user.username  # Assert that the playlist is associated with the user
 
     # Cleanup: Delete the user and playlist
     db.delete(user)
@@ -55,7 +55,10 @@ def test_get_playlist_by_id():
     playlist = create_playlist(db, playlist_data, user.id)
 
     # Send GET request to retrieve the playlist
-    response = client.get(f"/playlist/{playlist.playlist_id}", headers={"Authorization": f"Bearer {user.token}"})
+    response = client.get(
+        f"/playlist/{playlist.playlist_id}",
+        headers={"Authorization": f"Bearer {user.token}"}
+    )
 
     # Assert response status and content
     assert response.status_code == 200
@@ -130,8 +133,11 @@ def test_delete_playlist():
     assert response.status_code == 204
 
     # Ensure the playlist was deleted from the database
-    deleted_playlist = get_playlist_by_id(db, playlist.playlist_id)
-    assert deleted_playlist is None
+    try:
+        get_playlist_by_id(db, playlist.playlist_id, user.id)
+        assert False  # The playlist should not exist
+    except ValueError:
+        pass # Expected
 
     # Cleanup: Delete the user
     db.delete(user)
