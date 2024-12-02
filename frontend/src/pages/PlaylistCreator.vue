@@ -271,10 +271,10 @@ watch(
 onMounted(function () {
     if (!isCreating()) {
         fetchPlaylistData(route.params.id)
-        fetchSongs() // Only needs to be done once (ie. no need to refetch if the URL is rewritten by router)
     } else {
         isLoaded.value = true
     }
+    fetchSongs() // Only needs to be done once (ie. no need to refetch if the URL is rewritten by router). Must be done even if we enter the creator page first, as the component will be re-used when entering the edit page afterwards.
 })
 
 const canEdit = computed(() => {
