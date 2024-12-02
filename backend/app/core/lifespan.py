@@ -14,7 +14,7 @@ from crud.song import create_song, get_songs_by_artist_id
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code
-    create_multiple_artists()
+    # populate_with_artists_and_songs()
     yield
     # Shutdown code (if needed)
 
@@ -30,7 +30,7 @@ def init_db():
 
 
 
-def create_multiple_artists():
+def populate_with_artists_and_songs():
     db: Session = SessionLocal()
     try:
         filename = 'data/top_artists.json'
