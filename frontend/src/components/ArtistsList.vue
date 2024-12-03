@@ -76,7 +76,7 @@
 
 <script>
 import ArtistComponent from './ArtistComponent.vue';
-import ArtistService from '../services/artist.js';
+import ArtistService from '../services/artist.js'; // Assume this service handles API calls
 
 export default {
   components: {
@@ -104,15 +104,6 @@ export default {
         );
       }
 
-      // Sort the filtered artists
-      if (this.sortOrder === 'Alphabet') {
-        filtered.sort((a, b) => a.username.localeCompare(b.username));
-      } else if (this.sortOrder === 'Engagement') {
-        filtered.sort((a, b) => b.engagement - a.engagement); // Assuming engagement is a numeric property
-      } else if (this.sortOrder === 'Followers') {
-        filtered.sort((a, b) => b.followers - a.followers); // Assuming followers is a numeric property
-      }
-
       return filtered;
     },
     totalPages() {
@@ -125,9 +116,10 @@ export default {
     },
   },
   methods: {
-    async fetchArtists() {
+    async fetchArtists(sortBy = 'Alphabet') {
       try {
-        const data = await ArtistService.getArtists();
+        // Fetch artists from the backend based on the selected sort order
+        const data = await ArtistService.getArtists(sortBy); // Pass the sortBy parameter to the API
         const fixedImage = 'cara3.jpg';
         this.artists = data.map(artist => ({
           ...artist,
@@ -143,9 +135,10 @@ export default {
         this.scrollToTop(); // Scroll to top when page changes
       }
     },
-    setSortOrder(order) {
+    async setSortOrder(order) {
       this.sortOrder = order;
       this.currentPage = 1; // Reset to the first page after sorting
+      await this.fetchArtists(order); // Fetch sorted data from the backend
       this.scrollToTop(); // Scroll to top after sorting
     },
     scrollToTop() {
@@ -157,7 +150,7 @@ export default {
     showHeader: Boolean,
   },
   created() {
-    this.fetchArtists();
+    this.fetchArtists(); // Fetch artists with the default sort order
   },
 };
 </script>
