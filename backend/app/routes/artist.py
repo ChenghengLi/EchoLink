@@ -24,7 +24,7 @@ def get_artists_engagement(db: Session = Depends(get_db)):
     Retrieve all the artists from the database by engagement
     """
     artists_list = get_all_artists(db)
-    artists_list.sort(key=lambda x: engage_artist_score(x.username, db))
+    artists_list.sort(key=lambda x: engage_artist_score(x.username, db), reversed=True)
     return artists_list
 
 
@@ -34,5 +34,5 @@ def get_artists_followers(db: Session = Depends(get_db)):
     Retrieve all the artists from the database.
     """
     artists_list = get_all_artists(db)
-    artists_list.sort(key=lambda x: get_followers(db, x.username))
+    artists_list.sort(key=lambda x: get_followers(db, x.username), reversed=True)
     return artists_list
