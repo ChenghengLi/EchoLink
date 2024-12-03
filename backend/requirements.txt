@@ -9,3 +9,4 @@ pytest-picked
 watchdog
 httpx
 ruff
+coverage
