@@ -4,6 +4,9 @@ from sqlalchemy.orm import Session
 from core.config import SessionLocal
 from crud.user import create_user, get_user_by_username
 from crud.artist import get_artist_by_user_id
+from crud.listener import follow_artist, get_listener_by_user_id, create_listener, check_follow
+from crud.question import submit_question
+from models.question import QuestionInput
 from models.user import UserInput, RoleEnum, User
 import json
 from crud.artist import create_artist
@@ -15,6 +18,7 @@ from crud.song import create_song, get_songs_by_artist_id
 async def lifespan(app: FastAPI):
     # Startup code
     # populate_with_artists_and_songs()
+    # populate_with_users()
     yield
     # Shutdown code (if needed)
 
@@ -85,3 +89,50 @@ def populate_with_artists_and_songs():
 
 
 
+def populate_with_users():
+    db: Session = SessionLocal()
+    try:
+        print("Populating users...")
+        filename = 'data/user.json'
+        with open(filename, 'r', encoding='utf-8') as f:
+            users = json.load(f)
+        
+        for user in users.values():
+            print(user)
+            user_input = UserInput(
+                username=user['username'],
+                email=user['email'],
+                password=user['password'],
+                role=RoleEnum.listener
+            )
+
+            question_list = user["artist_questions"]
+            followed_artists = user["followers"]
+
+            existing_user_by_username = db.query(User).filter(User.username == user_input.username).first()
+            if not existing_user_by_username:
+                user = create_user(db, user_input)
+            else:
+                user = get_user_by_username(db, user_input.username)
+
+            listener = get_listener_by_user_id(db, user.id)
+
+            if not listener:
+                listener = create_listener(db, user)
+
+            for artist in followed_artists:
+                follow = check_follow(db, listener, artist)
+                if not follow:
+                    follow_artist(db, listener, artist)
+
+            for artist, question in question_list.items():
+                question = QuestionInput(
+                    artist_username=artist,
+                    question_text=question
+                )
+                submit_question(db, listener, question)
+
+    except Exception as e:
+        print(e)
+    finally:
+        db.close()

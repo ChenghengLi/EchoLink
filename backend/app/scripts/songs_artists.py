@@ -68,7 +68,7 @@ def get_top_artists():
 # Fetch and print the top 10 artists
 top_artists = get_top_artists()
 
-def save_artists_to_json(top_artists, filename='top_artists.json'):
+def save_artists_to_json(top_artists, filename='backend/app/data/top_artists.json'):
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(top_artists, f, ensure_ascii=False, indent=4)
 

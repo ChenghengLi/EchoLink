@@ -38,6 +38,15 @@ def get_listener_by_username(db: Session, username: str) -> Listener:
     
     return listener
 
+
+def check_follow(db: Session, listener: Listener, artist_username: str) -> bool:
+    artist = get_artist_by_username(db, artist_username)
+    return db.query(ListenerArtistLink).filter(
+        ListenerArtistLink.listener_id == listener.listener_id,
+        ListenerArtistLink.artist_id == artist.artist_id
+    ).first() is not None
+
+
 # Follow an artist
 def follow_artist(db: Session, listener: Listener, artist_username: str) -> ListenerArtistLink:
     artist = get_artist_by_username(db, artist_username)

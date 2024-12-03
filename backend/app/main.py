@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.lifespan import lifespan
 from core.config import engine
 from core.config import Base
-from routes import user, test, login, question, artist, song, playlist
+from routes import user, test, login, question, artist, song, playlist, metrics
 # Importing them ensures SQLAlchemy creates their tables.
 from models.user import User, ListenerArtistLink  # noqa: F401
 from models.artist import Artist  # noqa: F401
@@ -11,6 +11,7 @@ from models.listener import Listener # noqa: F401
 from models.question import Question # noqa: F401
 from models.song import Song # noqa: F401
 from models.playlist import Playlist # noqa: F401
+
 
 # Initialize the FastAPI app with the lifespan context manager
 app = FastAPI(lifespan=lifespan)
@@ -37,3 +38,4 @@ app.include_router(question.router, prefix="/questions", tags=["Questions"])
 app.include_router(artist.router, prefix="/artists", tags=["Artists"])
 app.include_router(song.router, prefix="/songs", tags=["Songs"])
 app.include_router(playlist.router, prefix="/playlist", tags=["Playlist"])
+app.include_router(metrics.router, prefix="/metrics", tags=["Metrics"])

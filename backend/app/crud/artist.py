@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.artist import Artist
-from models.user import User, RoleEnum
+from models.user import User, RoleEnum, ListenerArtistLink
+
 
 # Get artist by user_id
 def get_artist_by_user_id(db: Session, user_id: int) -> Artist:
@@ -42,3 +43,18 @@ def get_artist_by_username(db: Session, username: str) -> Artist:
 # Get artists
 def get_all_artists(db: Session):
     return db.query(User).filter(User.role == RoleEnum.artist).all()
+
+
+
+def get_followers(db: Session, artist_name: str) -> int:
+    """
+    Get the number of followers for a given artist.
+    """
+    artist = get_artist_by_username(db, artist_name)
+    # Count the number of listener-artist links for the given artist
+    followers_count = db.query(ListenerArtistLink).filter(
+        ListenerArtistLink.artist_id == artist.artist_id
+    ).count()
+    return followers_count
+
+
