@@ -49,7 +49,7 @@ def get_playlists_by_username(
     """
     Retrieve a list of playlists by username.
     """
-    playlists = get_playlists_by_username_crud(db, username, current_user.id)
+    playlists = get_playlists_by_username_crud(db, username, current_user.id if current_user else None)
     return [transform_playlist_to_output(playlist) for playlist in playlists]
 
 @router.post("/", response_model=PlaylistOutput)

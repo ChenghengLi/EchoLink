@@ -158,7 +158,9 @@ def test_get_playlists_by_username():
     create_playlist(db, playlist_data, user.id)
 
     # Send GET request to retrieve playlists by username
-    response = client.get(f"playlist/user/{user.username}", headers={"Authorization": f"Bearer {user.token}"})
+    response = client.get(
+        f"playlist/user/{user.username}"
+    )
 
     # Assert response status and content
     assert response.status_code == 200
