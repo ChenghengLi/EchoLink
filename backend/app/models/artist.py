@@ -1,8 +1,9 @@
 """ Models """
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, HttpUrl
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import Base
+from typing import Optional
 
 # Artist table
 class Artist(Base):

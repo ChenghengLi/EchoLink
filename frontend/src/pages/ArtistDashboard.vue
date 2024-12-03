@@ -272,6 +272,7 @@ function answerQuestion(questionText, questionId) {
                         icon: 'success',
                     });
                     fetchQuestions();
+                    fetchMetrics();
                 })
                 .catch((err) => {
                     Swal.fire({
@@ -298,6 +299,7 @@ function answerQuestion(questionText, questionId) {
                                 icon: 'success',
                             });
                             fetchQuestions();
+                            fetchMetrics();
                         })
                         .catch((err) => {
                             Swal.fire({
