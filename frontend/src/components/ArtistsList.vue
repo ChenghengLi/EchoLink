@@ -5,7 +5,7 @@
       <div v-if="showHeader" class="row justify-content-center">
         <div class="col-12 col-xl-8">
           <div data-wow-duration="600ms" data-wow-delay="300ms" class="section__header wow fadeInUp">
-            <h2 class="h2">Artists</h2>
+            <h2 ref="artistsHeader" class="h2">Artists</h2>
           </div>
         </div>
       </div>
@@ -13,11 +13,20 @@
       <!-- Search and Order By -->
       <div class="row justify-content-center align-items-center mb-4">
         <div class="col-12 col-md-6 d-flex justify-content-center align-items-center search-container">
-          <input type="text" v-model="searchQuery" placeholder="Search for an artist..."
-            class="form-control search-input" />
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Search for an artist..."
+            class="form-control search-input"
+          />
           <div class="dropdown ms-3">
-            <button class="btn btn-primary dropdown-toggle selector-btn" type="button" id="orderByDropdown"
-              data-bs-toggle="dropdown" aria-expanded="false">
+            <button
+              class="btn btn-primary dropdown-toggle selector-btn"
+              type="button"
+              id="orderByDropdown"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
               Sort By: {{ sortOrder }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="orderByDropdown">
@@ -42,7 +51,7 @@
               <li class="page-item" :class="{ disabled: currentPage === 1 }">
                 <button class="page-link" @click="changePage(currentPage - 1)">Previous</button>
               </li>
-              <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: currentPage === page }">
+              <li v-for="page in visiblePages" :key="page" class="page-item" :class="{ active: currentPage === page }">
                 <button class="page-link" @click="changePage(page)">{{ page }}</button>
               </li>
               <li class="page-item" :class="{ disabled: currentPage === totalPages }">
@@ -71,7 +80,7 @@ export default {
       artists: [],
       searchQuery: '',
       currentPage: 1,
-      itemsPerPage: 9,
+      itemsPerPage: 6,
       sortOrder: 'Alphabet', // Default sort order
     };
   },
@@ -79,12 +88,10 @@ export default {
     filteredArtists() {
       const query = this.searchQuery.toLowerCase();
       let filtered = this.artists;
-      console.log(this.artists)
 
       if (query) {
-        filtered = filtered.filter(
-          artist =>
-            artist.username.toLowerCase().includes(query)
+        filtered = filtered.filter((artist) =>
+          artist.username.toLowerCase().includes(query)
         );
       }
 
@@ -98,13 +105,23 @@ export default {
       const end = start + this.itemsPerPage;
       return this.filteredArtists.slice(start, end);
     },
+    visiblePages() {
+      const range = 2; // Number of pages to show before and after the current page
+      const start = Math.max(1, this.currentPage - range);
+      const end = Math.min(this.totalPages, this.currentPage + range);
+
+      const pages = [];
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      return pages;
+    },
   },
   methods: {
     async fetchArtists() {
       try {
-        // Fetch artists from the backend based on the selected sort order
         const data = await ArtistService.getArtistsByAlphabet();
-        this.artists = data.map(artist => ({
+        this.artists = data.map((artist) => ({
           ...artist,
           image: artist.image_url || fixedImage,
         }));
@@ -115,7 +132,6 @@ export default {
     changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.scrollToTop(); // Scroll to top when page changes
       }
     },
     async setSortOrder(order) {
@@ -134,26 +150,26 @@ export default {
             data = await ArtistService.getArtistsByAlphabet();
             break;
         }
-        console.log(data)
-        this.artists = data.map(artist => ({
+        this.artists = data.map((artist) => ({
           ...artist,
           image: artist.image_url || fixedImage,
         }));
       } catch (error) {
         console.error('Error fetching artists:', error);
       }
-      this.scrollToTop(); // Scroll to top after sorting
     },
-    scrollToTop() {
-      const section = this.$el; // Get the root element of the component
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Smooth scroll to the top
+    scrollToArtistsHeader() {
+      const header = this.$refs.artistsHeader;
+      if (header) {
+        header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     },
   },
   props: {
     showHeader: Boolean,
   },
   created() {
-    this.setSortOrder("Alphabet");
+    this.setSortOrder('Alphabet');
   },
 };
 </script>
@@ -164,7 +180,6 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 15px;
-  /* Space between search bar and dropdown */
 }
 
 .search-input {
@@ -175,8 +190,6 @@ export default {
   outline: none;
   width: 100%;
   max-width: 400px;
-  /* Centered and responsive */
-  box-shadow: none;
   transition: all 0.3s ease;
 }
 
@@ -199,15 +212,12 @@ export default {
   background-color: #3457c5;
 }
 
-.dropdown-menu {
-  border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
 .pagination {
   display: flex;
+  flex-wrap: wrap;
   list-style: none;
   padding: 0;
+  justify-content: center;
 }
 
 .page-item {
@@ -230,5 +240,31 @@ export default {
 .page-item.disabled .page-link {
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+/* Responsive Styles */
+@media (max-width: 576px) {
+  .search-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+
+  .selector-btn {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .page-item .page-link {
+    padding: 5px 8px;
+    font-size: 14px;
+  }
 }
 </style>

@@ -70,7 +70,7 @@ function logIn(){
             title: 'Log in successful!',
             icon: 'success',
         });
-        router.push('/') // Go to homepage
+        router.push('/') 
     }).catch((err) => {
         Swal.fire({
             title: 'Log in failed',
