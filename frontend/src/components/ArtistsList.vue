@@ -18,7 +18,7 @@
           <div class="dropdown ms-3">
             <button class="btn btn-primary dropdown-toggle selector-btn" type="button" id="orderByDropdown"
               data-bs-toggle="dropdown" aria-expanded="false">
-              Order By: {{ sortOrder }}
+              Sort By: {{ sortOrder }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="orderByDropdown">
               <li><a class="dropdown-item" @click="setSortOrder('Alphabet')">By Alphabet</a></li>

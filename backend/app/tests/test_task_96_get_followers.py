@@ -2,8 +2,7 @@ from fastapi.testclient import TestClient
 from main import app
 from core.config import get_db
 from tests.utils import create_random_auth_artist, create_random_listener
-from crud.listener import follow_artist , create_listener
-
+from crud.listener import follow_artist 
 client = TestClient(app)
 
 def test_get_artists_followers():
