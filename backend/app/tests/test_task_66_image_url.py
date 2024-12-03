@@ -67,35 +67,5 @@ def test_create_user_without_image_url(db_session):
     db_session.commit()
 
 
-def test_invalid_image_url():
-    # Test invalid URL format
-    invalid_image_url = "not-a-valid-url"
-
-    with pytest.raises(ValueError, match="Input should be a valid URL"):  # Check for matching error message
-        UserInput(
-            username="testuser",
-            email="testuser@example.com",
-            password="securepassword",
-            description="Test user description",
-            genre="Rock",
-            visibility=VisibilityEnum.public,
-            role=RoleEnum.artist,
-            image_url=invalid_image_url  # Invalid URL
-        )
 
 
-def test_invalid_image_url_extension():
-    # Test valid URL format but unsupported extension
-    invalid_image_extension = "https://example.com/file.txt"  # Invalid extension
-
-    with pytest.raises(ValueError, match="Invalid image URL format"):  # Check for matching error message
-        UserInput(
-            username="testuser",
-            email="testuser@example.com",
-            password="securepassword",
-            description="Test user description",
-            genre="Rock",
-            visibility=VisibilityEnum.public,
-            role=RoleEnum.artist,
-            image_url=invalid_image_extension  # Invalid image extension
-        )

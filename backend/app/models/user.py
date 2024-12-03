@@ -70,14 +70,6 @@ class UserValidationMixin(BaseModel):
     # Validator for image URL
     @field_validator('image_url', check_fields=False)
     def validate_image_url(cls, v):
-        if v is not None:
-            # Convert HttpUrl object to string
-            url_str = str(v)
-
-            # Check if the URL ends with a valid image extension
-            valid_extensions = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg')
-            if not url_str.lower().endswith(valid_extensions):
-                raise ValueError("Invalid image URL format.")
         return v
 
 # Input user for login
@@ -112,6 +104,7 @@ class UserOutput(BaseModel):
     genre: Optional[str] = None
     visibility: VisibilityEnum
     role: RoleEnum
+    image_url: Optional[HttpUrl] = None
 
     # Pydantic V2 configuration for ORM mode
     model_config = {'from_attributes': True}

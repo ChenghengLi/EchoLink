@@ -17,8 +17,8 @@ from crud.song import create_song, get_songs_by_artist_id
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code
-    # populate_with_artists_and_songs()
-    # populate_with_users()
+    populate_with_artists_and_songs()
+    populate_with_users()
     yield
     # Shutdown code (if needed)
 
@@ -47,7 +47,7 @@ def populate_with_artists_and_songs():
                 email=artist['email'],
                 password=artist['password'],
                 role=RoleEnum.artist,
-                #image_url=artist['image_url'],
+                image_url=artist['image_url'],
                 genre=artist['genres']
             )
 
@@ -58,10 +58,8 @@ def populate_with_artists_and_songs():
                 user = create_user(db, user_input)
             else:
                 user = get_user_by_username(db, user_input.username)
-            print("User: dsadsd", user)
-            artist = get_artist_by_user_id(db, user.id)
 
-            print(artist)
+            artist = get_artist_by_user_id(db, user.id)
 
             if not artist:
                 artist = create_artist(db, user)
@@ -76,7 +74,7 @@ def populate_with_artists_and_songs():
                     release_date=song['release_date'],
                     album=song['album'],
                     genre=song['genre'],
-                    artist_name=artist.name
+                    artist_name=artist.name,
                 )
 
                 if song_input.title not in artist_song_list:
@@ -92,13 +90,11 @@ def populate_with_artists_and_songs():
 def populate_with_users():
     db: Session = SessionLocal()
     try:
-        print("Populating users...")
         filename = 'data/user.json'
         with open(filename, 'r', encoding='utf-8') as f:
             users = json.load(f)
         
         for user in users.values():
-            print(user)
             user_input = UserInput(
                 username=user['username'],
                 email=user['email'],

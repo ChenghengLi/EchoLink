@@ -13,25 +13,16 @@
       <!-- Search and Order By -->
       <div class="row justify-content-center align-items-center mb-4">
         <div class="col-12 col-md-6 d-flex justify-content-center align-items-center search-container">
-          <input 
-            type="text" 
-            v-model="searchQuery" 
-            placeholder="Search for an artist..." 
-            class="form-control search-input"
-          />
+          <input type="text" v-model="searchQuery" placeholder="Search for an artist..."
+            class="form-control search-input" />
           <div class="dropdown ms-3">
-            <button 
-              class="btn btn-primary dropdown-toggle selector-btn" 
-              type="button" 
-              id="orderByDropdown" 
-              data-bs-toggle="dropdown" 
-              aria-expanded="false"
-            >
+            <button class="btn btn-primary dropdown-toggle selector-btn" type="button" id="orderByDropdown"
+              data-bs-toggle="dropdown" aria-expanded="false">
               Order By: {{ sortOrder }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="orderByDropdown">
-              <li><a class="dropdown-item" @click="setSortOrder('Engagement')">By Engagement</a></li>
               <li><a class="dropdown-item" @click="setSortOrder('Alphabet')">By Alphabet</a></li>
+              <li><a class="dropdown-item" @click="setSortOrder('Engagement')">By Engagement</a></li>
               <li><a class="dropdown-item" @click="setSortOrder('Followers')">By Followers</a></li>
             </ul>
           </div>
@@ -40,11 +31,7 @@
 
       <!-- Artists List -->
       <div class="row items-gap">
-        <ArtistComponent
-          v-for="artist in paginatedArtists"
-          :key="artist.id"
-          :artist="artist"
-        />
+        <ArtistComponent v-for="artist in paginatedArtists" :key="artist.id" :artist="artist" />
       </div>
 
       <!-- Pagination -->
@@ -55,12 +42,7 @@
               <li class="page-item" :class="{ disabled: currentPage === 1 }">
                 <button class="page-link" @click="changePage(currentPage - 1)">Previous</button>
               </li>
-              <li 
-                v-for="page in totalPages" 
-                :key="page" 
-                class="page-item" 
-                :class="{ active: currentPage === page }"
-              >
+              <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: currentPage === page }">
                 <button class="page-link" @click="changePage(page)">{{ page }}</button>
               </li>
               <li class="page-item" :class="{ disabled: currentPage === totalPages }">
@@ -77,6 +59,8 @@
 <script>
 import ArtistComponent from './ArtistComponent.vue';
 import ArtistService from '../services/artist.js'; // Assume this service handles API calls
+
+import fixedImage from '../assets/images/cara1.jpg'; // Default image for artists without an image
 
 export default {
   components: {
@@ -95,12 +79,12 @@ export default {
     filteredArtists() {
       const query = this.searchQuery.toLowerCase();
       let filtered = this.artists;
+      console.log(this.artists)
 
       if (query) {
         filtered = filtered.filter(
           artist =>
-            artist.username.toLowerCase().includes(query) || // Filter by name
-            artist.genre.toLowerCase().includes(query) // Filter by genre
+            artist.username.toLowerCase().includes(query)
         );
       }
 
@@ -116,14 +100,13 @@ export default {
     },
   },
   methods: {
-    async fetchArtists(sortBy = 'Alphabet') {
+    async fetchArtists() {
       try {
         // Fetch artists from the backend based on the selected sort order
-        const data = await ArtistService.getArtists(sortBy); // Pass the sortBy parameter to the API
-        const fixedImage = 'cara3.jpg';
+        const data = await ArtistService.getArtistsByAlphabet();
         this.artists = data.map(artist => ({
           ...artist,
-          image: fixedImage,
+          image: artist.image_url || fixedImage,
         }));
       } catch (error) {
         console.error('Error fetching artists:', error);
@@ -138,7 +121,27 @@ export default {
     async setSortOrder(order) {
       this.sortOrder = order;
       this.currentPage = 1; // Reset to the first page after sorting
-      await this.fetchArtists(order); // Fetch sorted data from the backend
+      let data = null;
+      try {
+        switch (order) {
+          case 'Engagement':
+            data = await ArtistService.getArtistByEngagement();
+            break;
+          case 'Followers':
+            data = await ArtistService.getArtistsByFollowers();
+            break;
+          default:
+            data = await ArtistService.getArtistsByAlphabet();
+            break;
+        }
+        console.log(data)
+        this.artists = data.map(artist => ({
+          ...artist,
+          image: artist.image_url || fixedImage,
+        }));
+      } catch (error) {
+        console.error('Error fetching artists:', error);
+      }
       this.scrollToTop(); // Scroll to top after sorting
     },
     scrollToTop() {
@@ -150,7 +153,7 @@ export default {
     showHeader: Boolean,
   },
   created() {
-    this.fetchArtists(); // Fetch artists with the default sort order
+    this.setSortOrder("Alphabet");
   },
 };
 </script>
@@ -160,7 +163,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px; /* Space between search bar and dropdown */
+  gap: 15px;
+  /* Space between search bar and dropdown */
 }
 
 .search-input {
@@ -170,7 +174,8 @@ export default {
   border-radius: 5px;
   outline: none;
   width: 100%;
-  max-width: 400px; /* Centered and responsive */
+  max-width: 400px;
+  /* Centered and responsive */
   box-shadow: none;
   transition: all 0.3s ease;
 }

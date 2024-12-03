@@ -202,6 +202,14 @@ const fetchMetrics = async () => {
   }
 };
 
+async function fetchQuestions() {
+    try {
+        Object.assign(questions, await QuestionService.getUserQuestions());
+        errorMsg.value = null; 
+    } catch (err) {
+        errorMsg.value = err.response ? err.response.data.detail : err.message;
+    }
+}
 
 
 

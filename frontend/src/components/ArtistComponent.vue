@@ -3,7 +3,7 @@
       <div class="team-main-single wow fadeInUp" data-wow-duration="600ms" data-wow-delay="300ms">
         <div class="thumb">
             <router-link :to="`/users/${artist.username}`">
-                <img :src="`/images/${artist.image}`" :alt="artist.name" class="clickable-image" />
+                <img :src="artist.image" :alt="artist.name" class="clickable-image" />
             </router-link>
             <div class="content">
                 <h5 class="h5">{{ artist.username }}</h5>
@@ -44,12 +44,17 @@ export default {
 .thumb {
     position: relative;
     overflow: hidden;
+    width: 300px; /* Set a fixed width for the square */
+    height: 300px; /* Set the same height to make it a square */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .thumb img {
     width: 100%;
-    height: auto; 
-    min-height: 300px; 
+    height: 100%; /* Force the image to fill the square */
+    object-fit: cover; /* Crop the image to ensure it fits within the square */
 }
 
 img {
@@ -82,7 +87,7 @@ img {
 }
 
 .content p,
-.content h5{
+.content h5 {
     color: white;
 }
 
@@ -98,5 +103,4 @@ img {
   transform: scale(1.05); 
   opacity: 0.9; 
 }
-
 </style>

@@ -2,7 +2,7 @@ import axios from './baseAxiosClient';
 import Cookies from 'js-cookie'
 
 class ArtistService{
-    async getArtists() {
+    async getArtistsByAlphabet() {
         try {
             const response = await axios.get('/artists/');
             return response.data;
@@ -10,6 +10,25 @@ class ArtistService{
             console.error('Error fetching artists:', error);
         }
     }
+
+    async getArtistByEngagement() {
+        try {
+            const response = await axios.get('/artists/engagement');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching artists:', error);
+        }
+    }
+
+    async getArtistByFollowers() {
+        try {
+            const response = await axios.get('/artists/followers');
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching artists:', error);
+        }
+    }
+
 
     async getFollowers() {
         try {
