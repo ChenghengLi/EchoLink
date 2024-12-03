@@ -140,14 +140,16 @@ import QuestionService from '../services/questions.js'
 import { onMounted, ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { GlobeAltIcon, QuestionMarkCircleIcon, UserIcon, StarIcon, TrophyIcon, PencilIcon, MusicalNoteIcon } from '@heroicons/vue/24/solid'
+import ArtistService from '../services/artist.js'
 
 const router = useRouter()
 
+
 // TODO pull from API
 const metrics = reactive([
-    {id: 'fans', label: 'Fans', tooltip: 'Amount of fans that follow you.', value: 20},
-    {id: 'answer_rate', label: 'Answer Rate', tooltip: 'Percentage of questions from fans you\'ve answered.', value: 20, suffix: '%'},
-    {id: 'engagement', label: 'Engagement', tooltip: 'How much your fans have interacted with your content. Follows, questions asked and other fan activity all boost your engagement score.', value: 8227},
+    {id: 'fans', label: 'Fans', tooltip: 'Amount of fans that follow you.', value: 323},
+    {id: 'answer_rate', label: 'Answer Rate', tooltip: 'Percentage of questions from fans you\'ve answered.', value: 3232, suffix: '%'},
+    {id: 'engagement', label: 'Engagement', tooltip: 'How much your fans have interacted with your content. Follows, questions asked and other fan activity all boost your engagement score.', value:3232},
     {id: 'ranking', label: 'Ranking', tooltip: 'How your Engagement score compares against other EchoLink artists.', value: 22, prefix: 'Top '},
 ])
 const questions = reactive([])
@@ -179,14 +181,29 @@ async function fetchArtistData() {
         isLoaded.value = true
     }
 }
-async function fetchQuestions() {
-    try {
-        Object.assign(questions, await QuestionService.getUserQuestions());
-        errorMsg.value = null; 
-    } catch (err) {
-        errorMsg.value = err.response ? err.response.data.detail : err.message;
-    }
-}
+
+
+
+const fetchMetrics = async () => {
+  try {
+    // Fetch data from the API using the ArtistService
+    const fans = await ArtistService.getFollowers();
+    const engagementRate = await ArtistService.getEngagementRate();
+    const responseRate = await ArtistService.getResponseRate();
+    const ranking = await ArtistService.getRanking();
+
+    // Update the metrics array with the fetched data
+    metrics.find(metric => metric.id === 'fans').value = fans || 0; 
+    metrics.find(metric => metric.id === 'engagement').value = engagementRate|| 0; 
+    metrics.find(metric => metric.id === 'answer_rate').value = responseRate || 0; 
+    metrics.find(metric => metric.id === 'ranking').value = ranking || 0; 
+  } catch (error) {
+    console.error('Error fetching metrics:', error);
+  }
+};
+
+
+
 
 const unansweredQuestions = computed(() => {
     const unansweredQuestions = questions.filter((question) => question.response_status === 'waiting')
@@ -295,6 +312,7 @@ function scrollToQuestions() {
 // Fetch artist data when the page is accessed.
 onMounted(function () {
     fetchArtistData()
+    fetchMetrics()
 })
 
 </script>
