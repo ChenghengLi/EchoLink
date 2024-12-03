@@ -1,5 +1,5 @@
 <template>
-  <section class="section artists pb-0 pt-0">
+  <section class="section artists pb-0 pt-3">
     <div class="container">
       <!-- Header -->
       <div v-if="showHeader" class="row justify-content-center">
@@ -128,7 +128,7 @@ export default {
             data = await ArtistService.getArtistByEngagement();
             break;
           case 'Followers':
-            data = await ArtistService.getArtistsByFollowers();
+            data = await ArtistService.getArtistByFollowers();
             break;
           default:
             data = await ArtistService.getArtistsByAlphabet();
