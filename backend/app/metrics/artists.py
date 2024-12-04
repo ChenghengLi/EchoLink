@@ -1,5 +1,5 @@
 
-from crud.artist import get_followers, get_all_artists, is_artist
+from crud.artist import get_followers, get_all_artists, get_artist_by_username
 from crud.question import get_questions_by_artist
 from models.artist import ArtistOutput
 from models.question import ResponseEnum
@@ -45,8 +45,8 @@ def engage_artist_score(artist_name: str, db: Session) -> int:
 
 
 def get_my_ranking(artist_name: str, db: Session):
-    if not is_artist(db, artist_name):
-        raise ValueError("Artist not found.")
+    # Check if the artist exists
+    get_artist_by_username(db, artist_name)
 
     # Get the engagement scores for all artists
     all_artists = get_all_artists(db)

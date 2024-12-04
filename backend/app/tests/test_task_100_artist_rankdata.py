@@ -1,6 +1,5 @@
 import pytest
 from tests.utils import create_random_artist, get_session
-from crud.artist import is_artist
 from metrics.artists import get_all_artists_with_rank_data
 
 
@@ -16,20 +15,6 @@ def db_session():
     finally:
         db.rollback()
         db.close()
-
-# Test: Check if user is an artist
-def test_is_artist(db_session):
-    artist = create_random_artist(db_session)
-
-    # Test if the user is recognized as an artist
-    assert is_artist(db_session, artist.user.username) is True  # Should return True for an artist
-
-    # Test with a non-existing artist
-    assert is_artist(db_session, "nonartist") is False  # Should return False for a non-existing artist
-
-    # Clean up
-    db_session.delete(artist.user)
-    db_session.commit()
 
 # NOTE: There is no test for rank_data logic. Its functionality must be tested manually. QA task.
 

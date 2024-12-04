@@ -57,11 +57,3 @@ def get_followers(db: Session, artist_name: str) -> int:
         ListenerArtistLink.artist_id == artist.artist_id
     ).count()
     return followers_count
-
-# Is the user an artist?
-def is_artist(db: Session, artist_name: str) -> bool:
-    try:
-        get_artist_by_username(db, artist_name)
-        return True
-    except HTTPException:
-        return False
