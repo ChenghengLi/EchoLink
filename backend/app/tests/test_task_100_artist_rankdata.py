@@ -47,7 +47,7 @@ def test_get_all_artists_with_rank_data(db_session):
 
     # Check if the rank_data is present for each artist
     for artist in artists_with_rank_data:
-        assert "rank_data" in artist.dict()  # Ensure rank_data is a part of the artist output
+        assert "rank_data" in artist.model_dump()  # Ensure rank_data is a part of the artist output
         assert isinstance(artist.rank_data, dict)  # rank_data should be a dictionary
 
     # Check specific artists are in the list
