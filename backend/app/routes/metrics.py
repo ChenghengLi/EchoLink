@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from metrics.artists import reply_rate_score, engage_artist_score, get_my_ranking
+from metrics.artists import reply_rate_score, engage_artist_score, rank_data
 from crud.artist import get_followers
 from pytest import Session
 from core.config import get_db
@@ -55,17 +55,15 @@ def get_artist_followers(artist_name: str, db: Session = Depends(get_db)) -> int
 
 
 
-@router.get("/ranking", response_model=int)
-def get_artist_ranking(artist_name: str, db: Session = Depends(get_db)) -> int:
+@router.get("/rank_data", response_model=dict)
+def get_artist_rank_data(artist_name: str, db: Session = Depends(get_db)) -> dict:
     """
-    Retrieve and return the ranking for an artist.
-
-    The number of followers is a key metric that reflects the size of the artist's audience.
+    Retrieve and return the rank_data for an artist.
 
     Args:
-        artist (Artist): The artist object containing data about their profile and audience.
+        artist_name (str): The artist name.
 
     Returns:
-        int: The total number of followers the artist has as an integer.
+        dict: A dictionary with the keys "ranking", "tier" and "percentage".
     """
-    return get_my_ranking(artist_name, db)
+    return rank_data(artist_name, db)
