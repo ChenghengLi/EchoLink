@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
 from metrics.artists import reply_rate_score, engage_artist_score, rank_data
-from crud.artist import get_followers
+from metrics.listeners import loyalty_points
+from crud.artist import get_followers, get_artist_by_username
 from pytest import Session
 from core.config import get_db
+from core.security import CurrentUser
 
 router = APIRouter()
 
@@ -67,3 +69,21 @@ def get_artist_rank_data(artist_name: str, db: Session = Depends(get_db)) -> dic
         dict: A dictionary with the keys "ranking", "tier" and "percentage".
     """
     return rank_data(artist_name, db)
+
+
+
+@router.get("/loyalty", response_model=int)
+def get_listener_loyalty(listener_name: str, user: CurrentUser, db: Session = Depends(get_db)) -> int:
+    """
+    Retrieve the loyalty metric of a listener related to the artist authenticated. 
+    The listener_name will be the only parameter.
+
+    An exception will be raised if there is no authorization token or if the one given does not belong to an artist.
+
+    Args:
+        listener_name (str): The listener username.
+
+    Returns:
+        int: Loyalty points of the listener related to the artist.
+    """
+    return loyalty_points(get_artist_by_username(db, user.username), listener_name, db)
