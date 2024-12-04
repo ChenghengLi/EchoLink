@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from models.song import Song, SongInput, SongOutput
+from models.song import Song, SongInput, SongOutput, SongSource
 from models.artist import Artist
 from models.user import User, RoleEnum
 from crud.artist import get_artist_by_username
@@ -22,7 +22,8 @@ def get_song_by_id(db: Session, song_id: int) -> SongOutput:
         album=song.album,
         genre=song.genre,
         release_date=song.release_date,
-        artist_name=song.artist.user.username
+        artist_name=song.artist.user.username,
+        sources=song.source_urls
     )
 
 # Get songs by artist_id
@@ -45,7 +46,8 @@ def get_all_songs(db: Session) -> list[SongOutput]:
             album=song.album,
             genre=song.genre,
             release_date=song.release_date,
-            artist_name=song.artist.user.username
+            artist_name=song.artist.user.username,
+            sources=song.source_urls
         )
         for song in songs
     ]
@@ -65,13 +67,17 @@ def create_song(db: Session, song_data: SongInput) -> SongOutput:
     db.commit()
     db.refresh(song)
 
+    # Add song sources (now song_id is assigned)
+    song.sources = [SongSource(song_id=song.song_id, source_url=str(url)) for url in song_data.sources]
+
     return SongOutput(
         song_id=song.song_id,
         title=song.title,
         album=song.album,
         genre=song.genre,
         release_date=song.release_date,
-        artist_name=artist.user.username
+        artist_name=artist.user.username,
+        sources=song.source_urls
     )
 
 # Update a song
@@ -80,12 +86,19 @@ def update_song(db: Session, song_id: int, song_data: SongInput) -> SongOutput:
     if song is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Song not found")
     
+    # Clear existing sources
+    db.query(SongSource).filter(SongSource.song_id == song.song_id).delete()
+    db.commit()
+    
     artist = get_artist_by_username(db, song_data.artist_name)
     song.title = song_data.title
     song.album = song_data.album
     song.genre = song_data.genre
     song.release_date = song_data.release_date
     song.artist_id = artist.artist_id
+
+    # Update with new sources
+    song.sources = [SongSource(song_id=song.song_id, source_url=str(url)) for url in song_data.sources]
 
     db.commit()
     db.refresh(song)
@@ -96,7 +109,8 @@ def update_song(db: Session, song_id: int, song_data: SongInput) -> SongOutput:
         album=song.album,
         genre=song.genre,
         release_date=song.release_date,
-        artist_name=artist.user.username
+        artist_name=artist.user.username,
+        sources=song.source_urls
     )
 
 # Delete a song
@@ -108,7 +122,8 @@ def delete_song(db: Session, song_id: int):
         album=song.album,
         genre=song.genre,
         release_date=song.release_date,
-        artist_name=song.artist.user.username
+        artist_name=song.artist.user.username,
+        sources = []
     )
     db.delete(song)
     db.commit()
