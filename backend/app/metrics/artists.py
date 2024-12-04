@@ -1,6 +1,7 @@
 
-from crud.artist import get_followers, get_all_artists
+from crud.artist import get_followers, get_all_artists, is_artist
 from crud.question import get_questions_by_artist
+from models.artist import ArtistOutput
 from models.question import ResponseEnum
 from pytest import Session
 
@@ -44,6 +45,8 @@ def engage_artist_score(artist_name: str, db: Session) -> int:
 
 
 def get_my_ranking(artist_name: str, db: Session):
+    if not is_artist(db, artist_name):
+        raise ValueError("Artist not found.")
 
     # Get the engagement scores for all artists
     all_artists = get_all_artists(db)
@@ -70,3 +73,64 @@ def get_my_ranking(artist_name: str, db: Session):
 
     # Return the rank of the artist
     return artist_rank
+
+
+def rank_data(artist_name: str, db: Session) -> dict:
+    """
+    Computes the ranking tier and percentage position of an artist.
+    
+    Args:
+        artist_name (str): The name of the artist.
+        db (Session): The database session.
+
+    Returns:
+        dict: A dictionary containing the tier and percentage position within the tier.
+    """
+    # Get the rank of the artist
+    artist_rank = get_my_ranking(artist_name, db)
+
+    # Get the number of artists
+    N = len(get_all_artists(db))
+
+    # Define the tiers
+    tiers = {
+        0: (1, 9),
+        1: (10, 50),
+        2: (51, 99),
+        3: (100, 999),
+        4: (1000, N if N >= 1000 else float("inf"))  # Tier 4 includes all artists beyond rank 1000
+    }
+
+    # Determine the tier and its range
+    for tier, (start, end) in tiers.items():
+        if start <= artist_rank <= end:
+            # Calculate percentage position within the tier
+            range_size = end - start + 1
+            percentage = ((artist_rank - start) / range_size) * 100
+            return {
+                "ranking": artist_rank,
+                "tier": tier,
+                "percentage": int(percentage)
+            }
+
+    # This should not be reached if tiers are correctly defined
+    raise RuntimeError("Could not determine the tier for the artist.")
+
+# Get all artists with their rank_data
+def get_all_artists_with_rank_data(db: Session):
+    artists = get_all_artists(db)
+
+    # Return a list of ArtistOutput models
+    return [
+        ArtistOutput(
+            username=artist.username,
+            email=artist.email,
+            genre=artist.genre,
+            description=artist.description,
+            visibility=artist.visibility,
+            role=artist.role,
+            image_url=artist.image_url,
+            rank_data=rank_data(artist.username, db)
+        )
+        for artist in artists
+    ]
