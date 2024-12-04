@@ -152,8 +152,9 @@ def test_update_song_successful():
     assert updated_song["release_date"] == song_data["release_date"]
     assert updated_song["artist_name"] == artist.username
 
-    # Check if the song is updated
+    # Check if the song is updated (refresh the song since this db is different from the one in the endpoint)
     db_song = db.query(Song).filter(Song.song_id == song.song_id).first()
+    db.refresh(db_song)
     assert db_song.title == song_data["title"]
     assert db_song.album == song_data["album"]
     assert db_song.genre == song_data["genre"]
