@@ -9,7 +9,7 @@ from models.user import User, ListenerArtistLink  # noqa: F401
 from models.artist import Artist  # noqa: F401
 from models.listener import Listener # noqa: F401
 from models.question import Question # noqa: F401
-from models.song import Song # noqa: F401
+from models.song import Song, SongSource # noqa: F401
 from models.playlist import Playlist # noqa: F401
 
 
