@@ -9,7 +9,7 @@ def loyalty_points(artist: Artist, listener_name: str, db: Session) -> int:
     listener = get_listener_by_username(db, listener_name)
 
     # Check if the listener follows the artist
-    follow_score = 500 if check_follow(db, listener, artist.user.username) else 0
+    follow_score = 5000 if check_follow(db, listener, artist.user.username) else 0
 
     # Questions from the listener to the artist
     questions = db.query(Question).filter(Question.artist_id == artist.artist_id, 
