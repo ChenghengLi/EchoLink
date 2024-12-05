@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime
 from fastapi import HTTPException
+from crud.listener import follow_artist
 from models.question import Question, QuestionInput, QuestionResponse, ResponseEnum
 from crud.question import get_questions_by_listener, get_questions_by_artist, submit_question, get_question_by_id, response_question
 from tests.utils import create_artist, create_listener, get_session
@@ -58,6 +59,9 @@ def test_get_questions_by_artist(db_session):
 def test_submit_question(db_session):
     listener = create_listener(db_session)
     artist = create_artist(db_session)
+
+    # Make the listener follows the artist
+    follow_artist(db_session, listener, artist.user.username)
 
     question_input = QuestionInput(
         artist_username=artist.user.username,
@@ -121,6 +125,9 @@ def test_artist_cannot_answer_others_question(db_session):
     listener = create_listener(db_session)
     artist_1 = create_artist(db_session)
     artist_2 = create_artist(db_session, "artist2")
+
+    # Make the listener follows the artist_1
+    follow_artist(db_session, listener, artist_1.user.username)
 
     # Listener asks a question to artist_1
     question_input = QuestionInput(

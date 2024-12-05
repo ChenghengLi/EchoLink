@@ -1,6 +1,7 @@
 import pytest
 from datetime import datetime
 from fastapi import HTTPException, status
+from crud.listener import follow_artist
 from models.question import Question, QuestionInput, QuestionResponse, ResponseEnum
 from crud.question import submit_question, response_question
 from tests.utils import create_artist, create_listener, get_session
@@ -22,6 +23,9 @@ def test_submit_question_when_waiting_for_response(db_session):
     # Arrange: Create a listener, artist, and a question that is already waiting for a response
     listener = create_listener(db_session)
     artist = create_artist(db_session)
+
+    # Make the listener follows the artist
+    follow_artist(db_session, listener, artist.user.username)
     
     # Create an existing question with the 'waiting' status
     question_input = QuestionInput(

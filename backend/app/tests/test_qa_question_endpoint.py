@@ -1,6 +1,7 @@
 from tests.utils import get_session, get_client, create_random_auth_artist, create_random_auth_user, random_lower_string
 from models.question import Question
 from models.user import User
+from crud.listener import follow_artist, get_listener_by_username
 
 def test_create_question_successful():
     db = get_session()
@@ -9,6 +10,11 @@ def test_create_question_successful():
     # Create an authenticated listener
     listener = create_random_auth_user(db)
     artist = create_random_auth_artist(db)
+
+    # Make the listener follows the artist
+    follow_artist(db, get_listener_by_username(db, listener.username), artist.username)
+
+    # Question data
     question_data = {
         "question_text": random_lower_string(),
         "artist_username": artist.username
@@ -50,6 +56,11 @@ def test_two_questions_error():
     # Create an authenticated listener
     listener = create_random_auth_user(db)
     artist = create_random_auth_artist(db)
+    
+    # Make the listener follows the artist
+    follow_artist(db, get_listener_by_username(db, listener.username), artist.username)
+
+    # Question data
     question_data = {
         "question_text": random_lower_string(),
         "artist_username": artist.username
@@ -92,6 +103,11 @@ def test_response_question_successful():
     # Create an authenticated listener
     listener = create_random_auth_user(db)
     artist = create_random_auth_artist(db)
+    
+    # Make the listener follows the artist
+    follow_artist(db, get_listener_by_username(db, listener.username), artist.username)
+
+    # Question data
     question_data = {
         "question_text": random_lower_string(),
         "artist_username": artist.username
@@ -140,6 +156,11 @@ def test_answer_question_not_found():
     # Create an authenticated listener
     listener = create_random_auth_user(db)
     artist = create_random_auth_artist(db)
+    
+    # Make the listener follows the artist
+    follow_artist(db, get_listener_by_username(db, listener.username), artist.username)
+
+    # Question data
     question_data = {
         "question_text": random_lower_string(),
         "artist_username": artist.username
@@ -190,6 +211,11 @@ def test_response_artist_no_permissions():
     listener = create_random_auth_user(db)
     artist = create_random_auth_artist(db)
     artist2 = create_random_auth_artist(db)
+
+    # Make the listener follows the artist
+    follow_artist(db, get_listener_by_username(db, listener.username), artist.username)
+
+    # Question data
     question_data = {
         "question_text": random_lower_string(),
         "artist_username": artist.username
@@ -240,6 +266,11 @@ def test_reject_question_successful():
     # Create an authenticated listener
     listener = create_random_auth_user(db)
     artist = create_random_auth_artist(db)
+    
+    # Make the listener follows the artist
+    follow_artist(db, get_listener_by_username(db, listener.username), artist.username)
+
+    # Question data
     question_data = {
         "question_text": random_lower_string(),
         "artist_username": artist.username
