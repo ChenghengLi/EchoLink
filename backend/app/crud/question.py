@@ -3,9 +3,10 @@ from datetime import datetime
 from models.question import Question, QuestionInput, QuestionResponse, ResponseEnum
 from fastapi import HTTPException, status
 from crud.artist import get_artist_by_username
-from crud.listener import get_listener_by_username
+from crud.listener import check_follow, get_listener_by_username
 from models.listener import Listener
 from models.artist import Artist
+from metrics.listeners import get_listener_loyalty_data
 
 # Get questions by listener username
 def get_questions_by_listener(db: Session, username: str):
@@ -19,8 +20,12 @@ def get_questions_by_artist(db: Session, username: str):
 
 # Decide if a listener can ask a question to an artist
 def can_question(db: Session, listener: Listener, artist: Artist):
-    # TODO: Implement algorithm based on metrics
-    return True
+    # Check if listener follows the artist
+    if not check_follow(db, listener, artist.user.username):
+        return False
+
+    # Check if listener is in the top 10 in terms of loyalty
+    return get_listener_loyalty_data(artist, listener, db)["percentage"] < 10
 
 # Add a new question to the database
 def submit_question(db: Session, listener: Listener, question_input: QuestionInput) -> Question:
