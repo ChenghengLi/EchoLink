@@ -8,7 +8,8 @@ from crud.question import (
     get_questions_by_listener,
     get_questions_by_artist,
     submit_question,
-    response_question
+    response_question,
+    archive_question
 )
 from crud.listener import get_listener_by_username
 from crud.artist import get_artist_by_username
@@ -60,3 +61,11 @@ def answer_question_endpoint(response: QuestionResponse, user: CurrentUser, db: 
     """
     return response_question(db, get_artist_by_username(db, user.username), 
                              response, response_status=ResponseEnum.answered)
+
+
+@router.post("/archive", response_model=QuestionModel)
+def archive_question_endpoint(question_id: int, user: CurrentUser, db: Session = Depends(get_db)):
+    """
+    Archive a question by its ID (it must be asked by the listener derived from the Authorization token).
+    """
+    return archive_question(db, question_id, get_listener_by_username(db, user.username))

@@ -76,3 +76,16 @@ def response_question(db: Session, artist: Artist, response: QuestionResponse, r
     db.refresh(question)
     return question
     
+# Archive a question
+def archive_question(db: Session, question_id: int, listener: Listener) -> Question:
+    question = get_question_by_id(db, question_id)
+    if not question:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Question not found.")
+    
+    if question.listener_id != listener.listener_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This listener cannot archive this question.")
+    
+    question.archived = True
+    db.commit()
+    db.refresh(question)
+    return question
