@@ -1,9 +1,9 @@
-
+from models.listener import Listener
 from models.playlist import Playlist
-from models.question import Question
+from models.question import Question, ResponseEnum
 from models.artist import Artist
 from pytest import Session
-from crud.listener import get_listener_by_username, check_follow
+from crud.listener import get_listener_by_username, check_follow, get_all_listeners
 
 def loyalty_points(artist: Artist, listener_name: str, db: Session) -> int:
     listener = get_listener_by_username(db, listener_name)
@@ -19,10 +19,10 @@ def loyalty_points(artist: Artist, listener_name: str, db: Session) -> int:
     question_score = 20 * len(questions)
 
     # Answered questions give more points
-    answer_score = 1000 * sum(1 for question in questions if question.response_status == "answered")
+    answer_score = 1000 * sum(1 for question in questions if question.response_status == ResponseEnum.answered)
 
     # Rejected questions reduce the score
-    reject_score = -200 * sum(1 for question in questions if question.response_status == "rejected")
+    reject_score = -200 * sum(1 for question in questions if question.response_status == ResponseEnum.rejected)
 
     # Playlists with artist's songs give points (based on the % of songs of the artist)
     playlists = db.query(Playlist).filter(Playlist.user_id == listener.user_id).all()
@@ -39,3 +39,30 @@ def loyalty_points(artist: Artist, listener_name: str, db: Session) -> int:
 
     # Return a score as an integer (minimum 1000)
     return 1000 + max(int(round(loyalty_score)), 0)
+
+
+def loyalty_sorted_listeners(artist: Artist, db: Session) -> list:
+    # Get all listeners and their loyalty points
+    listeners = [[listener.username, loyalty_points(artist, listener.username, db)] for listener in get_all_listeners(db)]
+
+    # Sort in descending order of loyalty points
+    sorted_listeners = sorted(listeners, key=lambda x: x[1], reverse=True)
+
+    return sorted_listeners
+
+
+def get_listener_loyalty_data(artist: Artist, listener: Listener, db: Session):
+    # Get listeners sorted by loyalty
+    listeners = loyalty_sorted_listeners(artist, db)
+
+    # Iterate through the list to get the listener ranking
+    for i, (name, score) in enumerate(listeners, start=1):
+        if name == listener.user.username:
+            return {
+                "ranking": i,
+                "loyalty_points": score,
+                "percentage": int(((i-1) / len(listeners)) * 100)
+            }
+
+    # This should not be reached
+    raise RuntimeError("Could not determine the ranking for the listener.")
