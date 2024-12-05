@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.listener import Listener
-from models.user import ListenerArtistLink, User
+from models.user import ListenerArtistLink, RoleEnum, User
 from crud.artist import get_artist_by_username
 
 # Get listener by user_id
@@ -23,6 +23,10 @@ def create_listener(db: Session, user: User) -> Listener:
     db.refresh(listener)
 
     return listener
+
+# Get listeners
+def get_all_listeners(db: Session):
+    return db.query(User).filter(User.role == RoleEnum.listener).all()
 
 # Get listener by username
 def get_listener_by_username(db: Session, username: str) -> Listener:
