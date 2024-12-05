@@ -1,12 +1,16 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.listener import Listener
-from models.user import ListenerArtistLink, RoleEnum, User
+from models.user import ListenerArtistLink, User
 from crud.artist import get_artist_by_username
 
 # Get listener by user_id
 def get_listener_by_user_id(db: Session, user_id: int) -> Listener:
     return db.query(Listener).filter(Listener.user_id == user_id).first()
+
+# Get listener by listener_id
+def get_listener_by_listener_id(db: Session, listener_id: int) -> Listener:
+    return db.query(Listener).filter(Listener.listener_id == listener_id).first()
 
 # Create listener
 def create_listener(db: Session, user: User) -> Listener:
@@ -26,7 +30,7 @@ def create_listener(db: Session, user: User) -> Listener:
 
 # Get listeners
 def get_all_listeners(db: Session):
-    return db.query(User).filter(User.role == RoleEnum.listener).all()
+    return db.query(Listener).all()
 
 # Get listener by username
 def get_listener_by_username(db: Session, username: str) -> Listener:

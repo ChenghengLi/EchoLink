@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from crud.listener import get_listener_by_username
 from metrics.artists import reply_rate_score, engage_artist_score, rank_data
 from metrics.listeners import loyalty_points
 from crud.artist import get_followers, get_artist_by_username
@@ -86,4 +87,4 @@ def get_listener_loyalty(listener_name: str, user: CurrentUser, db: Session = De
     Returns:
         int: Loyalty points of the listener related to the artist.
     """
-    return loyalty_points(get_artist_by_username(db, user.username), listener_name, db)
+    return loyalty_points(get_artist_by_username(db, user.username), get_listener_by_username(db, listener_name), db)

@@ -3,11 +3,9 @@ from models.playlist import Playlist
 from models.question import Question, ResponseEnum
 from models.artist import Artist
 from pytest import Session
-from crud.listener import get_listener_by_username, check_follow, get_all_listeners
+from crud.listener import check_follow, get_all_listeners
 
-def loyalty_points(artist: Artist, listener_name: str, db: Session) -> int:
-    listener = get_listener_by_username(db, listener_name)
-
+def loyalty_points(artist: Artist, listener: Listener, db: Session) -> int:
     # Check if the listener follows the artist
     follow_score = 5000 if check_follow(db, listener, artist.user.username) else 0
 
@@ -43,7 +41,7 @@ def loyalty_points(artist: Artist, listener_name: str, db: Session) -> int:
 
 def loyalty_sorted_listeners(artist: Artist, db: Session) -> list:
     # Get all listeners and their loyalty points
-    listeners = [[listener.username, loyalty_points(artist, listener.username, db)] for listener in get_all_listeners(db)]
+    listeners = [[listener.user.username, loyalty_points(artist, listener, db)] for listener in get_all_listeners(db)]
 
     # Sort in descending order of loyalty points
     sorted_listeners = sorted(listeners, key=lambda x: x[1], reverse=True)

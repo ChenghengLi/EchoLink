@@ -44,14 +44,14 @@ def test_loyalty_points(db_session):
     artist = create_artist(db_session)
 
     # Test with no interactions
-    points = loyalty_points(artist, listener.user.username, db_session)
+    points = loyalty_points(artist, listener, db_session)
     assert points >= 1000  # Minimum score is 1000
 
     # Make the listener follow the artist
     follow_artist(db_session, listener, artist.user.username)
 
     # Test with following
-    points = loyalty_points(artist, listener.user.username, db_session)
+    points = loyalty_points(artist, listener, db_session)
     assert points >= 6000  # Should add follow score
 
     # Add questions and responses
@@ -60,7 +60,7 @@ def test_loyalty_points(db_session):
     db_session.commit()
 
     # Test with answered question
-    points2 = loyalty_points(artist, listener.user.username, db_session)
+    points2 = loyalty_points(artist, listener, db_session)
     assert points2 > points  # Includes follow + answered question bonus
 
     # Add rejected question
@@ -69,7 +69,7 @@ def test_loyalty_points(db_session):
     db_session.commit()
 
     # Test with rejected question
-    points3 = loyalty_points(artist, listener.user.username, db_session)
+    points3 = loyalty_points(artist, listener, db_session)
     assert points3 < points2  # Rejected reduces points
 
     # Clean up
@@ -146,9 +146,9 @@ def test_get_all_listeners(db_session):
 
     # Ensure the listeners created are in the result
     assert len(all_listeners) == n_listeners + 2
-    usernames = [listener.username for listener in all_listeners]
-    assert listener1.user.username in usernames
-    assert listener2.user.username in usernames
+    ids = [listener.listener_id for listener in all_listeners]
+    assert listener1.listener_id in ids
+    assert listener2.listener_id in ids
 
     # Cleanup created users
     db_session.delete(listener1.user)
