@@ -1,7 +1,7 @@
 """Models"""
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Enum, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from core.config import Base
@@ -26,6 +26,7 @@ class Question(Base):
     question_date = Column(DateTime, default=func.now(), nullable=False)
     response_date = Column(DateTime, nullable=True)
     response_status = Column(Enum(ResponseEnum), default=ResponseEnum.waiting)
+    archived = Column(Boolean, default=False, nullable=False)
 
     # Relationships to other tables
     listener = relationship("Listener")
@@ -51,6 +52,7 @@ class QuestionModel(BaseModel):
     question_date: datetime
     response_date: Optional[datetime]
     response_status: ResponseEnum
+    archived: bool
 
     # Use ConfigDict for Pydantic v2
     model_config = ConfigDict(from_attributes=True)
