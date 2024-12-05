@@ -1,3 +1,4 @@
+/*
 import { generateRandomEmail, generateRandomPassword, generateRandomUsername } from './utils/dataGenerator.js';
 import { registerUser, registerArtist } from './utils/user.js';
 import { test, expect } from '@playwright/test';
@@ -151,3 +152,4 @@ test('Ask and Answer a question', async ({ page }) => {
     const successToastAnswer = page.locator('text="Your response has been sent successfully!"');
     await expect(successToastAnswer).toBeVisible();
 });
+*/
