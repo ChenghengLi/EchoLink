@@ -9,7 +9,8 @@ from crud.question import (
     get_questions_by_artist,
     submit_question,
     response_question,
-    archive_question
+    archive_question,
+    can_question
 )
 from crud.listener import get_listener_by_username
 from crud.artist import get_artist_by_username
@@ -69,3 +70,11 @@ def archive_question_endpoint(question_id: int, user: CurrentUser, db: Session =
     Archive a question by its ID (it must be asked by the listener derived from the Authorization token).
     """
     return archive_question(db, question_id, get_listener_by_username(db, user.username))
+
+
+@router.get("/can_ask", response_model=bool)
+def can_ask_question(artist_name: str, user: CurrentUser, db: Session = Depends(get_db)) -> bool:
+    """
+    Check if the listener can ask a question to the artist.
+    """
+    return can_question(db, get_listener_by_username(db, user.username), get_artist_by_username(db, artist_name))
