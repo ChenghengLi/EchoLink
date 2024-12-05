@@ -20,7 +20,7 @@ router = APIRouter()
 @router.get("/", response_model=List[QuestionModel])
 def get_questions(user: CurrentUser, db: Session = Depends(get_db)):
     """
-    Retrieve questions for a listener or artist (the user is derived from the Authorization token).
+    Retrieve sorted questions for a listener or artist (the user is derived from the Authorization token).
     """
     try:
         # If the user is a listener, return questions
@@ -36,6 +36,14 @@ def get_questions(user: CurrentUser, db: Session = Depends(get_db)):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="The user is neither a listener nor an artist."
             )
+        
+        
+@router.get("/top", response_model=List[QuestionModel])
+def get_top_questions(user: CurrentUser, db: Session = Depends(get_db)):
+    """
+    Retrieve the first 3 sorted questions for a listener or artist (the user is derived from the Authorization token).
+    """
+    return get_questions(user, db)[:3]
 
 
 @router.post("/", response_model=QuestionModel)
