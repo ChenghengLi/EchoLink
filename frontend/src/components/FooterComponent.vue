@@ -1,5 +1,6 @@
 <template>
-  <footer class="footer-two section bg-img">
+  <!-- mt-top to move the header to the bottom of the viewport -->
+  <footer class="footer-two section py-4 bg-img mt-auto">
     <div class="container">
       <div class="row items-gap-two justify-content-center align-items-center">
         <div class="col-auto logo-container">
