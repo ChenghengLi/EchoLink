@@ -52,7 +52,7 @@
                         <h2 class="section-header">{{ youtubeVideoID ? 'Listen on YouTube' : 'Listen' }}</h2>
 
                         <!-- Source view -->
-                        <div v-if="!isEditing" class="flex flex-col w-100">
+                        <div v-if="!isEditing" class="flex flex-col w-100 mt-2">
                             <p v-if="song.sources.length == 0" class="text-left">The artist hasn't added any sources for this song yet.</p>
 
                             <!-- Youtube embed -->
@@ -61,7 +61,7 @@
                                 <iframe width="100%" height="100%" :src="`https://www.youtube.com/embed/${youtubeVideoID}`" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
                             <!-- Other sources -->
-                            <h2 v-if="youtubeVideoID" class="section-header my-2">Also available on</h2>
+                            <h2 v-if="youtubeVideoID" class="section-header my-3">Also available on</h2>
                             <div class="flex flex-wrap place-content-center gap-4 mx-auto">
                                 <SongSourceCard v-if="spotifyLink" class="bg-green-200 hover:bg-green-300" :link="spotifyLink" :img="SpotifyLogo" label="On Spotify"></SongSourceCard>
                                 <SongSourceCard v-if="soundCloudLink" class="bg-orange-300 hover:bg-orange-400" :link="soundCloudLink" :img="SoundCloudLogo" label="On SoundCloud"></SongSourceCard>
