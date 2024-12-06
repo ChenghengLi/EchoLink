@@ -9,6 +9,7 @@ import UploadTrack from '../pages/UploadTrack.vue';
 import UserService from '../services/user.js';
 import ListenerDashboard from '../pages/ListenerDashboard.vue';
 import ArtistDashboard from '../pages/ArtistDashboard.vue';
+import SongDetails from '../pages/SongDetails.vue';
 
 export default  [
         {
@@ -37,6 +38,11 @@ export default  [
             path: '/playlists/:id',
             name: 'Playlist',
             component: PlaylistCreator,
+        },
+        {
+            path: '/songs/:id',
+            name: 'Song',
+            component: SongDetails,
         },
         {
             path: '/dashboard/',
