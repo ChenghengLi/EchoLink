@@ -39,8 +39,8 @@ def test_follow_artist():
     assert follow is not None
 
     # Clean up the database
-    db.delete(listener)
-    db.delete(artist)
+    db.delete(listener_user)
+    db.delete(artist_user)
     db.commit()
 
 #Test for following an artist being an artist
@@ -51,7 +51,6 @@ def test_follow_artist_as_artist():
     artist1_user = create_random_auth_artist(db)
     artist2_user = create_random_auth_artist(db)
 
-    artist1 = get_artist_by_user_id(db, artist1_user.id)
     artist2 = get_artist_by_user_id(db, artist2_user.id)
 
     # Call the /follow/{artist_name} endpoint
@@ -65,8 +64,8 @@ def test_follow_artist_as_artist():
     assert response.json() == {"detail": "You must be a listener to follow an artist."}
 
     # Clean up the database
-    db.delete(artist1)
-    db.delete(artist2)
+    db.delete(artist1_user)
+    db.delete(artist2_user)
     db.commit()
 
 # Test for following an artist that the listener is already following
@@ -77,7 +76,6 @@ def test_follow_artist_already_following():
     listener_user = create_random_auth_listener(db)
     artist_user = create_random_auth_artist(db)
 
-    listener = get_listener_by_user_id(db, listener_user.id)
     artist = get_artist_by_user_id(db, artist_user.id)
 
     # Follow the artist
@@ -96,8 +94,8 @@ def test_follow_artist_already_following():
     assert response.json() == {"detail": "The listener follows the artist."}
 
     # Clean up the database
-    db.delete(listener)
-    db.delete(artist)
+    db.delete(listener_user)
+    db.delete(artist_user)
     db.commit()
 
 # Test for unfollowing an artist
@@ -133,6 +131,6 @@ def test_unfollow_artist():
     assert follow is None
 
     # Clean up the database
-    db.delete(listener)
-    db.delete(artist)
+    db.delete(listener_user)
+    db.delete(artist_user)
     db.commit()
