@@ -22,6 +22,13 @@ def create_random_user_input():
     pwd = random_lower_string()
     return UserInput(username=username, email=email, password=pwd)
 
+def create_random_listener_input():
+    username = random_lower_string()
+    email = random_email()
+    pwd = random_lower_string()
+    role = RoleEnum.listener
+    return UserInput(username=username, email=email, password=pwd, role=role)
+
 def create_random_artist_input():
     username = random_lower_string()
     email = random_email()
@@ -34,6 +41,13 @@ def create_random_user(db):
 
 def create_random_auth_user(db):
     user_input = create_random_user_input()
+    user = create_user(db, user_input)
+    authenticate(db, UserLogin(email=user_input.email, password=user_input.password))
+    db.refresh(user)
+    return user
+
+def create_random_auth_listener(db):
+    user_input = create_random_listener_input()
     user = create_user(db, user_input)
     authenticate(db, UserLogin(email=user_input.email, password=user_input.password))
     db.refresh(user)
