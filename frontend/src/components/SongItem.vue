@@ -10,7 +10,7 @@
 
             <!-- Artist & title -->
             <span class="mx-3 text-left">
-                {{ prefix ? prefix : ''}} <router-link :to="`/users/${song.artist_name}`">{{ song.artist_name }}</router-link> - {{  song.title }}
+                {{ prefix ? prefix : ''}} <router-link :to="`/users/${song.artist_name}`">{{ song.artist_name }}</router-link> - <router-link :to="`/songs/${song.song_id}`">{{  song.title }}</router-link>
             </span>
 
             <div class="mx-auto"></div>
