@@ -51,6 +51,7 @@ def test_recommendations():
     db.delete(listener_user)
     db.delete(artist1.user)
     db.delete(artist2.user)
+    db.delete(artist3.user)
     db.commit()
 
 #Test followed artists have less than 30 songs so need to add same genre songs
@@ -99,6 +100,7 @@ def test_recommendations_same_genre():
     db.delete(listener_user)
     db.delete(artist1.user)
     db.delete(artist2.user)
+    db.delete(artist3.user)
     db.commit()
 
 #Test followed artists and genre songs have less than 30 songs so need to add random songs
@@ -142,4 +144,5 @@ def test_recommendations_random():
     db.delete(listener_user)
     db.delete(artist1.user)
     db.delete(artist2.user)
+    db.delete(artist3.user)
     db.commit()
