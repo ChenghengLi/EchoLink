@@ -70,6 +70,9 @@ class UserService {
         return this.isLoggedIn() ? Cookies.get('username') : null // Tests for both cookies as sanity check.
     }
     getConfig() {
+        if (!Cookies.get('auth_token')) {
+            return {};
+        }
         return {
             headers: {
                 Authorization: `Bearer ${Cookies.get('auth_token')}`,
