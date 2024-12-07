@@ -58,6 +58,23 @@
                 <ArtistsList/>
             </div>
 
+            <hr class="h-divider my-5"/>
+
+            <!-- Questions -->
+            <!-- TODO hide for artists -->
+            <div class="mx-auto">
+                <h2>Your questions</h2>
+                <p>See how artists have responded to your questions.</p>
+                <div v-if="!questionsError && topQuestions.length > 0" class="flex flex-col gap-y-4 mx-auto mt-2 max-w-screen-lg">
+                    <QuestionCard v-for="question in topQuestions" :question="question" @archived="onQuestionArchived(question)"></QuestionCard>
+                </div>
+                <p v-else-if="questionsError" class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
+                <p v-else-if="topQuestions.length == 0" class="text-gray-500">You have made no questions to artists yet. Visit their profiles to start asking questions.</p>
+                
+                <button @click="router.push('/questions')" class="btn btn--primary mt-3 min-w-64 text-black">
+                    View all questions
+                </button>
+            </div>
         </div>
 
         <FooterComponent class="footer-light mx-10" />
@@ -72,9 +89,16 @@ import { PlusIcon } from '@heroicons/vue/24/solid'
 import OptionSelector from '../components/form/OptionSelector.vue';
 import ArtistsList from '../components/ArtistsList.vue';
 import SongList from '../components/SongList.vue';
+import QuestionCard from '../components/QuestionCard.vue';
 import UserService from '../services/user.js'
 import SongService from '../services/song.js'
+import Swal from 'sweetalert2'
+import Toast from '../utilities/toast.js'
+import QuestionService from '../services/question.js'
 import { computed, ref, reactive, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const LATEST_SONGS_STEP = 5 // Amount of additional songs to display when clicking "Show more"
 
@@ -83,11 +107,13 @@ const songsError = ref(null)
 const shownSongsAmount = ref(3) // Ref in case we decide to make it customizable.
 const genres = reactive([])
 const registeredGenres = ref(new Set())
-
 const search = reactive({
     genre: null,
     text: '',
 })
+
+const topQuestions = reactive([])
+const topQuestionsError = ref(null)
 
 async function fetchSongs() {
     try {
@@ -107,6 +133,15 @@ async function fetchSongs() {
         Object.assign(songs, fetchedSongs)
     } catch (err) {
         songsError.value = (err.response) ? err.response.data.detail : err.message
+    }
+}
+
+async function fetchQuestions() {
+    try {
+        const fetchedQuestions = await QuestionService.getTopQuestions()
+        Object.assign(topQuestions, fetchedQuestions)
+    } catch (err) {
+        topQuestionsError.value = (err.response) ? err.response.data.detail : err.message
     }
 }
 
@@ -130,9 +165,23 @@ function getUsername() {
     return UserService.getCurrentUsername()
 }
 
-// Fetch song data when the page is accessed.
+function onQuestionArchived(question) {
+    QuestionService.archiveQuestion(question.question_id).then(() => {
+        Toast.fireSuccess('Question archived')
+        fetchQuestions()
+    }).catch((err) => {
+        Swal.fire({
+            title: 'Error',
+            text: 'Failed to archive question: ' + ((err.response !== undefined) ? err.response.data.detail : err.message),
+            icon: 'error',
+        })
+    })
+}
+
+// Fetch data when the page is accessed.
 onMounted(function () {
     fetchSongs()
+    fetchQuestions()
 })
 
 </script>
