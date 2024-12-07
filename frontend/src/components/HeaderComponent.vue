@@ -8,6 +8,7 @@
 							<div class="nav__logo">
 								<router-link to="/" @click="scrollToTop">
 									<img :src="LogoURL" alt="Logo" style="max-width: 55px;" />
+									<p class="font-bold text-3xl ml-3">EchoLink</p>
 								</router-link>
 							</div>
 							<div class="nav__menu">
@@ -92,7 +93,7 @@
 										Log Out
 									</button>
 								</div>
-								<button class="nav__bar d-block d-xl-none">
+								<button class="nav__bar d-block d-md-none">
 									<span class="icon-bar top-bar"></span>
 									<span class="icon-bar middle-bar"></span>
 									<span class="icon-bar bottom-bar"></span>
