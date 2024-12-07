@@ -19,7 +19,6 @@ def follow_artist_route(
     if not listener:
         raise HTTPException(status_code=400, detail="You must be a listener to follow an artist.")
     
-    print(listener)
     return follow_artist(db, listener, artist_name)
 
 # Unfollow an artist

@@ -2,8 +2,10 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.song import Song, SongInput, SongOutput, SongSource
 from models.artist import Artist
-from models.user import User, RoleEnum
+from models.user import ListenerArtistLink, User, RoleEnum
 from crud.artist import get_artist_by_username
+from crud.listener import get_listener_by_user_id
+import random
 
 # Helper function to get a song or raise an error
 def _get_song_or_error(db: Session, song_id: int) -> Song:
@@ -141,3 +143,53 @@ def is_user_artist(db: Session, user_id: int):
     user = db.query(User).filter(User.id == user_id).first()
     if user.role != RoleEnum.artist:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not an artist") 
+
+def get_recommendations(db: Session, user: User) -> list[Song]:
+    # Check if the user is a listener
+    listener = get_listener_by_user_id(db, user.id)
+    if not listener:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This user is not a listener.")
+
+    # Step 1: Get songs by followed artists
+    followed_artists = (
+        db.query(Artist.artist_id)
+        .join(ListenerArtistLink, ListenerArtistLink.artist_id == Artist.artist_id)
+        .filter(ListenerArtistLink.listener_id == listener.listener_id)
+        .all()
+    )
+    followed_songs = (
+        db.query(Song)
+        .filter(Song.artist_id.in_([artist.artist_id for artist in followed_artists]))
+        .all()
+    )
+
+    # If there are 30 or more songs, pick 10 at random
+    if len(followed_songs) >= 30:
+        return random.sample(followed_songs, 10)
+
+    # Step 2: Add songs with the listener's preferred genre
+    genres = db.query(Song.genre).filter(Song.artist_id.in_([artist.artist_id for artist in followed_artists])).distinct().all()
+    genres = [genre[0] for genre in genres]
+    genres_songs = (
+        db.query(Song)
+        .filter(Song.genre.in_(genres))
+        .all()
+    )
+
+    combined_list = list(set(followed_songs + genres_songs))
+
+    # If the combined list has 30 or more songs, pick 10 at random
+    if len(combined_list) >= 30:
+        return random.sample(combined_list, 10)
+
+    # Step 3: Handle small lists
+    selected_songs = random.sample(combined_list, min(5, len(combined_list)))
+
+    # Add random songs from the database excluding already selected ones
+    remaining_songs = (
+        db.query(Song)
+        .filter(~Song.song_id.in_([song.song_id for song in combined_list]))
+        .all()
+    )
+    additional_songs = random.sample(remaining_songs, 10 - len(selected_songs))
+    return selected_songs + additional_songs

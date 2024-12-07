@@ -1,19 +1,33 @@
 from fastapi import APIRouter, status, Depends
 from sqlalchemy.orm import Session
 from core.config import get_db
-from core.security import get_current_user
+from core.security import get_current_user, CurrentUser
 from crud.song import get_song_by_id as get_song_by_id_crud, \
     get_all_songs as get_all_songs_crud, \
     create_song as create_song_crud, \
     update_song as update_song_crud, \
     delete_song as delete_song_crud, \
     is_artist_owner_song as is_artist_owner_song_crud, \
-    is_user_artist as is_user_artist_crud
+    is_user_artist as is_user_artist_crud, \
+    get_recommendations as get_recommendations_crud
 from crud.artist import get_artist_by_user_id
 import models.song as song_model
 import models.user as user_model
+from typing import List
 
 router = APIRouter()
+
+# GET /songs/recommendations -> Get song recommendations
+@router.get("/recommendations", response_model=List[song_model.SongOutput])
+def get_recommendations(
+    current_user: CurrentUser,
+    db: Session = Depends(get_db),
+):
+    """
+    Recommend 10 songs for the authenticated listener.
+    """
+    recommendations = get_recommendations_crud(db, current_user)
+    return [transform_song_to_output(song) for song in recommendations]
 
 # GET /songs -> Retrieve all songs
 @router.get("/", response_model=list[song_model.SongOutput])
@@ -69,3 +83,13 @@ async def delete_song(
     delete_song_crud(db, song_id)
     return {"message": "Song deleted successfully"}
 
+def transform_song_to_output(song: song_model.Song):
+    return song_model.SongOutput(
+        song_id=song.song_id,
+        title=song.title,
+        album=song.album,
+        genre=song.genre,
+        release_date=song.release_date,
+        artist_name=song.artist.name,
+        sources=song.sources
+    )
