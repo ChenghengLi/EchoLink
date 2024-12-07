@@ -49,7 +49,8 @@
                 <!-- Sources -->
                 <div class="content-block flex flex-grow lg:mr-2">
                     <div class="flex flex-column w-100">
-                        <h2 class="section-header">{{ youtubeVideoID ? 'Listen on YouTube' : 'Listen' }}</h2>
+                        <h2 v-if="!isEditing" class="section-header">{{ youtubeVideoID ? 'Listen on YouTube' : 'Listen' }}</h2>
+                        <h2 v-else class="section-header">Edit sources</h2>
 
                         <!-- Source view -->
                         <div v-if="!isEditing" class="flex flex-col w-100 mt-2">
