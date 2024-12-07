@@ -61,8 +61,7 @@
             <hr class="h-divider my-5"/>
 
             <!-- Questions -->
-            <!-- TODO hide for artists -->
-            <div class="mx-auto">
+            <div v-if="isListener" class="mx-auto">
                 <h2>Your questions</h2>
                 <p>See how artists have responded to your questions.</p>
                 <div v-if="!questionsError && topQuestions.length > 0" class="flex flex-col gap-y-4 mx-auto mt-2 max-w-screen-lg">
@@ -102,6 +101,7 @@ const router = useRouter()
 
 const LATEST_SONGS_STEP = 5 // Amount of additional songs to display when clicking "Show more"
 
+const user = reactive({})
 const songs = reactive([])
 const songsError = ref(null)
 const shownSongsAmount = ref(3) // Ref in case we decide to make it customizable.
@@ -145,6 +145,15 @@ async function fetchQuestions() {
     }
 }
 
+async function fetchUser() {
+    try {
+        const userData = await UserService.get(UserService.getCurrentUsername())
+        Object.assign(user, userData)
+    } catch {
+        Toast.fireError('Failed to load user data')
+    }
+}
+
 function showMoreSongs() {
     shownSongsAmount.value += LATEST_SONGS_STEP
 }
@@ -165,6 +174,10 @@ function getUsername() {
     return UserService.getCurrentUsername()
 }
 
+function isListener() {
+    return user.role === 'listener'
+}
+
 function onQuestionArchived(question) {
     QuestionService.archiveQuestion(question.question_id).then(() => {
         Toast.fireSuccess('Question archived')
@@ -182,6 +195,7 @@ function onQuestionArchived(question) {
 onMounted(function () {
     fetchSongs()
     fetchQuestions()
+    fetchUser()
 })
 
 </script>
