@@ -334,63 +334,74 @@ function deleteAccount() {
 }
 
 function askQuestion() {
-    Swal.fire({
-        title: 'Ask me something!',
-        html: `
-           <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-               <textarea 
-                   id="swal-input" 
-                   class="swal2-textarea" 
-                   maxlength="500" 
-                   style="width: 100%; max-width: 500px; height: 100px; resize: none; padding: 10px; box-sizing: border-box;" 
-                   placeholder="Type your question here..."></textarea>
-               <div 
-                   id="char-counter" 
-                   style="width: 100%; max-width: 500px; text-align: right; font-size: 0.9em; color: #555; margin-top: 5px;">
-                   0/500 characters
-               </div>
-           </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Send',
-        cancelButtonText: 'Cancel',
-        preConfirm: () => {
-            const question = document.getElementById('swal-input').value;
-            // Check text (can't be empty)
-            if (!question || question.trim().length === 0) {
-                Swal.showValidationMessage('The question cannot be empty');
-                return false;
-            } else {
-                return question;
-            }
-        },
-        didOpen: () => {
-            const input = document.getElementById('swal-input');
-            const counter = document.getElementById('char-counter');
+    if(UserService.isLoggedIn()){
+        Swal.fire({
+            title: 'Ask me something!',
+            html: `
+            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <textarea 
+                    id="swal-input" 
+                    class="swal2-textarea" 
+                    maxlength="500" 
+                    style="width: 100%; max-width: 500px; height: 100px; resize: none; padding: 10px; box-sizing: border-box;" 
+                    placeholder="Type your question here..."></textarea>
+                <div 
+                    id="char-counter" 
+                    style="width: 100%; max-width: 500px; text-align: right; font-size: 0.9em; color: #555; margin-top: 5px;">
+                    0/500 characters
+                </div>
+            </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Send',
+            cancelButtonText: 'Cancel',
+            preConfirm: () => {
+                const question = document.getElementById('swal-input').value;
+                // Check text (can't be empty)
+                if (!question || question.trim().length === 0) {
+                    Swal.showValidationMessage('The question cannot be empty');
+                    return false;
+                } else {
+                    return question;
+                }
+            },
+            didOpen: () => {
+                const input = document.getElementById('swal-input');
+                const counter = document.getElementById('char-counter');
 
-            input.addEventListener('input', () => {
-                const charCount = input.value.length;
-                counter.textContent = `${charCount}/500 characters`;
-            });
-        }
-    }).then((result) => {
-        if (result.isConfirmed && result.value) {
-            QuestionService.newQuestion(getUsername(), result.value)
-                .then(() => {
-                    Toast.fire({
-                        title: 'Your question has been sent successfully!',
-                        icon: 'success',
-                    });
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Failed to send the question: ' + (err.response ? err.response.data.detail : err.message),
-                        icon: 'error',
-                    });
+                input.addEventListener('input', () => {
+                    const charCount = input.value.length;
+                    counter.textContent = `${charCount}/500 characters`;
                 });
-        }
-    });
+            }
+        }).then((result) => {
+            if (result.isConfirmed && result.value) {
+                QuestionService.newQuestion(getUsername(), result.value)
+                    .then(() => {
+                        Toast.fire({
+                            title: 'Your question has been sent successfully!',
+                            icon: 'success',
+                        });
+                    })
+                    .catch((err) => {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Failed to send the question: ' + (err.response ? err.response.data.detail : err.message),
+                            icon: 'error',
+                        });
+                    });
+            }
+        });
+    }
+    else{
+        Toast.fire({
+            title: 'You need to be logged in to send questions to artists',
+            icon: 'warning',
+            timer: 3000,
+        });
+        router.push('/');
+    }
+    
 }
 
 function goToPlaylistCreator(){
