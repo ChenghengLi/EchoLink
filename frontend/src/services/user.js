@@ -2,12 +2,13 @@ import axios from './baseAxiosClient';
 import Cookies from 'js-cookie'
 
 class UserService {
-    async registerAccount(username, email, password) {
+    async registerAccount(username, email, password, role) {
         try {
             const response = await axios.post('/users/user', {
                 'username': username,
                 'email': email,
                 'password': password,
+                'role': role,
             });
             return response.data;
         } catch (error) {

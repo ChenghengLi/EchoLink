@@ -23,6 +23,30 @@
                 
                 <hr class="h-divider"/>
 
+                <div class="mb-4">
+                    <div class="flex justify-between items-center">
+                        <label for="role" class="block text-sm font-medium text-gray-900">Role <span class="text-black-600">*</span></label>                        
+                        <p v-if="roleWarning" class="text-sm text-red-600 font-medium mt-1">{{ roleWarning }}</p>
+                    </div>
+                    <div class="mt-1">
+                        <input
+                            type="text"
+                            id="role"
+                            maxlength="50"
+                            class="w-full px-3 py-2 border bg-gray-50 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            placeholder="Select a role"
+                            list="rolesList"
+                            v-model="role"
+                            data-test="field-role"
+                        />
+                        <datalist id="rolesList">
+                            <option v-for="role in roles" :key="role" :value="role" />
+                        </datalist>
+                    </div>
+                </div>
+
+                <hr class="h-divider"/>
+
                 <Checkbox label="I agree to the terms of service *" :checked="termsOfServiceChecked" @changed="termsOfServiceChecked = $event" :test-id="'checkbox-tos'"></Checkbox>
             </div>
 
@@ -50,10 +74,14 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
+const role = ref('')
 const termsOfServiceChecked = ref(false)
 
+const roles = ["Artist", "Listener"].sort()
+
+
 function register() {
-    UserService.registerAccount(username.value, email.value, password.value).then(() => {
+    UserService.registerAccount(username.value, email.value, password.value, role.value.toLowerCase()).then(() => {
         Toast.fire({
             title: 'Registration successful!',
             icon: 'success',
@@ -97,6 +125,10 @@ const passwordMatches = computed(() => {
     return password.value === passwordConfirmation.value
 })
 
+const isRoleValid = computed(() => {
+    return roles.includes(role.value);
+})
+
 const canRegister = computed(() => {
     return isUsernameValid.value && isEmailValid.value && isPasswordValid.value && passwordMatches.value && termsOfServiceChecked.value
 })
@@ -113,6 +145,9 @@ const passwordWarning = computed(() => {
 })
 const passwordConfirmationWarning = computed(() => {
     return (passwordConfirmation.value !== '' && !passwordMatches.value) ? 'Passwords must match' : null
+})
+const roleWarning = computed(() => {
+    return (role.value !== '' && !isRoleValid.value) ? 'That\'s not an option' : null
 })
 
 </script>
