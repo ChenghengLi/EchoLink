@@ -1,11 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.listener import Listener
-from crud.listener import follow_artist, unfollow_artist
+from crud.listener import follow_artist, unfollow_artist, check_follow
 from core.config import get_db
 from core.security import CurrentUser
 
 router = APIRouter()
+
+#Check if user follows an artist
+@router.get("/follows/{artist_name}", status_code=200)
+def check_follow_route(
+    artist_name: str,
+    current_user: CurrentUser,
+    db: Session = Depends(get_db)
+):
+    # Check if the current user is a listener
+    listener = db.query(Listener).filter(Listener.user_id == current_user.id).first()
+    if not listener:
+        raise HTTPException(status_code=400, detail="You must be a listener to follow an artist.")
+    
+    return {"follows": check_follow(db, listener, artist_name)}
 
 # Follow an artist
 @router.post("/follow/{artist_name}", status_code=200)

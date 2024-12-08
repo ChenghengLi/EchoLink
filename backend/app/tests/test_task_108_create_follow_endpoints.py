@@ -134,3 +134,61 @@ def test_unfollow_artist():
     db.delete(listener_user)
     db.delete(artist_user)
     db.commit()
+
+#Test checking if a listener follows an artist
+def test_check_follow():
+    db = next(get_db())
+
+    # Create a random listener and artist
+    listener_user = create_random_auth_listener(db)
+    artist_user = create_random_auth_artist(db)
+
+    artist = get_artist_by_user_id(db, artist_user.id)
+
+    # Follow the artist
+    client.post(
+        f"/listeners/follow/{artist.name}",
+        headers={"Authorization": f"Bearer {listener_user.token}"}
+    )
+
+    response = client.get(
+        f"/listeners/follows/{artist.name}",
+        headers={"Authorization": f"Bearer {listener_user.token}"}
+    )
+
+    # Assert the response status code
+    assert response.status_code == 200
+
+    # Assert the response contains the correct data
+    assert response.json().get("follows")
+
+    # Clean up the database
+    db.delete(listener_user)
+    db.delete(artist_user)
+    db.commit()
+
+#Test checking if a listener follows an artist that they do not follow
+def test_check_follow_not_following():
+    db = next(get_db())
+
+    # Create a random listener and artist
+    listener_user = create_random_auth_listener(db)
+    artist_user = create_random_auth_artist(db)
+
+    artist = get_artist_by_user_id(db, artist_user.id)
+
+    response = client.get(
+        f"/listeners/follows/{artist.name}",
+        headers={"Authorization": f"Bearer {listener_user.token}"}
+    )
+
+    # Assert the response status code
+    assert response.status_code == 200
+
+    # Assert the response contains the correct data
+    assert not response.json().get("follows")
+
+    # Clean up the database
+    db.delete(listener_user)
+    db.delete(artist_user)
+    db.commit()
