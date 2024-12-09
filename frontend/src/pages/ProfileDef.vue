@@ -16,9 +16,19 @@
                     <!-- Avatar and username -->                        
                     <div class="flex items-end">
                         <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
-                        <div class="ms-3 flex flex-col items-start">
+                        <div class="ms-3 flex flex-col items-start w-full">
                             <!-- TODO ensure contrast vs banner -->
-                            <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
+                            <div class="flex items-center w-full mb-2 space-x-4">
+                                <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
+                                <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="toggleFollow"
+                                    data-test="button-follow">
+                                    <component 
+                                        :is="isFollowing ? UserMinusIcon : UserPlusIcon" 
+                                        class="icon"
+                                    />
+                                    {{ isFollowing ? 'Unfollow' : 'Follow'  }}
+                                </button>
+                            </div>
                             <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
                                 <ChatBubbleBottomCenterTextIcon class="icon" />
                                 Ask me something!
@@ -173,12 +183,13 @@ import LoadingSpinner from '../components/LoadingSpinner.vue';
 import UserService from '../services/user.js'
 import QuestionService from '../services/question.js'
 import PlaylistService from '../services/playlist.js'
+import ListenerService from '../services/listener.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
 import Cookies from 'js-cookie';
 import { computed, onMounted, ref, watch, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon, PlusIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/vue/24/solid'
+import { PencilIcon, MusicalNoteIcon, GlobeAltIcon, TrashIcon, PlusIcon, ChatBubbleBottomCenterTextIcon, UserMinusIcon, UserPlusIcon } from '@heroicons/vue/24/solid'
 
 const router = useRouter()
 const route = useRoute()
@@ -194,6 +205,7 @@ const genres = ["Rock", "Pop", "Blues", "Country", "Disco", "Vocaloid", "EDM", "
 const errorMsg = ref(null) // Error message from profile load request.
 const isEditing = ref(false) // Whether the profile is being edited.
 const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
+const isFollowing = ref(false)
 
 // Profile data. Field names should match the API ones.
 const user = reactive({
@@ -269,6 +281,53 @@ function toggleEditMode() {
     } else {
         // Enter edit mode immediately
         isEditing.value = !isEditing.value
+    }
+}
+
+async function toggleFollow(){
+    if(UserService.isLoggedIn()){
+        if(isFollowing.value){
+            try {
+                await ListenerService.unfollow(getUsername());
+                isFollowing.value = !isFollowing.value;
+                Toast.fire({
+                    title: 'Unfollow successful!',
+                    icon: 'success',
+                });
+            } catch (error) {
+                console.error("Error following:", error);
+                Swal.fire({
+                    title: 'Unfollow failed',
+                    text: 'Reason: ' + err.response.data.detail,
+                    icon: 'error',
+                })
+            }
+        }
+        else{
+            try {
+                await ListenerService.follow(getUsername());
+                isFollowing.value = !isFollowing.value;
+                Toast.fire({
+                    title: 'Follow successful!',
+                    icon: 'success',
+                });
+            } catch (error) {
+                console.error("Error following:", error);
+                Swal.fire({
+                    title: 'Follow failed',
+                    text: 'Reason: ' + err.response.data.detail,
+                    icon: 'error',
+                })
+            }
+        }
+    }
+    else{
+        Toast.fire({
+            title: 'You need to be logged in to send questions to artists',
+            icon: 'warning',
+            timer: 3000,
+        });
+        router.push('/');
     }
 }
 
@@ -450,14 +509,16 @@ const visibilityBadgeClass = computed(() => {
 // This is necessary as the component won't be recreated, thus onMounted() won't fire.
 watch(
     () => route.params,
-    (newId) => {
+    async (newId) => {
         fetchUserData(newId)
-    }
+        isFollowing.value = await ListenerService.checkFollow(getUsername())
+    },
 )
 
 // Fetch user data when the page is accessed from another one.
-onMounted(function () {
+onMounted(async function () {
     fetchUserData(getUsername())
+    isFollowing.value = await ListenerService.checkFollow(getUsername())
 })
 
 </script>
