@@ -1,6 +1,5 @@
 <template>
     <div class="home-two-light home-light container">
-
         <HeaderComponent />
         <!-- Set a fixed width for the container -->
         <div class="form-container mx-auto p-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
@@ -23,25 +22,23 @@
                 
                 <hr class="h-divider"/>
 
+                <!-- Role dropdown -->
                 <div class="mb-4">
                     <div class="flex justify-between items-center">
                         <label for="role" class="block text-sm font-medium text-gray-900">Role <span class="text-black-600">*</span></label>                        
                         <p v-if="roleWarning" class="text-sm text-red-600 font-medium mt-1">{{ roleWarning }}</p>
                     </div>
                     <div class="mt-1">
-                        <input
-                            type="text"
+                        <!-- Dropdown for role selection -->
+                        <select
                             id="role"
-                            maxlength="50"
-                            class="w-full px-3 py-2 border bg-gray-50 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            placeholder="Select a role"
-                            list="rolesList"
                             v-model="role"
-                            data-test="field-role"
-                        />
-                        <datalist id="rolesList">
-                            <option v-for="role in roles" :key="role" :value="role" />
-                        </datalist>
+                            class="w-full px-3 py-2 border bg-gray-50 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            :data-test="'field-role'"
+                        >
+                            <option value="Listener">Listener</option>
+                            <option value="Artist">Artist</option>
+                        </select>
                     </div>
                 </div>
 
@@ -74,11 +71,10 @@ const username = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirmation = ref('')
-const role = ref('')
+const role = ref('Listener')  // Set default value to 'Listener'
 const termsOfServiceChecked = ref(false)
 
 const roles = ["Artist", "Listener"].sort()
-
 
 function register() {
     UserService.registerAccount(username.value, email.value, password.value, role.value.toLowerCase()).then(() => {
@@ -113,7 +109,7 @@ const isUsernameValid = computed(() => {
 
 const isEmailValid = computed(() => {
     // Pattern source: https://stackoverflow.com/a/46181
-    const regex = RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+    const regex = RegExp(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
     return regex.test(email.value)
 })
 
@@ -149,9 +145,7 @@ const passwordConfirmationWarning = computed(() => {
 const roleWarning = computed(() => {
     return (role.value !== '' && !isRoleValid.value) ? 'That\'s not an option' : null
 })
-
 </script>
-
 
 <style scoped>
 .container {
@@ -180,6 +174,5 @@ const roleWarning = computed(() => {
         margin-top: 10vh; /* Remove margin for full screen effect */
         border-radius: 0; /* Remove border radius for full screen effect */
     }
-
 }
 </style>
