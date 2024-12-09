@@ -72,7 +72,7 @@ def test_get_artist_by_username(db_session):
     assert retrieved_artist is not None
     assert retrieved_artist.name == "Username Artist"
 
-    db_session.delete(artist)
+    db_session.delete(artist.user)
     db_session.commit()
 
 # Test: Get artist by username fails if not an artist
@@ -82,3 +82,7 @@ def test_get_artist_by_username_not_artist(db_session):
         get_artist_by_username(db_session, user.username)
     assert exc_info.value.status_code == 400
     assert "This user is not an artist." in str(exc_info.value.detail)
+
+    # Clean up
+    db_session.delete(user)
+    db_session.commit()

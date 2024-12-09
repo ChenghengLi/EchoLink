@@ -30,6 +30,10 @@ def test_create_user_assigns_listener(db_session):
     # Listener created
     assert get_listener_by_user_id(db_session, user.id) is not None
 
+    # Clean up
+    db_session.delete(user)
+    db_session.commit()
+
 def test_create_user_assigns_artist(db_session):
     # Arrange
     user_input = create_random_user_input()
@@ -57,3 +61,7 @@ def test_get_role_of_user_with_role(db_session):
 
     # Assert
     assert role == RoleEnum.listener
+
+    # Clean up
+    db_session.delete(user)
+    db_session.commit()

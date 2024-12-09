@@ -92,6 +92,10 @@ def test_create_user_duplicate_username():
     assert exc_info.value.status_code == 400
     assert exc_info.value.detail == "Username already exists."
 
+    # Clean up
+    db.delete(user)
+    db.commit()
+
 # Test unique email constraint
 def test_create_user_duplicate_email():
     db = next(get_db())
@@ -105,3 +109,7 @@ def test_create_user_duplicate_email():
 
     assert exc_info.value.status_code == 400
     assert exc_info.value.detail == "Email already exists."
+
+    # Clean up
+    db.delete(user)
+    db.commit()

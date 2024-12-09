@@ -18,6 +18,10 @@ def test_deauthenticate():
 
     # Check token is None
     assert user.token is None
+
+    # Clean up
+    db.delete(user)
+    db.commit()
     
 def test_logout():
     db = get_session()

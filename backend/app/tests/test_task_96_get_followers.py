@@ -41,8 +41,8 @@ def test_get_artists_followers():
 
     # Clean up the database
     db.delete(artist)
-    db.delete(listener1)
-    db.delete(listener2)
-    db.delete(listener4)
-    db.delete(listener3)
+    db.delete(listener1.user)
+    db.delete(listener2.user)
+    db.delete(listener4.user)
+    db.delete(listener3.user)
     db.commit()

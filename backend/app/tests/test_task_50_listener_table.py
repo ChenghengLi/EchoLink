@@ -23,11 +23,19 @@ def test_get_listener_by_user_id(db_session):
     assert retrieved_listener is not None
     assert retrieved_listener.user_id == user.id
 
+    # Clean up
+    db_session.delete(user)
+    db_session.commit()
+
 # Test: Create a Listener
 def test_create_listener(db_session):
     user = create_random_user(db_session)
     listener = get_listener_by_user_id(db_session, user.id)
     assert listener.user_id == user.id
+
+    # Clean up
+    db_session.delete(user)
+    db_session.commit()
 
 # Test: Create listener fails if user is already a listener
 def test_create_listener_already_exists(db_session):
@@ -37,6 +45,10 @@ def test_create_listener_already_exists(db_session):
         create_listener(db_session, user)
     assert exc_info.value.status_code == 400
     assert "This user is already a listener." in str(exc_info.value.detail)
+
+    # Clean up
+    db_session.delete(user)
+    db_session.commit()
 
 # Test: Deleting User Cascades to Listener
 def test_cascade_delete_user_deletes_listener(db_session):
@@ -57,3 +69,7 @@ def test_get_listener_by_username(db_session):
     retrieved_listener = get_listener_by_username(db_session, user.username)
     assert retrieved_listener is not None
     assert retrieved_listener.user_id == user.id
+
+    # Clean up
+    db_session.delete(user)
+    db_session.commit()
