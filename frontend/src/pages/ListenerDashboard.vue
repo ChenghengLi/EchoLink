@@ -159,11 +159,16 @@ function showMoreSongs() {
 }
 
 const validSongs = computed(() => {
+    const searchText = search.text.toLowerCase(); // Convert search input to lowercase
     const results = songs.filter((song) => {
-        return (search.text === '' || song.fullTitle.includes(search.text)) && (search.genre === null || search.genre.id === song.genre)
-    })
-    return results
-})
+        const fullTitle = song.fullTitle.toLowerCase(); // Convert song title and artist to lowercase
+        const genreMatch = search.genre === null || search.genre.id === song.genre;
+        const textMatch = search.text === '' || fullTitle.includes(searchText); // Perform case-insensitive search
+        return textMatch && genreMatch;
+    });
+    return results;
+});
+
 
 const shownSongs = computed(() => {
     const results =  validSongs.value.slice(0, shownSongsAmount.value)
