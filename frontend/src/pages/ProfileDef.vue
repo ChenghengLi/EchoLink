@@ -20,7 +20,7 @@
                             <!-- TODO ensure contrast vs banner -->
                             <div class="flex items-center w-full mb-2 space-x-4">
                                 <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
-                                <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="toggleFollow"
+                                <button v-if="!isOwnProfile && isArtist && userRole==='listener'" class="btn btn-blue max-w-min text-nowrap" @click="toggleFollow"
                                     data-test="button-follow">
                                     <component 
                                         :is="isFollowing ? UserMinusIcon : UserPlusIcon" 
@@ -206,6 +206,7 @@ const errorMsg = ref(null) // Error message from profile load request.
 const isEditing = ref(false) // Whether the profile is being edited.
 const isLoaded = ref(false) // Whether the page has finished loading - either successfully or with an error.
 const isFollowing = ref(false)
+const userRole = ref(null)
 
 // Profile data. Field names should match the API ones.
 const user = reactive({
@@ -281,6 +282,18 @@ function toggleEditMode() {
     } else {
         // Enter edit mode immediately
         isEditing.value = !isEditing.value
+    }
+}
+
+async function fetchUserRole() {
+    const username = UserService.getCurrentUsername();
+    if (username) {
+        try {
+            userRole.value = await UserService.getUserRole(username); 
+        } catch (error) {
+            console.error("Error obteniendo el rol del usuario:", error);
+            userRole.value = null; 
+        }
     }
 }
 
@@ -512,6 +525,7 @@ watch(
     async (newId) => {
         fetchUserData(newId)
         isFollowing.value = await ListenerService.checkFollow(getUsername())
+        fetchUserRole();
     },
 )
 
@@ -519,6 +533,7 @@ watch(
 onMounted(async function () {
     fetchUserData(getUsername())
     isFollowing.value = await ListenerService.checkFollow(getUsername())
+    fetchUserRole();
 })
 
 </script>
