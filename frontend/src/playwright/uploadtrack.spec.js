@@ -10,7 +10,7 @@ test('Create and Delete  Successful', async ({ page }) => {
         email: generateRandomEmail(),
         password: generateRandomPassword(),
     };
-    
+
     // Register an artist
     await registerArtist(artistData.username, artistData.email, artistData.password);
 
@@ -38,10 +38,17 @@ test('Create and Delete  Successful', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveURL('/');
 
-    // Locate the Upload Track button
-    const uploadTrackButton = page.locator('[data-test="upload-track-laptop"]');
-    await expect(uploadTrackButton).toBeVisible();
-    await uploadTrackButton.click();
+
+    // Access the "Artist Settings" dropdown
+    const artistSettingsDropdown = page.locator('[data-test="artist-menu"]');
+    await artistSettingsDropdown.click(); // Open the dropdown
+
+    // Click on "Upload Track"
+    const uploadTrackLink = page.locator('[data-test="upload-track-laptop"]');
+    await uploadTrackLink.click(); // Click the "Upload Track" link
+
+    // Verify navigation to the "Upload Track" page
+    await expect(page).toHaveURL(/\/uploadTrack/); // Ensure the URL contains "/uploadTrack"
 
     // Locate the fields
     const titleInput = page.locator('[data-test="field-title"]');

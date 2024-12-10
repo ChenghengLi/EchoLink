@@ -149,6 +149,11 @@ def get_recommendations(db: Session, user: User) -> list[Song]:
     listener = get_listener_by_user_id(db, user.id)
     if not listener:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This user is not a listener.")
+    
+    # Step 0: Check if database has at least 10 songs, otherwise return all songs
+    song_count = db.query(Song).count()
+    if song_count < 10:
+        return db.query(Song).all()
 
     # Step 1: Get songs by followed artists
     followed_artists = (

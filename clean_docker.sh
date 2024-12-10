@@ -4,28 +4,24 @@
 echo "Stopping all running containers..."
 docker stop $(docker ps -q)
 
-# Remove all containers (including stopped ones)
+# Remove all containers (stopped and running)
 echo "Removing all containers..."
-docker rm $(docker ps -a -q)
+docker rm -f $(docker ps -aq)
 
 # Remove all images
 echo "Removing all images..."
-docker rmi $(docker images -q)
+docker rmi -f $(docker images -q)
 
-# Remove all unused volumes
-echo "Removing unused volumes..."
-docker volume prune -f
+# Remove all volumes
+echo "Removing all volumes..."
+docker volume rm $(docker volume ls -q)
 
-# Remove all unused networks
-echo "Removing unused networks..."
+# Remove all networks (except default ones)
+echo "Removing all networks..."
 docker network prune -f
 
-# Remove dangling images (images not associated with any containers)
-echo "Removing dangling images..."
-docker image prune -f
-
-# Remove all build cache
-echo "Removing build cache..."
-docker builder prune -f
+# Clean up any remaining system cache
+echo "Cleaning up Docker system cache..."
+docker system prune -a -f --volumes
 
 echo "Docker cleanup complete!"

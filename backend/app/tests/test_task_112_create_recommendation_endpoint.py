@@ -146,3 +146,32 @@ def test_recommendations_random():
     db.delete(artist2.user)
     db.delete(artist3.user)
     db.commit()
+
+#Test less than 10 songs in database
+def test_recommendations_less_than_10_songs():
+    db = next(get_db())
+
+    # Create a listener
+    listener_user = create_random_auth_listener(db)
+
+    # Create artist and their songs
+    artist = create_random_artist(db)
+
+    for _ in range(5):
+        create_random_song(db, artist.name)
+
+    # Fetch recommendations
+    response = client.get(
+        "songs/recommendations",
+        headers={"Authorization": f"Bearer {listener_user.token}"}
+    )
+
+    # Assert response
+    assert response.status_code == 200
+    recommendations = response.json()
+    assert len(recommendations) == 5
+
+    # Cleanup
+    db.delete(listener_user)
+    db.delete(artist.user)
+    db.commit()
