@@ -27,7 +27,8 @@ def loyalty_points(artist: Artist, listener: Listener, db: Session) -> int:
     playlist_score = 0
     for playlist in playlists:
         artist_songs = sum(1 for song in playlist.songs if song.artist_id == artist.artist_id)
-        playlist_score += 50 * artist_songs / len(playlist.songs)
+        if len(playlist.songs) > 0:
+            playlist_score += 50 * artist_songs / len(playlist.songs)
 
     # Check if the listener's favorite genre matches the artist's genre
     genre_score = 100 if listener.user.genre == artist.user.genre else 0

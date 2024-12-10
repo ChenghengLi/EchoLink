@@ -30,9 +30,13 @@
 import ChatBubble from '../components/ChatBubble.vue'
 import { TrashIcon } from '@heroicons/vue/24/solid'
 
+
+
 const props = defineProps({
     "question": Object,
 })
+
+
 
 defineEmits(['archived'])
 

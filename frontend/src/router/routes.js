@@ -10,6 +10,7 @@ import UserService from '../services/user.js';
 import ListenerDashboard from '../pages/ListenerDashboard.vue';
 import ArtistDashboard from '../pages/ArtistDashboard.vue';
 import SongDetails from '../pages/SongDetails.vue';
+import QuestionPage from '../pages/QuestionPage.vue';
 
 export default  [
         {
@@ -91,5 +92,10 @@ export default  [
                     next('/'); // Redirect to the homepage in case of an error
                 }
             },
+        }, 
+        {
+            path: '/questions',
+            name: 'QuestionPage',
+            component: QuestionPage
         },
     ];
