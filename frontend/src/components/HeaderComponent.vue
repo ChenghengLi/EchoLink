@@ -53,11 +53,11 @@
 										</a>
 										<ul class="nav__dropdown">
 											<li>
-												<router-link to="/dashboard"
+												<router-link to="/dashboard" :data-test="'artist-dashboard'" 
 													class="nav__dropdown-item hide-nav">Dashboard</router-link>
 											</li>
 											<li>
-												<router-link to="/uploadTrack"
+												<router-link to="/uploadTrack" :data-test="'upload-track-laptop'"
 													class="nav__dropdown-item hide-nav">Upload Track</router-link>
 											</li>
 
