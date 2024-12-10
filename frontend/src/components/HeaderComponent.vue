@@ -47,7 +47,7 @@
 										</ul>
 									</li>
 							
-									<li v-if="isArtist() && isLoggedIn" class="nav__menu-item nav__menu-item--dropdown">
+									<li v-if="isArtist() && isLoggedIn" class="nav__menu-item nav__menu-item--dropdown" :data-test="'artist-menu'" >
 										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
 											Artist Settings
 										</a>
