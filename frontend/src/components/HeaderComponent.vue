@@ -21,30 +21,50 @@
 									</button>
 								</div>
 								<ul class="nav__menu-items">
-									<!-- De moment, això no es necessita
+
 									<li class="nav__menu-item">
 										<router-link to="/" class="nav__menu-link hide-nav">Home</router-link>
 									</li>
-									<li class="nav__menu-item">
-										<router-link to="/about" class="nav__menu-link hide-nav">About
-											Us</router-link>
-									</li>
-									<li class="nav__menu-item">
-										<router-link to="/resources"
-											class="nav__menu-link hide-nav">Resources</router-link>
-									</li>
+
 									<li class="nav__menu-item nav__menu-item--dropdown">
 										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
-											Activities
+											Exploration Zone
 										</a>
 										<ul class="nav__dropdown">
 											<li>
-												<router-link to="/"
-													class="nav__dropdown-item hide-nav">Upcoming</router-link>
+												<router-link to="/artist"
+													class="nav__dropdown-item hide-nav">Artists</router-link>
 											</li>
+											<li>
+												<router-link to="/music"
+													class="nav__dropdown-item hide-nav">Music</router-link>
+											</li>
+											<li v-if="isLoggedIn">
+												<router-link to="/questions"
+													class="nav__dropdown-item hide-nav">Questions</router-link>
+											</li>
+											
 										</ul>
 									</li>
-									-->
+							
+									<li v-if="isArtist() && isLoggedIn" class="nav__menu-item nav__menu-item--dropdown">
+										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
+											Artist Settings
+										</a>
+										<ul class="nav__dropdown">
+											<li>
+												<router-link to="/dashboard"
+													class="nav__dropdown-item hide-nav">Dashboard</router-link>
+											</li>
+											<li>
+												<router-link to="/uploadTrack"
+													class="nav__dropdown-item hide-nav">Upload Track</router-link>
+											</li>
+
+
+										</ul>
+									</li>
+						
 
 									<li v-if="!isLoggedIn" class="nav__menu-item d-block d-md-none">
 										<router-link to="/logIn" :data-test="'login-mobile'" class="btn btn--secondary mb-4">
@@ -55,12 +75,6 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
-										<button v-if="isArtist()" @click="goToDashboard" class="btn btn--secondary">
-											Dashboard
-										</button>
-										<button v-if="isArtist()" @click="goToUploadTrack" data-test="Upload-track-mobile"class="btn btn--secondary">
-											Upload Track
-										</button>
 										<button @click="goToProfile" data-test="profile-mobile"class="btn btn--secondary">
 											My Profile
 										</button>
@@ -79,12 +93,6 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
-									<button v-if="isArtist()" @click="goToDashboard" class="btn btn--secondary">
-										Dashboard
-									</button>
-									<button v-if="isLoggedIn && isArtist()" :data-test="'upload-track-laptop'" @click="goToUploadTrack" class="btn btn--secondary">
-										Upload Track
-									</button>
 									<button v-if="isLoggedIn" :data-test="'profile-laptop'" @click="goToProfile" class="btn btn--secondary">
 										My Profile
 									</button>
