@@ -60,6 +60,31 @@
 
             <hr class="h-divider my-5"/>
 
+            <!--Songs-->
+            <div v-if="isListener()" class="mx-auto">
+                <hr class="h-divider my-5"/>
+                <h2>Your songs</h2>
+                <p>This list of songs may be of your interest!</p>
+                <div v-if="recommendationSongsError === null" class="flex flex-col items-center w-100 mt-3 gap-4 h-full">
+                    <div class="flex flex-col-reverse lg:flex-row items-center justify-center gap-4 w-full">
+                        <div class="flex flex-col flex-grow max-w-xl">
+                        <SongList :value="recommendationSongs.slice(0, 5)" :editable="false" />
+                        </div>
+                        <div class="flex flex-col flex-grow max-w-xl">
+                        <SongList :value="recommendationSongs.slice(5, 10)" :editable="false" />
+                        </div>
+                    </div>
+                    <div class="flex justify-center mt-4">
+                        <button @click="router.push('/exploreSongs')" class="btn btn--primary mt-3 min-w-64 text-black">
+                        Explore songs
+                        </button>
+                    </div>
+                </div>
+                <p v-else class="text-gray-500">Something went wrong while fetching your recommendation songs:<br>{{ recommendationSongsError }}.<br>Try refreshing the page.</p>    
+            </div>
+
+            <hr class="h-divider my-5"/>
+
             <!-- Questions -->
             <div v-if="isListener" class="mx-auto">
                 <h2>Your questions</h2>
@@ -103,7 +128,9 @@ const LATEST_SONGS_STEP = 5 // Amount of additional songs to display when clicki
 
 const user = reactive({})
 const songs = reactive([])
+const recommendationSongs = reactive([])
 const songsError = ref(null)
+const recommendationSongsError = ref(null)
 const shownSongsAmount = ref(3) // Ref in case we decide to make it customizable.
 const genres = reactive([])
 const registeredGenres = ref(new Set())
@@ -133,6 +160,21 @@ async function fetchSongs() {
         Object.assign(songs, fetchedSongs)
     } catch (err) {
         songsError.value = (err.response) ? err.response.data.detail : err.message
+    }
+}
+
+async function fetchRecommendationSongs(){
+    try {
+        const fetchedRecommendationSongs = await SongService.getRecommendation()
+        for (const index in fetchedRecommendationSongs) {
+            const song = fetchedRecommendationSongs[index]
+
+            // Add an extra field to improve vue-multiselect search support (since it only supports searching by one key)
+            song.fullTitle = `${song.artist_name} - ${song.title}`
+        }
+        Object.assign(recommendationSongs, fetchedRecommendationSongs)
+    } catch (err) {
+        recommendationSongsError.value = (err.response) ? err.response.data.detail : err.message
     }
 }
 
@@ -201,6 +243,7 @@ onMounted(function () {
     fetchSongs()
     fetchQuestions()
     fetchUser()
+    fetchRecommendationSongs()
 })
 
 </script>

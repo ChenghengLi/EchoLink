@@ -11,6 +11,14 @@ class SongService {
             throw error;
         }
     }
+    async getRecommendation(){
+        try {
+            const response = await axios.get('/songs/recommendations', UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
     async get(id) {
         try {
             const response = await axios.get('/songs/' + id, UserService.getConfig());
