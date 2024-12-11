@@ -58,27 +58,41 @@
                 <ArtistsList/>
             </div>
 
-            <hr class="h-divider my-5"/>
-
             <!--Songs-->
             <div v-if="isListener()" class="mx-auto">
                 <hr class="h-divider my-5"/>
                 <h2>Your songs</h2>
                 <p>This list of songs may be of your interest!</p>
                 <div v-if="recommendationSongsError === null" class="flex flex-col items-center w-100 mt-3 gap-4 h-full">
-                    <div class="flex flex-col-reverse lg:flex-row items-center justify-center gap-4 w-full">
-                        <div class="flex flex-col flex-grow max-w-xl">
-                        <SongList :value="recommendationSongs.slice(0, 5)" :editable="false" />
+                    <template v-if="recommendationSongs.length > 0">
+                        <div
+                            :class="{
+                            'flex flex-col items-center': recommendationSongs.length <= 5,
+                            'flex flex-col-reverse lg:flex-row items-center justify-center': recommendationSongs.length > 5
+                            }"
+                            class="gap-4 w-full"
+                        >
+                            <div v-if="recommendationSongs.length <= 5" class="flex flex-col flex-grow max-w-xl">
+                                <SongList :value="recommendationSongs" :editable="false" />
+                            </div>
+                            <template v-else>
+                                <div class="flex flex-col flex-grow max-w-xl">
+                                    <SongList :value="recommendationSongs.slice(0, Math.ceil(recommendationSongs.length / 2))" :editable="false" />
+                                </div>
+                                <div class="flex flex-col flex-grow max-w-xl">
+                                    <SongList :value="recommendationSongs.slice(Math.ceil(recommendationSongs.length / 2))" :editable="false" />
+                                </div>
+                            </template>
                         </div>
-                        <div class="flex flex-col flex-grow max-w-xl">
-                        <SongList :value="recommendationSongs.slice(5, 10)" :editable="false" />
+                        <div class="flex justify-center mt-4">
+                            <button @click="router.push('/exploreSongs')" class="btn btn--primary mt-3 min-w-64 text-black">
+                                Explore songs
+                            </button>
                         </div>
-                    </div>
-                    <div class="flex justify-center mt-4">
-                        <button @click="router.push('/exploreSongs')" class="btn btn--primary mt-3 min-w-64 text-black">
-                        Explore songs
-                        </button>
-                    </div>
+                    </template>
+                    <template v-else>
+                        <p class="text-gray-500 text-center mt-4">No recommendations available. Please check back later!</p>
+                    </template>
                 </div>
                 <p v-else class="text-gray-500">Something went wrong while fetching your recommendation songs:<br>{{ recommendationSongsError }}.<br>Try refreshing the page.</p>    
             </div>
@@ -199,6 +213,15 @@ async function fetchUser() {
 function showMoreSongs() {
     shownSongsAmount.value += LATEST_SONGS_STEP
 }
+
+function splitSongs() {
+    // Dividir las canciones en dos columnas
+    const midPoint = Math.ceil(this.recommendationSongs.length / 2);
+    return [
+      this.recommendationSongs.slice(0, midPoint),
+      this.recommendationSongs.slice(midPoint)
+    ];
+  }
 
 const validSongs = computed(() => {
     const searchText = search.text.toLowerCase(); // Convert search input to lowercase

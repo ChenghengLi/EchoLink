@@ -1,5 +1,5 @@
 <template>
-	<div class="w-100">
+    <div class="w-100">
         <draggable v-model="internalSongs" group="songs" @start="dragging=true" @end="dragging=false" item-key="song_id" handle=".handle" @update="$emit('reordered')">
             <template #item="{element}">
                 <SongItem class="my-1" :song="element" :show-handle="props.editable" :show-delete="props.editable" :prefix="getSongPrefix(element)" @removed="removeSong($event)"></SongItem>
@@ -11,7 +11,7 @@
 <script setup>
 import draggable from 'vuedraggable'
 import SongItem from '../components/SongItem.vue'
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 
 const songs = defineModel({type: Array})
 

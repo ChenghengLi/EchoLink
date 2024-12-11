@@ -3,9 +3,7 @@
 		<div class="home-two-light my-app home-light container">
 
 			<Header />
-			<Banner />
-			<Broadcast />
-			<ArtistsList />
+			
 			<Footer class="footer-light mx-10" />
 		</div>
 		<div class="progress-wrap active-progress" @click="scrollToTop">
