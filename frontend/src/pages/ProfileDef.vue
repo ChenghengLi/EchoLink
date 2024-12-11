@@ -20,19 +20,23 @@
                             <!-- TODO ensure contrast vs banner -->
                             <div class="flex items-center w-full mb-2 space-x-4">
                                 <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
-                                <button v-if="!isOwnProfile && isArtist && userRole==='listener'" class="btn btn-blue max-w-min text-nowrap" @click="toggleFollow"
-                                    data-test="button-follow">
+                            </div>
+
+                            <div class="flex max-lg:flex-col gap-2 gap-y-2">
+                                <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
+                                    <ChatBubbleBottomCenterTextIcon class="icon" />
+                                    Ask me something!
+                                </button>
+                                
+                                <button v-if="!isOwnProfile && isArtist && userRole==='listener'" class="btn btn-blue max-w-min text-nowrap" @click="toggleFollow" data-test="button-follow">
                                     <component 
                                         :is="isFollowing ? UserMinusIcon : UserPlusIcon" 
                                         class="icon"
                                     />
                                     {{ isFollowing ? 'Unfollow' : 'Follow'  }}
                                 </button>
+
                             </div>
-                            <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
-                                <ChatBubbleBottomCenterTextIcon class="icon" />
-                                Ask me something!
-                            </button>
                         </div>
                     </div>
 
