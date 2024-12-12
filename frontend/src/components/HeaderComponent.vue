@@ -101,7 +101,7 @@
 										Log Out
 									</button>
 								</div>
-								<button class="nav__bar d-block d-md-none">
+								<button class="nav__bar d-block d-xl-none">
 									<span class="icon-bar top-bar"></span>
 									<span class="icon-bar middle-bar"></span>
 									<span class="icon-bar bottom-bar"></span>
