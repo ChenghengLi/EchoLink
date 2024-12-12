@@ -57,3 +57,15 @@ def get_followers(db: Session, artist_name: str) -> int:
         ListenerArtistLink.artist_id == artist.artist_id
     ).count()
     return followers_count
+
+# Get a list of the ids of all artists which are not in the listener's following list and are not in a playlist
+def get_other_artists(db: Session, follwed_artists: list, playlist_artists: list) -> list:
+    """
+    Get a list of the ids of all artists which are not in the listener's following list and are not in a playlist.
+    """
+    # Get all the artists
+    all_artists = db.query(Artist).all()
+
+    # Get the ids of the artists which are not in the listener's following list and are not in a playlist
+    other_artists = [artist.artist_id for artist in all_artists if artist.artist_id not in follwed_artists and artist.artist_id not in playlist_artists]
+    return other_artists

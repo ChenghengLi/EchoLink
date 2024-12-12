@@ -3,6 +3,7 @@ from fastapi import HTTPException, status
 from models.listener import Listener
 from models.user import ListenerArtistLink, User
 from crud.artist import get_artist_by_username
+from crud.playlist import get_playlists_by_user_id, get_songs_in_playlist
 
 # Get listener by user_id
 def get_listener_by_user_id(db: Session, user_id: int) -> Listener:
@@ -90,3 +91,24 @@ def unfollow_artist(db: Session, listener: Listener, artist_username: str):
     # Delete the follow link
     db.delete(follow)
     db.commit()
+
+def get_followed_artists(db: Session, listener_id: int):
+
+    # Query the ListenerArtistLink to get the artist_ids for the given user
+    followed_artists_ids = db.query(ListenerArtistLink.artist_id).filter(
+        ListenerArtistLink.listener_id == listener_id
+    ).all()
+
+    # Return a list of artist IDs (flatten the result)
+    return [artist_id for artist_id, in followed_artists_ids]
+
+def get_songs_id_in_playlist(db: Session, user_id: int):
+
+    playlists = get_playlists_by_user_id(db, user_id)
+
+    # Get all the songs in the playlists
+    songs = []
+    for playlist in playlists:
+        songs += get_songs_in_playlist(db, playlist.playlist_id)
+
+    return songs

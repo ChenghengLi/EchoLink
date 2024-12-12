@@ -23,6 +23,20 @@ def create_playlist(db: Session, playlist_data: PlaylistInput, user_id: int) -> 
     db.refresh(new_playlist)
     return new_playlist
 
+# Retrieve all playlists by user ID
+def get_playlists_by_user_id(db: Session, user_id: int) -> List[Playlist]:
+    return db.query(Playlist).filter(Playlist.user_id == user_id).all()
+
+# Get all the songs in a playlist
+def get_songs_in_playlist(db: Session, playlist_id: int) -> List[int]:
+    playlist = db.query(Playlist).filter(Playlist.playlist_id == playlist_id).first()
+
+    if not playlist:
+        raise ValueError("Playlist not found")
+    
+    return [song.song_id for song in playlist.songs]
+
+
 # Retrieve a playlist by ID and check ownership and visibility
 def get_playlist_by_id(db: Session, playlist_id: int, user_id: int) -> Optional[Playlist]:
     playlist = db.query(Playlist).filter(Playlist.playlist_id == playlist_id).first()
