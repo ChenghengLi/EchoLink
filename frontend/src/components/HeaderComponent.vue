@@ -47,7 +47,8 @@
 										</ul>
 									</li>
 							
-									<li v-if="isArtist() && isLoggedIn" class="nav__menu-item nav__menu-item--dropdown" :data-test="'artist-menu'" >
+									<!-- Must exist during onMount for all the event listeners to be registered properly; cannot be v-if'd. -->
+									<li class="nav__menu-item nav__menu-item--dropdown" :style="!isArtist() || !isLoggedIn  ? {'display': 'none'} : {}" :data-test="'artist-menu'" >
 										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
 											Artist Settings
 										</a>
