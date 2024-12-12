@@ -63,14 +63,14 @@
                 <hr class="h-divider my-5"/>
                 <h2>Your songs</h2>
                 <p>This list of songs may be of your interest!</p>
-                <div v-if="recommendationSongsError === null" class="flex flex-col items-center w-100 mt-3 gap-4 h-full">
+                <div v-if="recommendationSongsError === null" class="flex flex-col items-center w-100 mt-3 gap-x-4 h-full"> <!-- Gap is present on 2-column layout only (not mobile) -->
                     <template v-if="recommendationSongs.length > 0">
                         <div
                             :class="{
                             'flex flex-col items-center': recommendationSongs.length <= 5,
                             'flex flex-col-reverse lg:flex-row items-center justify-center': recommendationSongs.length > 5
                             }"
-                            class="gap-4 w-full"
+                            class="gap-x-4 w-full"
                         >
                             <div v-if="recommendationSongs.length <= 5" class="flex flex-col flex-grow max-w-xl">
                                 <SongList :value="recommendationSongs" :editable="false" />
