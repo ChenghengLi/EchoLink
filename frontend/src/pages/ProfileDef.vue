@@ -1,5 +1,5 @@
 <template>
-    <div class="home-two-light home-light container">
+    <div class="home-two-light home-light page-container">
         <HeaderComponent />
 
         <!-- Show a loading spinner while fetching user data -->
@@ -551,8 +551,7 @@ onMounted(async function () {
 
 <style scoped>
 
-.container {
-    width: 100vw;
+.page-container {
     display: flex;
     flex-direction: column;
     align-items: center;
