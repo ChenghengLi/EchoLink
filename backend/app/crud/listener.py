@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.listener import Listener
 from models.user import ListenerArtistLink, User
-from crud.artist import get_artist_by_username
+from crud.artist import get_artist_by_username, get_artists
 from crud.playlist import get_playlists_by_user_id, get_songs_in_playlist
 
 # Get listener by user_id
@@ -112,3 +112,36 @@ def get_songs_id_in_playlist(db: Session, user_id: int):
         songs += get_songs_in_playlist(db, playlist.playlist_id)
 
     return songs
+
+# Get a sorted list of artists based on:
+# - If the listener can ask a question to the artist
+# - If the listener follows the artist
+# - Other criteria
+
+def get_sorted_artists(db: Session, user_id: int):
+    from crud.question import can_question
+    listener = get_listener_by_user_id(db, user_id)
+
+    can_ask_artists = []
+    followed_artists = []
+    other_artists = []
+
+    # Get all artists
+    artists = get_artists(db)
+
+    for artist in artists:
+
+        if can_question(db, listener, artist):
+            can_ask_artists.append(artist)
+
+        elif check_follow(db, listener, artist.user.username):
+            followed_artists.append(artist)
+
+        else:
+            other_artists.append(artist)
+
+    # Sort the artists based on the criteria
+    sorted_artists = can_ask_artists + followed_artists + other_artists
+
+    return sorted_artists
+

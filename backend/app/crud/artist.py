@@ -45,7 +45,9 @@ def get_artist_by_username(db: Session, username: str) -> Artist:
 def get_all_artists(db: Session):
     return db.query(User).filter(User.role == RoleEnum.artist).all()
 
-
+# Get all artists
+def get_artists(db: Session):
+    return db.query(Artist).all()
 
 def get_followers(db: Session, artist_name: str) -> int:
     """
