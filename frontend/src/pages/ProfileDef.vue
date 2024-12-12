@@ -104,7 +104,7 @@
                         <h2 class="section-header">About</h2>
                         <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass"
                             class="details-field text-left flex-grow w-100 min-w-full min-h-60"
-                            :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing"
+                            :maxlength="DESCRIPTION_MAX_LENGTH" :placeholder="isOwnProfile ? 'Describe yourself' : 'No description provided.'" :readonly="!isEditing"
                             v-model="user.description" data-test="field-description"></textarea>
                     </div>
                 </div>
