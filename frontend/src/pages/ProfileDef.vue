@@ -410,7 +410,7 @@ function deleteAccount() {
 }
 
 function askQuestion() {
-    if(UserService.isLoggedIn()){
+    if(UserService.isLoggedIn() && isFollowing.value){
         Swal.fire({
             title: 'Ask me something!',
             html: `
@@ -467,6 +467,13 @@ function askQuestion() {
                         });
                     });
             }
+        });
+    }
+    else if(UserService.isLoggedIn() && !isFollowing.value){
+        Toast.fire({
+            title: 'You need to follow the artist to send them questions',
+            icon: 'warning',
+            timer: 3000,
         });
     }
     else{
