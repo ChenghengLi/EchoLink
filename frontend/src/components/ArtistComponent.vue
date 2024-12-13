@@ -1,4 +1,5 @@
 <template>
+    <EngagementShape :artist="artist" class="engagement-shape" />
     <div class="artist-container wow fadeInUp" data-wow-duration="600ms" data-wow-delay="300ms">
         <div class="thumb" @mousemove="handleMouseMove">
             <router-link :to="`/users/${artist.username}`" draggable="false">
@@ -13,7 +14,11 @@
 </template>
 
 <script>
+import EngagementShape from './EngagementShape.vue';
 export default {
+    components: {
+        EngagementShape,
+    },
     name: 'ArtistComponent',
     props: {
         artist: {
@@ -163,5 +168,13 @@ export default {
 .artist-genre {
     font-size: 1rem;
     margin-top: 5px;
+}
+
+.engagement-shape {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    pointer-events: none;
 }
 </style>
