@@ -21,8 +21,8 @@ class Question(Base):
     question_id = Column(Integer, primary_key=True, index=True)
     listener_id = Column(Integer, ForeignKey('listeners.listener_id', ondelete="CASCADE"), nullable=False)
     artist_id = Column(Integer, ForeignKey('artists.artist_id', ondelete="CASCADE"), nullable=False)
-    artist_username = Column(String, nullable=False)
-    listener_username = Column(String, nullable=False)
+    artist_username = Column(String, nullable=True)
+    listener_username = Column(String, nullable=True)
     question_text = Column(Text, nullable=False)
     response_text = Column(Text, nullable=True)
     question_date = Column(DateTime, default=func.now(), nullable=False)
@@ -48,8 +48,8 @@ class QuestionResponse(BaseModel):
 class QuestionModel(BaseModel):
     question_id: int
     listener_id: int
-    artist_username: str
-    listener_username: str
+    artist_username: Optional[str]
+    listener_username: Optional[str]
     artist_id: int
     question_text: str
     response_text: Optional[str]
