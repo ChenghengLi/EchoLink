@@ -208,14 +208,23 @@ function saveChanges() {
 
 async function share() {
     try {
-        // Ask for permissions first
-        // TODO is this done differently on firefox?
-        navigator.permissions.query({name: "clipboard-write"}).then((result) => {
-            if (result.state === "granted" || result.state === "prompt") {
-                navigator.clipboard.writeText(window.location.href);
+        const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+
+        // No perms are required on Firefox, but it will fail outside of HTTPS
+        if (isFirefox) {
+            navigator.clipboard.writeText(window.location.href).then(() => {
                 Toast.fireSuccess('Link copied to clipboard')
-            }
-        });
+            });
+        } else {
+            // Ask for permissions first
+            navigator.permissions.query({name: "clipboard-write"}).then((result) => {
+                if (result.state === "granted" || result.state === "prompt") {
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        Toast.fireSuccess('Link copied to clipboard')
+                    });
+                }
+            });
+        }
     } catch {
         Toast.fireError('Failed to copy link')
     }
