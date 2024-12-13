@@ -76,7 +76,7 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
-										<button @click="goToProfile" data-test="profile-mobile"class="btn btn--secondary">
+										<button @click="goToProfile" data-test="profile-mobile"class="btn btn--secondary mb-4">
 											My Profile
 										</button>
 										<button @click="logout_function" :data-test="'logout-mobile'" class="btn btn--secondary"
