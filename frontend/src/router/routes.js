@@ -46,7 +46,7 @@ export default  [
             component: SongDetails,
         },
         {
-            path: '/exploreSongs',
+            path: '/music',
             name: 'Explore Songs',
             component: ExploreSongs,
         },

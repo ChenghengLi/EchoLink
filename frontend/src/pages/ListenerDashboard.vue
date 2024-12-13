@@ -85,7 +85,7 @@
                             </template>
                         </div>
                         <div class="flex justify-center mt-4">
-                            <button @click="router.push('/exploreSongs')" class="btn btn--primary mt-3 min-w-64 text-black">
+                            <button @click="router.push('/music')" class="btn btn--primary mt-3 min-w-64 text-black">
                                 Explore songs
                             </button>
                         </div>
