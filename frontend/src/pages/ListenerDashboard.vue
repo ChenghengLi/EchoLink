@@ -52,10 +52,10 @@
 
             <!-- Browse artists -->
             <div class="mx-auto">
-                <h2>Explore artists</h2>
+                <h2>Your artists</h2>
                 <p>Connect with your favorite musicians on EchoLink by asking them questions and staying up to date with their latest releases.</p>
 
-                <ArtistsList/>
+                <ArtistsCarousel/>
             </div>
 
             <!--Songs-->
@@ -125,7 +125,7 @@ import FooterComponent from '../components/FooterComponent.vue';
 import TextInput from '../components/form/TextInput.vue';
 import { PlusIcon } from '@heroicons/vue/24/solid'
 import OptionSelector from '../components/form/OptionSelector.vue';
-import ArtistsList from '../components/ArtistsList.vue';
+import ArtistsCarousel from '../components/ArtistsCarousel.vue';
 import SongList from '../components/SongList.vue';
 import QuestionCard from '../components/QuestionCard.vue';
 import UserService from '../services/user.js'

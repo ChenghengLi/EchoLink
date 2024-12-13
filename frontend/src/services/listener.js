@@ -26,6 +26,14 @@ class ListenerService {
             throw error.response ? error.response.data : new Error('Error unfollowing artist');
         }
     }
+    async getPreferences(){
+        try {
+            const response = await axios.get(`/listeners/preferences`, UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error.response ? error.response.data : new Error('Error getting preferences');
+        }
+    }
     
 }
 
