@@ -3,8 +3,11 @@ from fastapi import HTTPException, status
 from models.song import Song, SongInput, SongOutput, SongSource
 from models.artist import Artist
 from models.user import ListenerArtistLink, User, RoleEnum
+from crud.listener import get_followed_artists
 from crud.artist import get_artist_by_username
-from crud.listener import get_listener_by_user_id
+from crud.listener import get_listener_by_user_id, get_songs_id_in_playlist
+from crud.artist import get_other_artists
+from metrics.artists import get_all_artists_with_rank_data
 import random
 
 # Helper function to get a song or raise an error
@@ -32,11 +35,25 @@ def get_song_by_id(db: Session, song_id: int) -> SongOutput:
 def get_songs_by_artist_id(db: Session, artist_id: int):
     return db.query(Song).filter(Song.artist_id == artist_id).all()
 
+# Get artist by song id
 def get_artist_by_song_id(db: Session, song_id: int) -> Artist:
     song = db.query(Song).filter(Song.song_id == song_id).first()
     if song is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Song not found")
     return song.artist
+
+# Get artist id by song id
+def get_artist_id_by_song_id(db: Session, followed_artists: list, user_id: int) -> int:
+    playlist_songs = get_songs_id_in_playlist(db, user_id)
+    playlist_artists = []
+    for song in playlist_songs:
+        artist = get_artist_by_song_id(db, song)
+        if artist.artist_id in followed_artists:
+            continue
+        elif artist.artist_id not in playlist_artists:
+            playlist_artists.append(artist.artist_id)
+
+    return playlist_artists
 
 # Get all songs
 def get_all_songs(db: Session) -> list[SongOutput]:
@@ -149,6 +166,11 @@ def get_recommendations(db: Session, user: User) -> list[Song]:
     listener = get_listener_by_user_id(db, user.id)
     if not listener:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This user is not a listener.")
+    
+    # Step 0: Check if database has at least 10 songs, otherwise return all songs
+    song_count = db.query(Song).count()
+    if song_count < 10:
+        return db.query(Song).all()
 
     # Step 1: Get songs by followed artists
     followed_artists = (
@@ -193,3 +215,175 @@ def get_recommendations(db: Session, user: User) -> list[Song]:
     )
     additional_songs = random.sample(remaining_songs, 10 - len(selected_songs))
     return selected_songs + additional_songs
+
+  # Sort songs alphabetically
+def sort_songs_alphabetically(db: Session, ascending: bool = True) -> list[SongOutput]:
+    """
+    Retrieve and sort all songs alphabetically by title.
+
+    Args:
+    - db: Database session
+    - ascending: Sort in ascending order if True, descending order if False
+
+    Returns:
+    - List of SongOutput objects
+    """
+    order = Song.title.asc() if ascending else Song.title.desc()
+    songs = db.query(Song).order_by(order).all()
+
+    return [
+        SongOutput(
+            song_id=song.song_id,
+            title=song.title,
+            album=song.album,
+            genre=song.genre,
+            release_date=song.release_date,
+            artist_name=song.artist.user.username,
+            sources=song.source_urls
+        )
+        for song in songs
+    ]
+
+# Sort songs by release date
+def sort_songs_by_release_date(db: Session, ascending: bool = True) -> list[SongOutput]:
+    """
+    Retrieve and sort all songs by release date.
+
+    Args:
+    - db: Database session
+    - ascending: Sort in ascending order if True, descending order if False
+
+    Returns:
+    - List of SongOutput objects
+    """
+    order = Song.release_date.asc() if ascending else Song.release_date.desc()
+    songs = db.query(Song).order_by(order).all()
+
+    return [
+        SongOutput(
+            song_id=song.song_id,
+            title=song.title,
+            album=song.album,
+            genre=song.genre,
+            release_date=song.release_date,
+            artist_name=song.artist.user.username,
+            sources=song.source_urls
+        )
+        for song in songs
+    ]
+
+def get_songs_by_artist_engagement_score(db: Session, ascending: bool = True) -> list[SongOutput]:
+    """
+    Retrieve all songs and sort them by the engagement score of the artist.
+
+    Args:
+    - db: Database session
+    - ascending: Boolean flag to indicate if sorting should be ascending (True) or descending (False).
+
+    Returns:
+    - List of SongOutput objects
+    """
+
+    # Get all artists with rank data
+    artists = get_all_artists_with_rank_data(db)
+
+    # Create a dictionary to hold songs for each priority tier
+    tiered_songs = {0: [], 1: [], 2: [], 3: [], 4: []}
+
+    # Iterate through artists and add their songs to the appropriate tier
+    for artist in artists:
+        tier = artist.rank_data["tier"]
+        artist = get_artist_by_username(db, artist.username)
+        songs = get_songs_by_artist_id(db, artist.artist_id)
+
+        # Add songs to the appropriate tier
+        tiered_songs[tier].extend(songs)
+
+    # Shuffle songs within each tier
+    for tier_songs in tiered_songs.values():
+        random.shuffle(tier_songs)
+
+    # Define the order of the tiers
+    tier_order = [0, 1, 2, 3, 4] if ascending else [4, 3, 2, 1, 0]
+
+    # Create a list of songs sorted by tier
+    sorted_songs = []
+    for tier in tier_order:
+        sorted_songs.extend(tiered_songs[tier])
+
+    return [
+        SongOutput(
+            song_id=song.song_id,
+            title=song.title,
+            album=song.album,
+            genre=song.genre,
+            release_date=song.release_date,
+            artist_name=song.artist.user.username,
+            sources=song.source_urls
+        )
+        for song in sorted_songs
+    ]
+
+def get_songs_by_artist_priority(db: Session, user_id: int) -> list[SongOutput]:
+    """
+    Retrieve songs ordered by artist priority:
+    1. Songs from artists followed by the user.
+    2. Songs from artists that have at least one song added to the user's playlist.
+    3. Songs from other artists.
+
+    Args:
+    - db: Database session
+    - user_id: The user ID to identify the followed artists and playlists
+    - ascending: Whether to sort in ascending or descending order of priority
+
+    Returns:
+    - List of SongOutput objects
+    """
+    # Get the listener by user ID
+    listener = get_listener_by_user_id(db, user_id)
+
+    # Initialize the lists for each priority tier
+    followed_songs = []
+    playlist_songs = []
+    other_songs = []
+
+    # Get the ids of artists followed by the user
+    followed_artists = get_followed_artists(db, listener.listener_id)
+    playlist_artists = get_artist_id_by_song_id(db, followed_artists, listener.user_id)
+    other_artists = get_other_artists(db, followed_artists, playlist_artists)
+
+    for artist in followed_artists:
+        followed_songs.extend(get_songs_by_artist_id(db, artist))
+
+    for artist in playlist_artists:
+        playlist_songs.extend(get_songs_by_artist_id(db, artist))
+
+    for artist in other_artists:
+        other_songs.extend(get_songs_by_artist_id(db, artist))
+
+    # Shuffle the songs within each tier
+    random.shuffle(followed_songs)
+    random.shuffle(playlist_songs)
+    random.shuffle(other_songs)
+
+    songs = followed_songs + playlist_songs + other_songs
+
+    return [
+        SongOutput(
+            song_id=song.song_id,
+            title=song.title,
+            album=song.album,
+            genre=song.genre,
+            release_date=song.release_date,
+            artist_name=song.artist.user.username,
+            sources=song.source_urls
+        )
+        for song in songs
+    ]
+
+
+
+
+
+
+

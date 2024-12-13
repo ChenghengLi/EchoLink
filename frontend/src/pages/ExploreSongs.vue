@@ -3,11 +3,7 @@
 		<div class="home-two-light my-app home-light container">
 
 			<Header />
-			<Banner />
-			<Broadcast />
-
-			<h2 class="mt-5">Explore Artists</h2>
-			<ArtistsList />
+			
 			<Footer class="footer-light mx-10" />
 		</div>
 		<div class="progress-wrap active-progress" @click="scrollToTop">

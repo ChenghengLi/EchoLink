@@ -10,7 +10,11 @@ import UserService from '../services/user.js';
 import ListenerDashboard from '../pages/ListenerDashboard.vue';
 import ArtistDashboard from '../pages/ArtistDashboard.vue';
 import SongDetails from '../pages/SongDetails.vue';
+<<<<<<< HEAD
 import QuestionPage from '../pages/QuestionPage.vue';
+=======
+import ExploreSongs from '../pages/ExploreSongs.vue';
+>>>>>>> 57f167ebfe13f51b7ea86ceec3d2c8214f029e5f
 
 export default  [
         {
@@ -44,6 +48,11 @@ export default  [
             path: '/songs/:id',
             name: 'Song',
             component: SongDetails,
+        },
+        {
+            path: '/exploreSongs',
+            name: 'Explore Songs',
+            component: ExploreSongs,
         },
         {
             path: '/dashboard/',

@@ -4,25 +4,26 @@
 
             <!-- Song icon (would be ex. album cover) -->
             <!-- min-w is necessary to avoid the box being compressed if title is too long -->
-            <div class="flex size-10 min-w-10 rounded bg-indigo-400">
+            <div class="flex size-10 min-w-10 rounded bg-indigo-400 max-lg:hidden"> <!-- Not shown on mobile due to space concerns -->
                 <MusicalNoteIcon class="icon-h5 my-auto mx-auto"/>
             </div>
 
             <!-- Artist & title -->
-            <span class="mx-3 text-left">
-                {{ prefix ? prefix : ''}} <router-link :to="`/users/${song.artist_name}`">{{ song.artist_name }}</router-link> - <router-link :to="`/songs/${song.song_id}`">{{  song.title }}</router-link>
+            <span class="lg:mx-3 text-left text-nowrap max-sm:overflow-scroll max-sm:max-w-80"> <!-- overflow-scroll is kinda painful but the quickest solution -->
+                <!--{{ prefix ? prefix : ''}} -->
+                <router-link :to="`/users/${song.artist_name}`">{{ song.artist_name }}</router-link> - <router-link :to="`/songs/${song.song_id}`">{{  song.title }}</router-link>
             </span>
 
             <div class="mx-auto"></div>
 
             <!-- TODO readd when we get duration field -->
             <!-- <span class="mx-3">{{ duration }}</span> -->
-            <span class="mx-3" v-tooltip="'Genre'">{{ song.genre }}</span>
+            <span v-if="!showHandle && !showDelete" class="mx-3 text-nowrap overflow-ellipsis" v-tooltip="'Genre'">{{ song.genre }}</span> <!-- Don't show genre in edit contexts to make more space for mobile -->
 
             <!-- Edition controls -->
             <!-- TODO how the fuck could reorder be made accessible? -->
-            <Bars3Icon v-if="showHandle" class="icon handle mx-3" />
-            <button v-if="showDelete" class="btn btn-delete text-nowrap p-2" @click="$emit('removed', song)">
+            <Bars3Icon v-if="showHandle" class="icon handle mx-3 min-w-8" />
+            <button v-if="showDelete" class="btn btn-delete text-nowrap p-2 h-full max-w-fit" @click="$emit('removed', song)">
                 <TrashIcon class="icon-h5" />
             </button>
         </div>

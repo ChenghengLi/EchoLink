@@ -103,8 +103,7 @@
                     <!-- TODO better accessibility -->
                     <div v-for="(question, i) in unansweredQuestions" v-if="unansweredQuestions.length > 0" class="question relative group" @mouseover="hoveredQuestions.add(i)" @mouseleave="hoveredQuestions.delete(i)" @click="answerQuestion(question.question_text, question.question_id)" :tabindex="i">
                         <div class="absolute right-2 top-2 d-flex flex-column flex-md-row ml-auto mr-md-0" >
-                            <button class="btn btn-blue p-2 max-w-min text-nowrap" :class="{'invisible': !hoveredQuestions.has(i)}"
-                                data-test="button-edit">
+                            <button class="btn btn-blue p-2 max-w-min text-nowrap" :class="{'lg:invisible': !hoveredQuestions.has(i)}" data-test="button-edit"> <!-- On desktop, answer button is only shown on hover to reduce visual noise -->
                                 <PencilIcon class="icon" />
                                 Answer
                             </button>

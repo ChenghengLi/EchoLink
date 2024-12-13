@@ -58,6 +58,45 @@
                 <ArtistsList/>
             </div>
 
+            <!--Songs-->
+            <div v-if="isListener()" class="mx-auto">
+                <hr class="h-divider my-5"/>
+                <h2>Your songs</h2>
+                <p>This list of songs may be of your interest!</p>
+                <div v-if="recommendationSongsError === null" class="flex flex-col items-center w-100 mt-3 gap-x-4 h-full"> <!-- Gap is present on 2-column layout only (not mobile) -->
+                    <template v-if="recommendationSongs.length > 0">
+                        <div
+                            :class="{
+                            'flex flex-col items-center': recommendationSongs.length <= 5,
+                            'flex flex-col-reverse lg:flex-row items-center justify-center': recommendationSongs.length > 5
+                            }"
+                            class="gap-x-4 w-full"
+                        >
+                            <div v-if="recommendationSongs.length <= 5" class="flex flex-col flex-grow max-w-xl">
+                                <SongList :value="recommendationSongs" :editable="false" />
+                            </div>
+                            <template v-else>
+                                <div class="flex flex-col flex-grow max-w-xl">
+                                    <SongList :value="recommendationSongs.slice(0, Math.ceil(recommendationSongs.length / 2))" :editable="false" />
+                                </div>
+                                <div class="flex flex-col flex-grow max-w-xl">
+                                    <SongList :value="recommendationSongs.slice(Math.ceil(recommendationSongs.length / 2))" :editable="false" />
+                                </div>
+                            </template>
+                        </div>
+                        <div class="flex justify-center mt-4">
+                            <button @click="router.push('/exploreSongs')" class="btn btn--primary mt-3 min-w-64 text-black">
+                                Explore songs
+                            </button>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <p class="text-gray-500 text-center mt-4">No recommendations available. Please check back later!</p>
+                    </template>
+                </div>
+                <p v-else class="text-gray-500">Something went wrong while fetching your recommendation songs:<br>{{ recommendationSongsError }}.<br>Try refreshing the page.</p>    
+            </div>
+
             <hr class="h-divider my-5"/>
 
             <!-- Questions -->
@@ -103,7 +142,9 @@ const LATEST_SONGS_STEP = 5 // Amount of additional songs to display when clicki
 
 const user = reactive({})
 const songs = reactive([])
+const recommendationSongs = reactive([])
 const songsError = ref(null)
+const recommendationSongsError = ref(null)
 const shownSongsAmount = ref(3) // Ref in case we decide to make it customizable.
 const genres = reactive([])
 const registeredGenres = ref(new Set())
@@ -136,6 +177,21 @@ async function fetchSongs() {
     }
 }
 
+async function fetchRecommendationSongs(){
+    try {
+        const fetchedRecommendationSongs = await SongService.getRecommendation()
+        for (const index in fetchedRecommendationSongs) {
+            const song = fetchedRecommendationSongs[index]
+
+            // Add an extra field to improve vue-multiselect search support (since it only supports searching by one key)
+            song.fullTitle = `${song.artist_name} - ${song.title}`
+        }
+        Object.assign(recommendationSongs, fetchedRecommendationSongs)
+    } catch (err) {
+        recommendationSongsError.value = (err.response) ? err.response.data.detail : err.message
+    }
+}
+
 async function fetchQuestions() {
     try {
         const fetchedQuestions = await QuestionService.getTopQuestions()
@@ -157,6 +213,15 @@ async function fetchUser() {
 function showMoreSongs() {
     shownSongsAmount.value += LATEST_SONGS_STEP
 }
+
+function splitSongs() {
+    // Dividir las canciones en dos columnas
+    const midPoint = Math.ceil(this.recommendationSongs.length / 2);
+    return [
+      this.recommendationSongs.slice(0, midPoint),
+      this.recommendationSongs.slice(midPoint)
+    ];
+  }
 
 const validSongs = computed(() => {
     const searchText = search.text.toLowerCase(); // Convert search input to lowercase
@@ -201,6 +266,7 @@ onMounted(function () {
     fetchSongs()
     fetchQuestions()
     fetchUser()
+    fetchRecommendationSongs()
 })
 
 </script>

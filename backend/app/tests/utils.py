@@ -96,12 +96,12 @@ def create_random_listener(db):
 
     return get_listener_by_user_id(db, user.id)
 
-def create_random_song(db, artist_name, genre=None):
+def create_random_song(db, artist_name, genre=None, title=None, release_date=None):
     song_data = {
-        "title": random_lower_string(),
+        "title": title or random_lower_string(),
         "album": random_lower_string(),
         "genre": genre or random_lower_string(),
-        "release_date": "2024-11-26",
+        "release_date": release_date or "2024-11-26",
         "artist_name": artist_name
     }
     return create_song(db, SongInput(**song_data))

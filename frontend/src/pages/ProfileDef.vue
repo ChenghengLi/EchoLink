@@ -1,5 +1,5 @@
 <template>
-    <div class="home-two-light home-light container">
+    <div class="home-two-light home-light page-container">
         <HeaderComponent />
 
         <!-- Show a loading spinner while fetching user data -->
@@ -20,19 +20,23 @@
                             <!-- TODO ensure contrast vs banner -->
                             <div class="flex items-center w-full mb-2 space-x-4">
                                 <p class="font-bold text-lg text-white mb-2 text-left" data-test="label-username">{{ getUsername() }}</p>
-                                <button v-if="!isOwnProfile && isArtist && userRole==='listener'" class="btn btn-blue max-w-min text-nowrap" @click="toggleFollow"
-                                    data-test="button-follow">
+                            </div>
+
+                            <div class="flex max-lg:flex-col gap-2 gap-y-2">
+                                <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
+                                    <ChatBubbleBottomCenterTextIcon class="icon" />
+                                    Ask me something!
+                                </button>
+                                
+                                <button v-if="!isOwnProfile && isArtist && userRole==='listener'" class="btn btn-blue max-w-min text-nowrap" @click="toggleFollow" data-test="button-follow">
                                     <component 
                                         :is="isFollowing ? UserMinusIcon : UserPlusIcon" 
                                         class="icon"
                                     />
                                     {{ isFollowing ? 'Unfollow' : 'Follow'  }}
                                 </button>
+
                             </div>
-                            <button v-if="!isOwnProfile && isArtist" class="btn btn-blue max-w-min text-nowrap" @click="askQuestion" data-test="button-ask">
-                                <ChatBubbleBottomCenterTextIcon class="icon" />
-                                Ask me something!
-                            </button>
                         </div>
                     </div>
 
@@ -100,7 +104,7 @@
                         <h2 class="section-header">About</h2>
                         <textarea cols="999999" autocomplete="off" autocorrect="on" :class="editableFieldClass"
                             class="details-field text-left flex-grow w-100 min-w-full min-h-60"
-                            :maxlength="DESCRIPTION_MAX_LENGTH" placeholder="Describe yourself" :readonly="!isEditing"
+                            :maxlength="DESCRIPTION_MAX_LENGTH" :placeholder="isOwnProfile ? 'Describe yourself' : 'No description provided.'" :readonly="!isEditing"
                             v-model="user.description" data-test="field-description"></textarea>
                     </div>
                 </div>
@@ -406,7 +410,7 @@ function deleteAccount() {
 }
 
 function askQuestion() {
-    if(UserService.isLoggedIn()){
+    if(UserService.isLoggedIn() && isFollowing.value){
         Swal.fire({
             title: 'Ask me something!',
             html: `
@@ -463,6 +467,13 @@ function askQuestion() {
                         });
                     });
             }
+        });
+    }
+    else if(UserService.isLoggedIn() && !isFollowing.value){
+        Toast.fire({
+            title: 'You need to follow the artist to send them questions',
+            icon: 'warning',
+            timer: 3000,
         });
     }
     else{
@@ -540,8 +551,7 @@ onMounted(async function () {
 
 <style scoped>
 
-.container {
-    width: 100vw;
+.page-container {
     display: flex;
     flex-direction: column;
     align-items: center;

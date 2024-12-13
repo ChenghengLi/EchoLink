@@ -9,7 +9,11 @@ from crud.song import get_song_by_id as get_song_by_id_crud, \
     delete_song as delete_song_crud, \
     is_artist_owner_song as is_artist_owner_song_crud, \
     is_user_artist as is_user_artist_crud, \
-    get_recommendations as get_recommendations_crud
+    get_recommendations as get_recommendations_crud, \
+    sort_songs_alphabetically as sort_songs_alphabetically_crud, \
+    sort_songs_by_release_date as sort_songs_by_release_date_crud, \
+    get_songs_by_artist_engagement_score as get_songs_by_artist_engagement_score_crud, \
+    get_songs_by_artist_priority as get_songs_by_artist_priority_crud
 from crud.artist import get_artist_by_user_id
 import models.song as song_model
 import models.user as user_model
@@ -43,6 +47,35 @@ async def retrieve_song_by_id(
     db: Session = Depends(get_db)
 ):
     return get_song_by_id_crud(db, song_id)
+
+# GET /songs/sorted/alphabetically
+@router.get("/sorted/alphabetically", response_model=list[song_model.SongOutput])
+async def sort_songs_alphabetically(
+    db: Session = Depends(get_db)
+):
+    return sort_songs_alphabetically_crud(db)
+
+# GET /songs/sorted/release_date
+@router.get("/sorted/release_date", response_model=list[song_model.SongOutput])
+async def sort_songs_by_release_date(
+    db: Session = Depends(get_db)
+):
+    return sort_songs_by_release_date_crud(db)
+
+# GET /songs/sorted/engagement_score
+@router.get("/sorted/engagement_score", response_model=list[song_model.SongOutput])
+async def get_songs_by_artist_engagement_score(
+    db: Session = Depends(get_db)
+):
+    return get_songs_by_artist_engagement_score_crud(db)
+
+# GET /songs/sorted/priority
+@router.get("/sorted/priority", response_model=list[song_model.SongOutput])
+async def get_songs_by_artist_priority(
+    db: Session = Depends(get_db),
+    current_user: user_model.User = Depends(get_current_user)
+):
+    return get_songs_by_artist_priority_crud(db, current_user.id)
 
 # POST /songs -> Create a song
 @router.post("/", response_model=song_model.SongOutput)
@@ -93,3 +126,4 @@ def transform_song_to_output(song: song_model.Song):
         artist_name=song.artist.name,
         sources=song.sources
     )
+

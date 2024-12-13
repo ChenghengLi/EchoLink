@@ -1,12 +1,12 @@
 <template>
-    <div class="home-two-light home-light container">
+    <div class="home-two-light home-light page-container">
         <HeaderComponent />
         
         <!-- Show a loading spinner while fetching user data -->
         <div v-if="!isLoaded" class="flex">
             <LoadingSpinner class="mx-auto" />
         </div>
-        <div v-else-if="isLoaded && errorMsg === null" class="form-container relative mx-auto p-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
+        <div v-else-if="isLoaded && errorMsg === null" class="form-container max-lg:w-full relative mx-auto py-4 max-lg:px-2 lg:px-4 mt-8 border-3 rounded-lg border-indigo-100 bg-indigo-200">
             <!-- Header, edit and share buttons -->
             <!-- Buttons appear on same line as title on desktop, below on mobile -->
             <div class="lg:flex">
@@ -208,14 +208,23 @@ function saveChanges() {
 
 async function share() {
     try {
-        // Ask for permissions first
-        // TODO is this done differently on firefox?
-        navigator.permissions.query({name: "clipboard-write"}).then((result) => {
-            if (result.state === "granted" || result.state === "prompt") {
-                navigator.clipboard.writeText(window.location.href);
+        const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+
+        // No perms are required on Firefox, but it will fail outside of HTTPS
+        if (isFirefox) {
+            navigator.clipboard.writeText(window.location.href).then(() => {
                 Toast.fireSuccess('Link copied to clipboard')
-            }
-        });
+            });
+        } else {
+            // Ask for permissions first
+            navigator.permissions.query({name: "clipboard-write"}).then((result) => {
+                if (result.state === "granted" || result.state === "prompt") {
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        Toast.fireSuccess('Link copied to clipboard')
+                    });
+                }
+            });
+        }
     } catch {
         Toast.fireError('Failed to copy link')
     }
@@ -302,7 +311,7 @@ const fullTitle = computed(() => {
 </script>
 
 <style scoped>
-.container {
+.page-container {
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -312,9 +321,13 @@ const fullTitle = computed(() => {
 }
 
 .form-container {
-    width: 800px;
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
     margin-top: 50px; /* Add some margin to push the form down slightly from the header */
+}
+@media (min-width: 900px) {
+    .form-container {
+        width: 800px;
+    }
 }
 
 .footer-light {
@@ -345,7 +358,6 @@ const fullTitle = computed(() => {
 
 @media (max-width: 768px) {
     .form-container {
-        width: 90vw; /* Full viewport width for small screens */
         height: auto; /* Full viewport height for small screens */
         margin-top: 10vh; /* Remove margin for full screen effect */
         border-radius: 0; /* Remove border radius for full screen effect */
