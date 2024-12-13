@@ -76,7 +76,7 @@ def get_preferences(db: Session, user_id: int):
 
     sorted_artist = get_sorted_artists(db, user_id)
 
-    if type(user_id) == User:
+    if type(user_id) is User:
         user_id = user_id.id
 
     listener = get_listener_by_user_id(db, user_id) if user_id else None

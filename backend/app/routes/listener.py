@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from models.listener import Listener
-from crud.listener import follow_artist, unfollow_artist, check_follow, get_sorted_artists
+from crud.listener import follow_artist, unfollow_artist, check_follow
 from core.config import get_db
 from core.security import CurrentUser, OptionalCurrentUser
 from metrics.listeners import get_preferences

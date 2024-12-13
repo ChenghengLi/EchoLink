@@ -2,10 +2,7 @@ from fastapi.testclient import TestClient
 from main import app
 from core.config import get_db
 from tests.utils import create_random_auth_listener, create_random_auth_artist
-from crud.listener import get_listener_by_user_id
-from crud.artist import get_artist_by_user_id
-from metrics.artists import engage_artist_score
-from crud.artist import get_followers
+
 
 
 client = TestClient(app)
