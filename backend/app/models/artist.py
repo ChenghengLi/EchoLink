@@ -4,6 +4,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from core.config import Base
 from models.user import UserOutput
+from typing import Optional
 
 # Artist table
 class Artist(Base):
@@ -25,6 +26,8 @@ class Artist(Base):
 # Pydantic model for the response
 class ArtistOutput(UserOutput):
     rank_data: dict
+    can_ask: Optional[bool] = False
+    is_following: Optional[bool] = False
 
     # Use ConfigDict for Pydantic v2
     model_config = ConfigDict(from_attributes=True)

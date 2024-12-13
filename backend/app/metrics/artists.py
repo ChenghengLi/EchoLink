@@ -1,6 +1,7 @@
 
 from crud.artist import get_followers, get_all_artists, get_artist_by_username
-from crud.question import get_questions_by_artist
+from crud.question import get_questions_by_artist, can_question
+from crud.listener import get_listener_by_user_id, check_follow
 from models.artist import ArtistOutput
 from models.question import ResponseEnum
 from pytest import Session
@@ -117,10 +118,11 @@ def rank_data(artist_name: str, db: Session) -> dict:
     raise RuntimeError("Could not determine the tier for the artist.")
 
 # Get all artists with their rank_data
-def get_all_artists_with_rank_data(db: Session):
+def get_all_artists_with_rank_data(db: Session, user_id : str = None):
     artists = get_all_artists(db)
 
-    # Return a list of ArtistOutput models
+    listener = get_listener_by_user_id(db, user_id) if user_id else None
+
     return [
         ArtistOutput(
             username=artist.username,
@@ -130,7 +132,9 @@ def get_all_artists_with_rank_data(db: Session):
             visibility=artist.visibility,
             role=artist.role,
             image_url=artist.image_url,
-            rank_data=rank_data(artist.username, db)
+            rank_data=rank_data(artist.username, db),
+            can_ask=can_question(db, listener, get_artist_by_username(db, artist.username))if listener else False,
+            is_following=check_follow(db, listener, artist.username) if listener else False
         )
         for artist in artists
     ]

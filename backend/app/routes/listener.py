@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from models.listener import Listener
 from crud.listener import follow_artist, unfollow_artist, check_follow, get_sorted_artists
 from core.config import get_db
-from core.security import CurrentUser
+from core.security import CurrentUser, OptionalCurrentUser
 
 router = APIRouter()
 
@@ -24,11 +24,11 @@ def check_follow_route(
 # Get the artists sorted by preference
 @router.get("/preferences", status_code=200)
 def get_sorted_artists_route(
-    current_user: CurrentUser,
+    current_user : OptionalCurrentUser,
     db: Session = Depends(get_db)
 ):
     # Return a list of artists sorted by preference
-    return get_sorted_artists(db, current_user.id)
+    return get_sorted_artists(db, current_user.id if current_user is None else current_user)
     
 # Follow an artist
 @router.post("/follow/{artist_name}", status_code=200)
