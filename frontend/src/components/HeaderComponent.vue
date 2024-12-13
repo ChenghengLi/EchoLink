@@ -15,6 +15,7 @@
 								<div class="nav__menu-logo d-flex d-xl-none">
 									<router-link to="/" class="text-center hide-nav">
 										<img :src="LogoURL" alt="Logo" />
+										<p class="font-bold text-3xl ml-3">EchoLink</p>
 									</router-link>
 									<button aria-label="close the menu" class="nav__menu-close">
 										<i class="fa-solid fa-xmark"></i>
@@ -28,7 +29,7 @@
 
 									<li class="nav__menu-item nav__menu-item--dropdown">
 										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
-											Exploration Zone
+											Explore
 										</a>
 										<ul class="nav__dropdown">
 											<li>
@@ -47,9 +48,10 @@
 										</ul>
 									</li>
 							
-									<li v-if="isArtist() && isLoggedIn" class="nav__menu-item nav__menu-item--dropdown" :data-test="'artist-menu'" >
-										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
-											Artist Settings
+									<!-- Must exist during onMount for all the event listeners to be registered properly; cannot be v-if'd. -->
+									<li class="nav__menu-item nav__menu-item--dropdown" :style="!isArtist() || !isLoggedIn  ? {'display': 'none'} : {}" :data-test="'artist-menu'" >
+										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown text-nowrap">
+											Artist Management
 										</a>
 										<ul class="nav__dropdown">
 											<li>
@@ -75,7 +77,7 @@
 										</router-link>
 									</li>
 									<li v-else class="nav__menu-item d-block d-md-none">
-										<button @click="goToProfile" data-test="profile-mobile"class="btn btn--secondary">
+										<button @click="goToProfile" data-test="profile-mobile"class="btn btn--secondary mb-4">
 											My Profile
 										</button>
 										<button @click="logout_function" :data-test="'logout-mobile'" class="btn btn--secondary"
@@ -93,15 +95,15 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
-									<button v-if="isLoggedIn" :data-test="'profile-laptop'" @click="goToProfile" class="btn btn--secondary">
+									<button v-if="isLoggedIn" :data-test="'profile-laptop'" @click="goToProfile" class="btn btn--secondary text-nowrap">
 										My Profile
 									</button>
-									<button v-if="isLoggedIn" :data-test="'logout-laptop'" @click="logout_function" class="btn btn--secondary"
+									<button v-if="isLoggedIn" :data-test="'logout-laptop'" @click="logout_function" class="btn btn--secondary text-nowrap"
 										data-test="button-logout">
 										Log Out
 									</button>
 								</div>
-								<button class="nav__bar d-block d-md-none">
+								<button class="nav__bar d-block d-xl-none">
 									<span class="icon-bar top-bar"></span>
 									<span class="icon-bar middle-bar"></span>
 									<span class="icon-bar bottom-bar"></span>
