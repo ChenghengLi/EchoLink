@@ -55,7 +55,7 @@ export default {
             const transformValue = Math.random() * 360;
             heart.style.transform = 'rotate(' + transformValue + 'deg)';
 
-            var style = document.createElement('style');
+            const style = document.createElement('style');
             style.type = 'text/css';
             style.innerHTML = `
                 .heart-animation::before {
