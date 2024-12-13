@@ -1,106 +1,102 @@
 <template>
-    <div class="col-12 col-md-6 col-xl-4">
-      <div class="team-main-single wow fadeInUp" data-wow-duration="600ms" data-wow-delay="300ms">
+    <div class="artist-container wow fadeInUp" data-wow-duration="600ms" data-wow-delay="300ms">
         <div class="thumb">
-            <router-link :to="`/users/${artist.username}`">
+            <router-link :to="`/users/${artist.username}`" draggable="false">
                 <img :src="artist.image" :alt="artist.name" class="clickable-image" />
             </router-link>
-            <div class="content">
-                <h5 class="h5">{{ artist.username }}</h5>
-                <p>{{ artist.genre }}</p>
+            <div class="overlay">
+                <h5 class="artist-name">{{ artist.username }}</h5>
+                <p class="artist-genre">{{ artist.genre }}</p>
             </div>
         </div>
-      </div>
     </div>
-  </template>
+</template>
 
 <script>
 export default {
-  name: 'ArtistComponent',
-  props: {
-    artist: {
-      type: Object,
-      required: true,
+    name: 'ArtistComponent',
+    props: {
+        artist: {
+            type: Object,
+            required: true,
+        },
     },
-  },
+    data() {
+        return {
+            heartCounter: 0,
+        };
+    },
 };
 </script>
 
-
 <style scoped>
-.col-12.col-md-6.col-xl-4 {
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-}
-
-.team-main-single {
+.artist-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     width: 100%;
-    max-width: 100%; 
-    height: auto; 
-    margin-bottom: 20px; 
 }
 
 .thumb {
     position: relative;
     overflow: hidden;
-    width: 300px; /* Set a fixed width for the square */
-    height: 300px; /* Set the same height to make it a square */
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 50%;
+    width: calc(100% - 100px);
+    height: calc(100% - 100px);
 }
 
 .thumb img {
     width: 100%;
-    height: 100%; /* Force the image to fill the square */
-    object-fit: cover; /* Crop the image to ensure it fits within the square */
-}
-
-img {
-    max-width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
-    border: 0;
-    outline: 0;
-    vertical-align: middle;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
 }
 
-.content {
+.thumb:hover img {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+.overlay {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 30px;
-    min-width: 100%;
-    background: linear-gradient(
-        to top,
-        rgba(69, 105, 231, 1), 
-        rgba(69, 105, 231, 0.9), 
-        rgba(69, 105, 231, 0.8),
-        rgba(255, 255, 255, 0)   
-    );
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
     opacity: 0;
-    transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
-.content p,
-.content h5 {
-    color: white;
-}
-
-.thumb:hover .content {
+.thumb:hover .overlay {
     opacity: 1;
 }
 
-.clickable-image {
-  transition: transform 0.3s ease, opacity 0.3s ease; 
+.artist-name,
+.artist-genre {
+    margin: 0;
+    color: white;
 }
 
-.clickable-image:hover {
-  transform: scale(1.05); 
-  opacity: 0.9; 
+.artist-name {
+    font-size: 1.5rem;
+}
+
+.artist-genre {
+    font-size: 1rem;
+    margin-top: 5px;
 }
 </style>
