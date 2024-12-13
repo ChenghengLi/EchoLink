@@ -1,6 +1,6 @@
 <template>
     <div class="artist-container wow fadeInUp" data-wow-duration="600ms" data-wow-delay="300ms">
-        <div class="thumb">
+        <div class="thumb" @mousemove="handleMouseMove">
             <router-link :to="`/users/${artist.username}`" draggable="false">
                 <img :src="artist.image" :alt="artist.name" class="clickable-image" />
             </router-link>
@@ -26,6 +26,71 @@ export default {
             heartCounter: 0,
         };
     },
+    methods: {
+        handleMouseMove(event) {
+            if (!this.artist.is_following) return; // Check if the artist is followed
+            if (event.buttons !== 0) return; // Check if the mouse button is pressed
+
+            this.heartCounter++;
+            if (this.heartCounter % 2 !== 0) return;
+
+            let body = document.querySelector('body');
+            let heart = document.createElement('span');
+            heart.classList.add('heart-animation');
+
+            const x = event.clientX + window.scrollX;
+            const y = event.clientY + window.scrollY;
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+
+            let size = Math.random() * 80;
+            heart.style.width = 20 + size + 'px';
+            heart.style.height = 20 + size + 'px';
+
+            let transformValue = Math.random() * 360;
+            heart.style.transform = 'rotate(' + transformValue + 'deg)';
+
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = `
+                .heart-animation::before {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    background: url(heart.png);
+                    background-size: cover;
+                    animation: animate 1s linear infinite;
+                }
+                .heart-animation {
+                    z-index: 1000;
+                    position: absolute;
+                    pointer-events: none;
+                    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.5));
+                }
+                @keyframes animate {
+                    0% {
+                        transform: translate(0) rotate(0deg);
+                        opacity: 0;
+                    }
+                    20%, 80% {
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translate(300px) rotate(360deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.getElementsByTagName('head')[0].appendChild(style);
+
+            body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        }
+    }
 };
 </script>
 
