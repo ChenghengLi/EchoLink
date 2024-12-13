@@ -39,8 +39,8 @@ export default {
             this.heartCounter++;
             if (this.heartCounter % 2 !== 0) return;
 
-            let body = document.querySelector('body');
-            let heart = document.createElement('span');
+            const body = document.querySelector('body');
+            const heart = document.createElement('span');
             heart.classList.add('heart-animation');
 
             const x = event.clientX + window.scrollX;
@@ -48,11 +48,11 @@ export default {
             heart.style.left = x + 'px';
             heart.style.top = y + 'px';
 
-            let size = Math.random() * 80;
+            const size = Math.random() * 80;
             heart.style.width = 20 + size + 'px';
             heart.style.height = 20 + size + 'px';
 
-            let transformValue = Math.random() * 360;
+            const transformValue = Math.random() * 360;
             heart.style.transform = 'rotate(' + transformValue + 'deg)';
 
             var style = document.createElement('style');
