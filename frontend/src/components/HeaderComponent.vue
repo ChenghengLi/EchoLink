@@ -15,6 +15,7 @@
 								<div class="nav__menu-logo d-flex d-xl-none">
 									<router-link to="/" class="text-center hide-nav">
 										<img :src="LogoURL" alt="Logo" />
+										<p class="font-bold text-3xl ml-3">EchoLink</p>
 									</router-link>
 									<button aria-label="close the menu" class="nav__menu-close">
 										<i class="fa-solid fa-xmark"></i>
