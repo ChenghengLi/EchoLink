@@ -28,7 +28,7 @@
 
 									<li class="nav__menu-item nav__menu-item--dropdown">
 										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
-											Exploration Zone
+											Explore
 										</a>
 										<ul class="nav__dropdown">
 											<li>
@@ -49,8 +49,8 @@
 							
 									<!-- Must exist during onMount for all the event listeners to be registered properly; cannot be v-if'd. -->
 									<li class="nav__menu-item nav__menu-item--dropdown" :style="!isArtist() || !isLoggedIn  ? {'display': 'none'} : {}" :data-test="'artist-menu'" >
-										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown">
-											Artist Settings
+										<a href="javascript:void(0)" class="nav__menu-link nav__menu-link--dropdown text-nowrap">
+											Artist Management
 										</a>
 										<ul class="nav__dropdown">
 											<li>
@@ -94,10 +94,10 @@
 									<router-link v-if="!isLoggedIn" to="/register" class="btn btn--secondary">
 										Register
 									</router-link>
-									<button v-if="isLoggedIn" :data-test="'profile-laptop'" @click="goToProfile" class="btn btn--secondary">
+									<button v-if="isLoggedIn" :data-test="'profile-laptop'" @click="goToProfile" class="btn btn--secondary text-nowrap">
 										My Profile
 									</button>
-									<button v-if="isLoggedIn" :data-test="'logout-laptop'" @click="logout_function" class="btn btn--secondary"
+									<button v-if="isLoggedIn" :data-test="'logout-laptop'" @click="logout_function" class="btn btn--secondary text-nowrap"
 										data-test="button-logout">
 										Log Out
 									</button>
