@@ -4,6 +4,7 @@ from models.listener import Listener
 from crud.listener import follow_artist, unfollow_artist, check_follow, get_sorted_artists
 from core.config import get_db
 from core.security import CurrentUser, OptionalCurrentUser
+from metrics.listeners import get_preferences
 
 router = APIRouter()
 
@@ -28,7 +29,7 @@ def get_sorted_artists_route(
     db: Session = Depends(get_db)
 ):
     # Return a list of artists sorted by preference
-    return get_sorted_artists(db, current_user.id if current_user is None else current_user)
+    return get_preferences(db, current_user.id if current_user is None else current_user)
     
 # Follow an artist
 @router.post("/follow/{artist_name}", status_code=200)

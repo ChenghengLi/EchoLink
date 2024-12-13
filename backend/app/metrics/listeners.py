@@ -3,7 +3,9 @@ from models.playlist import Playlist
 from models.question import Question, ResponseEnum
 from models.artist import Artist
 from pytest import Session
-from crud.listener import check_follow, get_all_listeners
+from crud.listener import check_follow, get_all_listeners, get_sorted_artists, get_listener_by_user_id
+from crud.artist import get_artist_by_username
+
 
 def loyalty_points(artist: Artist, listener: Listener, db: Session) -> int:
     # Check if the listener follows the artist
@@ -64,3 +66,35 @@ def get_listener_loyalty_data(artist: Artist, listener: Listener, db: Session):
 
     # This should not be reached
     raise RuntimeError("Could not determine the ranking for the listener.")
+
+
+def get_preferences(db: Session, user_id: int):
+    from models.artist import ArtistOutput
+    from models.user import User
+    from metrics.artists import rank_data
+    from crud.question import can_question
+
+    sorted_artist = get_sorted_artists(db, user_id)
+
+    if type(user_id) == User:
+        user_id = user_id.id
+
+    listener = get_listener_by_user_id(db, user_id) if user_id else None
+
+
+
+    return [
+        ArtistOutput(
+            username=artist.user.username,
+            email=artist.user.email,
+            genre=artist.user.genre,
+            description=artist.user.description,
+            visibility=artist.user.visibility,
+            role=artist.user.role,
+            image_url=artist.user.image_url,
+            rank_data=rank_data(artist.user.username, db),
+            can_ask=can_question(db, listener, get_artist_by_username(db, artist.user.username))if listener else False,
+            is_following=check_follow(db, listener, artist.user.username) if listener else False
+        )
+        for artist in sorted_artist
+    ]

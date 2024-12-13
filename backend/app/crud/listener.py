@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.listener import Listener
 from models.user import ListenerArtistLink, User
+from models.artist import ArtistOutput
 from crud.artist import get_artist_by_username, get_artists
 from crud.playlist import get_playlists_by_user_id, get_songs_in_playlist
 
@@ -120,17 +121,18 @@ def get_songs_id_in_playlist(db: Session, user_id: int):
 
 def get_sorted_artists(db: Session, user_id: int):
     from crud.question import can_question
-    listener = get_listener_by_user_id(db, user_id)
+    
+    if type(user_id) == User:
+        user_id = user_id.id
 
+    listener = get_listener_by_user_id(db, user_id)
     can_ask_artists = []
     followed_artists = []
     other_artists = []
 
     # Get all artists
     artists = get_artists(db)
-
     for artist in artists:
-
         if can_question(db, listener, artist):
             can_ask_artists.append(artist)
 
@@ -144,4 +146,3 @@ def get_sorted_artists(db: Session, user_id: int):
     sorted_artists = can_ask_artists + followed_artists + other_artists
 
     return sorted_artists
-

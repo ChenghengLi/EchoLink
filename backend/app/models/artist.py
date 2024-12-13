@@ -25,7 +25,7 @@ class Artist(Base):
 
 # Pydantic model for the response
 class ArtistOutput(UserOutput):
-    rank_data: dict
+    rank_data: Optional[dict] = None
     can_ask: Optional[bool] = False
     is_following: Optional[bool] = False
 

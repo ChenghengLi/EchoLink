@@ -5,6 +5,7 @@ from crud.listener import get_listener_by_user_id, check_follow
 from models.artist import ArtistOutput
 from models.question import ResponseEnum
 from pytest import Session
+from fastapi import HTTPException
 
 
 def reply_rate_score(artist_name: str, db: Session) -> float:
@@ -72,6 +73,8 @@ def get_my_ranking(artist_name: str, db: Session):
         # Update the previous score
         previous_score = score
 
+    if artist_rank is None:
+        raise HTTPException(status_code=404, detail="Artist not found.")
     # Return the rank of the artist
     return artist_rank
 
@@ -115,7 +118,7 @@ def rank_data(artist_name: str, db: Session) -> dict:
             }
 
     # This should not be reached if tiers are correctly defined
-    raise RuntimeError("Could not determine the tier for the artist.")
+    raise HTTPException(status_code=404, detail="Could not determine the tier for the artist.")
 
 # Get all artists with their rank_data
 def get_all_artists_with_rank_data(db: Session, user_id : str = None):
