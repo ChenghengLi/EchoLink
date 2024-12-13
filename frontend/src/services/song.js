@@ -19,6 +19,38 @@ class SongService {
             throw error;
         }
     }
+    async getSortedAlphabetically(){
+        try {
+            const response = await axios.get('/songs/sorted/alphabetically', UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getSortedReleaseDate(){
+        try {
+            const response = await axios.get('/songs/sorted/release_date', UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getSortedEngagement(){
+        try {
+            const response = await axios.get('/songs/sorted/engagement_score', UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getSortedPriority(){
+        try {
+            const response = await axios.get('/songs/sorted/priority', UserService.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
     async get(id) {
         try {
             const response = await axios.get('/songs/' + id, UserService.getConfig());
