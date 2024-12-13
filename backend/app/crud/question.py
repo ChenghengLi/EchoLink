@@ -78,10 +78,13 @@ def submit_question(db: Session, listener: Listener, question_input: QuestionInp
                                  Question.response_status == ResponseEnum.waiting).first():
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="This listener is waiting for a response.")
 
+    print("Creating question")
     # Create Question
     question = Question(
         listener_id=listener.listener_id,
         artist_id=artist.artist_id,
+        artist_username=artist.user.username,
+        listener_username=listener.user.username,
         question_text=question_input.question_text,
         response_status = ResponseEnum.waiting,
         question_date=datetime.utcnow()
