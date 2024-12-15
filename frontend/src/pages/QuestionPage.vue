@@ -99,16 +99,15 @@ watch(() => search.filter.id, (newValue) => {
 
 
 function filterQuestions() {
-	// Start with all questions
+
 	let filtered = [...sortedQuestions];
 
-	// Filter by status if a specific filter is selected
 	if (search.filter.id !== 0) {
 		const statusMap = {
-			1: 'waiting',   // Waiting Response
-			2: 'answered',  // Answered
-			3: 'rejected',  // Rejected
-			4: 'archived',  // Archived
+			1: 'waiting',  
+			2: 'answered',  
+			3: 'rejected',  
+			4: 'archived',  
 		};
 
 		if (search.filter.id === 4) {
@@ -120,7 +119,7 @@ function filterQuestions() {
 		}
 	}
 
-	// Apply search text filter (if any)
+	// Apply search text filter 
 	if (search.text.trim() !== '') {
 		const searchText = search.text.toLowerCase();
 		filtered = filtered.filter(question =>
