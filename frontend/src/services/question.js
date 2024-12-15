@@ -22,6 +22,16 @@ class QuestionService{
             throw error;
         }
     }
+
+
+    async getQuestions() {
+        try {
+            const response = await axios.get('/questions/', this.getConfig());
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
     async archiveQuestion(id) {
         try {
             const response = await axios.post('/questions/archive', null, {... (this.getConfig()), params: {question_id: id}});

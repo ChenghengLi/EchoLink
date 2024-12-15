@@ -106,7 +106,7 @@
                 <div v-if="!questionsError && topQuestions.length > 0" class="flex flex-col gap-y-4 mx-auto mt-2 max-w-screen-lg">
                     <QuestionCard v-for="question in topQuestions" :question="question" @archived="onQuestionArchived(question)"></QuestionCard>
                 </div>
-                <p v-else-if="questionsError" class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
+                <p v-else-if="questionsError" class="text-gray-500">Something went wrong while fetching latest questions:<br>{{ songsError }}.<br>Try refreshing the page.</p>
                 <p v-else-if="topQuestions.length == 0" class="text-gray-500">You have made no questions to artists yet. Visit their profiles to start asking questions.</p>
                 
                 <button @click="router.push('/questions')" class="btn btn--primary mt-3 min-w-64 text-black">

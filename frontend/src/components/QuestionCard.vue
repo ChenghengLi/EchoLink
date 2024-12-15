@@ -3,7 +3,7 @@
 	<div class="flex flex-col py-3 px-4 bg-indigo-300 rounded relative banner">
         <!-- Artist name and archive button -->
         <div class="rounded bg-white max-w-min px-3 mb-1 mx-auto">
-            <p class="text-nowrap">Your question to {{ 'TODO artist name' }}</p>
+            <p class="text-nowrap">Your question to {{ question.artist_username }}</p>
         </div>
 
         <!-- Show delete button on top-right on desktop -->
@@ -16,7 +16,7 @@
             <ChatBubble class="ml-auto bg-indigo-400" header="You asked:" :text="props.question.question_text" :date="props.question.question_date"/>
 
             <!-- Response -->
-            <ChatBubble v-if="props.question.response_status === 'answered'" class="mr-auto bg-indigo-500" :header="`${'TODO artist name'} responded:`" :text="props.question.answer_text" :date="props.question.answer_date"/>
+            <ChatBubble v-if="props.question.response_status === 'answered'" class="mr-auto bg-indigo-500" :header="`${question.artist_username} responded:`" :text="props.question.answer_text" :date="props.question.answer_date"/>
             <ChatBubble v-else-if="props.question.response_status === 'rejected'" class="mr-auto bg-red-400" text="The artist rejected your question."/>
             <ChatBubble v-else-if="props.question.response_status === 'waiting'" class="mr-auto bg-gray-300" text="The artist has not yet answered your question."/>
         </div>
