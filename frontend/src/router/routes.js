@@ -7,7 +7,6 @@ import LogInDef from '../pages/LogInDef.vue';
 import PlaylistCreator from '../pages/PlaylistCreator.vue';
 import UploadTrack from '../pages/UploadTrack.vue';
 import UserService from '../services/user.js';
-import ListenerDashboard from '../pages/ListenerDashboard.vue';
 import ArtistDashboard from '../pages/ArtistDashboard.vue';
 import SongDetails from '../pages/SongDetails.vue';
 import QuestionPage from '../pages/QuestionPage.vue';
@@ -17,9 +16,7 @@ export default  [
         {
             path: '/',
             name: 'Home',
-            component: async function() {
-                return UserService.isLoggedIn() ? ListenerDashboard : HomeDef // Redirect to dashboard if logged-in
-            },
+            component: HomeDef,
         },
         {
             path: '/register',

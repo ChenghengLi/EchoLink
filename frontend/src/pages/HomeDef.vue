@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="!isLoggedIn()">
 		<div class="home-two-light my-app home-light container">
 
 			<Header />
@@ -15,7 +15,10 @@
 				<path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 178,377;"></path>
 			</svg>
 		</div>
-
+	</div>
+	<!-- Show dashboard instead if the user is logged in -->
+	<div v-else>
+		<ListenerDashboard/>
 	</div>
 </template>
 
@@ -25,6 +28,8 @@ import Footer from '../components/FooterComponent.vue';
 import Banner from '../components/BannerComponent.vue';
 import Broadcast from '../components/BroadcastComponent.vue';
 import ArtistsList from '../components/ArtistsList.vue';
+import ListenerDashboard from '../pages/ListenerDashboard.vue';
+import UserService from '../services/user.js';
 export default {
 	name: "HomeLight",
 	components: {
@@ -33,22 +38,24 @@ export default {
 		Banner,
 		Broadcast,
 		ArtistsList,
-
+		ListenerDashboard,
 	}, mounted(){
-		const progressPath = this.$el.querySelector(".progress-wrap path");
-  		const pathLength = 307.919;
+		if (!this.isLoggedIn()) {
+			const progressPath = this.$el.querySelector(".progress-wrap path");
+			const pathLength = 307.919;
 
-		const updateProgress = () => {
-			const scrollTop = window.scrollY;
-			const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-			const progress = (scrollTop / docHeight) * 100;
+			const updateProgress = () => {
+				const scrollTop = window.scrollY;
+				const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+				const progress = (scrollTop / docHeight) * 100;
 
-			const offset = pathLength - (pathLength * progress) / 100;
-			progressPath.style.strokeDashoffset = offset;
-		};
+				const offset = pathLength - (pathLength * progress) / 100;
+				progressPath.style.strokeDashoffset = offset;
+			};
 
-		window.addEventListener("scroll", updateProgress);
-		updateProgress();
+			window.addEventListener("scroll", updateProgress);
+			updateProgress();
+		}
 	}, beforeDestroy(){
 		window.removeEventListener("scroll", this.updateProgress);
 	}, methods: {
@@ -59,7 +66,10 @@ export default {
 		},
 		scrollToTop(){
 			window.scrollTo({ top: 0, behavior: 'smooth' });
-		}
+		},
+		isLoggedIn() {
+			return UserService.isLoggedIn()
+		},
 	}
 };
 </script>
