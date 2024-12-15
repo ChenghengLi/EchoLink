@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<div class="home-two-light my-app home-light container">
+		<div class="home-two-light my-app home-light page-container">
 
 			<HeaderComponent />
 
-			<div class="px-4 mx-auto">
+			<div class="lg:px-4 mx-auto max-w-screen-xl">
                 <h2>Explore songs</h2>
                 <p>Discover new songs of artists</p>
 
@@ -13,33 +13,27 @@
 
 				<div class="mx-2 my-2"/> <!-- Spacing -->
 
-				<div class="flex justify-between gap-4 my-4">
-					<div class="content-block max-h-min max-w-lg lg:min-w-96">
+				<div class="flex justify-center gap-4 my-4">
+					<div class="content-block max-h-min max-w-lg lg:min-w-96 flex-grow">
 						<OptionSelector v-model="search.genre" :options="genres" label="Genre" track-by="id" option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
 					</div>
 
-					<div class="content-block max-h-min max-w-lg lg:min-w-96">
+					<div class="content-block max-h-min max-w-lg lg:min-w-96 flex-grow">
 						<OptionSelector v-model="search.filter" :options="filters" label="Sort" track-by="id" option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
 					</div>
 				</div>
 				
 				<div class="mx-2 my-2"/> <!-- Spacing -->
 
-                <div v-if="sortedSongsError === null" class="flex flex-col items-center w-100 mt-3 gap-4 h-ful">
+                <div v-if="sortedSongsError === null" class="flex flex-col items-center mt-3 gap-4">
                     <!-- Song list -->
-                    <div class="flex flex-col-reverse lg:flex-row items-center justify-center gap-4 w-full" >
+                    <div class="flex flex-col-reverse lg:flex-row items-center justify-center gap-4" >
                         <p v-if="sortedSongs.length === 0" class="text-gray-500 w-100">There are no songs that match your search criteria.</p>		
-						<div class="song-grid">
-							<div class="left">
-								<SongList v-model="songsByColumns.left" :editable="false" />
-							</div>
-							<div class="right">
-								<SongList v-model="songsByColumns.right" :editable="false" />
-							</div>
+						<div class="grid xl:grid-cols-2 gap-2 max-md:max-w-sm">
+							<SongList class="max-md:max-w-sm" v-model="songsByColumns.left" :editable="false" />
+							<SongList class="max-md:max-w-sm" v-model="songsByColumns.right" :editable="false" />
 						</div>
-						
                     </div>
-					
                 </div>
                 <p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
             </div>
@@ -62,7 +56,7 @@ import TextInput from '../components/form/TextInput.vue';
 import OptionSelector from '../components/form/OptionSelector.vue';
 import SongList from '../components/SongList.vue';
 import SongService from '../services/song.js'
-import { reactive, ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { reactive, ref, computed, onMounted, onBeforeUnmount, watch, onUpdated } from 'vue';
 
 const search = reactive({
     genre: { id: 'all', label: 'All' },
@@ -71,7 +65,6 @@ const search = reactive({
 })
 const genres = reactive([])
 const registeredGenres = ref(new Set())
-const songs = reactive([])
 const songsError = ref(null)
 const sortedSongs = reactive([])
 const sortedSongsError = ref(null)
@@ -127,10 +120,15 @@ async function fetchSongs(){
 		}
 
 		Object.assign(sortedSongs, fetchedSongs)
+		
 	} catch (err) {
         sortedSongsError.value = (err.response) ? err.response.data.detail : err.message
 	}
 }
+
+onUpdated(() => {
+	updateProgress() // Must update the scroll widget as the page dimensions most likely changed, ex. if songs were fetched.
+})
 
 function scrollToTop(){
 	window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -161,13 +159,9 @@ const songsByColumns = computed(() => {
     return { left: leftColumn, right: rightColumn };
 });
 
-
-onMounted(() => {
-    fetchSongs(); 
-    const progressPath = document.querySelector(".progress-wrap path");
-    const pathLength = 307.919;
-
-    const updateProgress = () => {
+const updateProgress = () => {
+		const progressPath = document.querySelector(".progress-wrap path");
+		const pathLength = 307.919;
         const scrollTop = window.scrollY;
         const docHeight = document.documentElement.scrollHeight - window.innerHeight;
         const progress = (scrollTop / docHeight) * 100;
@@ -175,6 +169,9 @@ onMounted(() => {
         const offset = pathLength - (pathLength * progress) / 100;
         progressPath.style.strokeDashoffset = offset;
     };
+
+onMounted(() => {
+    fetchSongs(); 
 
     window.addEventListener("scroll", updateProgress);
     updateProgress();
@@ -191,7 +188,7 @@ onBeforeUnmount(() => {
 	display: none;
 }
 
-.container {
+.page-container {
     width: 100vw;
     display: flex;
     flex-direction: column;
@@ -204,15 +201,4 @@ onBeforeUnmount(() => {
 	display: none;
 }
 
-.song-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; 
-    gap: 1rem; 
-    align-items: start;
-}
-
-.song-grid > div {
-    display: flex;
-    flex-direction: column;
-}
 </style>

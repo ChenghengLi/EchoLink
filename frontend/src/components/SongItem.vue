@@ -9,7 +9,7 @@
             </div>
 
             <!-- Artist & title -->
-            <span class="lg:mx-3 text-left text-nowrap max-sm:overflow-scroll max-sm:max-w-80"> <!-- overflow-scroll is kinda painful but the quickest solution -->
+            <span class="lg:mx-3 text-left text-nowrap max-sm:overflow-scroll sm:overflow-clip max-sm:max-w-80 sm:max-w-96"> <!-- overflow-scroll is kinda painful but the quickest solution -->
                 <!--{{ prefix ? prefix : ''}} -->
                 <router-link :to="`/users/${song.artist_name}`">{{ song.artist_name }}</router-link> - <router-link :to="`/songs/${song.song_id}`">{{  song.title }}</router-link>
             </span>
