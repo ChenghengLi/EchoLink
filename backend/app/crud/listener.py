@@ -118,30 +118,32 @@ def get_songs_id_in_playlist(db: Session, user_id: int):
 # - If the listener follows the artist
 # - Other criteria
 
-def get_sorted_artists(db: Session, user_id: int):
+def get_sorted_artists(db: Session, user_id: int, limit: int = 6):
     from crud.question import can_question
     
     if type(user_id) is User:
         user_id = user_id.id
 
     listener = get_listener_by_user_id(db, user_id)
-    can_ask_artists = []
-    followed_artists = []
-    other_artists = []
 
     # Get all artists
     artists = get_artists(db)
+    prioritized_artists = []
+
     for artist in artists:
         if can_question(db, listener, artist):
-            can_ask_artists.append(artist)
+            priority = 0
 
         elif check_follow(db, listener, artist.user.username):
-            followed_artists.append(artist)
+            priority = 1
 
         else:
-            other_artists.append(artist)
+            priority = 2
 
-    # Sort the artists based on the criteria
-    sorted_artists = can_ask_artists + followed_artists + other_artists
+        prioritized_artists.append((priority, artist))
+
+    # Sort the artists based on the priority
+    prioritized_artists.sort(key=lambda x: x[0])
+    sorted_artists = [artist for _, artist in prioritized_artists[:limit]]
 
     return sorted_artists
