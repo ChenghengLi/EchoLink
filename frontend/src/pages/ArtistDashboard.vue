@@ -195,7 +195,7 @@ const fetchMetrics = async () => {
     metrics.find(metric => metric.id === 'fans').value = fans || 0; 
     metrics.find(metric => metric.id === 'engagement').value = engagementRate|| 0; 
     metrics.find(metric => metric.id === 'answer_rate').value = responseRate || 0; 
-    metrics.find(metric => metric.id === 'ranking').value = ranking || 0; 
+    metrics.find(metric => metric.id === 'ranking').value = ranking.ranking || 0; 
   } catch (error) {
     console.error('Error fetching metrics:', error);
   }

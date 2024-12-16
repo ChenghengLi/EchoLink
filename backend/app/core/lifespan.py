@@ -39,9 +39,11 @@ def populate_with_artists_and_songs():
     try:
         filename = 'data/top_artists.json'
         with open(filename, 'r', encoding='utf-8') as f:
-            artists = json.load(f)  
 
+            artists = json.load(f)  
+        artist_counter = 0
         for artist in artists:
+            artist_counter += 1
             user_input = UserInput(
                 username=artist['name'].replace(' ', '_'),
                 email=artist['email'],
@@ -50,6 +52,8 @@ def populate_with_artists_and_songs():
                 image_url=artist['image_url'],
                 genre=artist['genres']
             )
+            if artist_counter == 8:
+                break
 
             songs_list = artist['songs']
             existing_user_by_username = db.query(User).filter(User.username == user_input.username).first()
@@ -66,8 +70,9 @@ def populate_with_artists_and_songs():
 
             artist_song_list = get_songs_by_artist_id(db, artist.artist_id)
             artist_song_list = [song.title for song in artist_song_list]	
-
+            song_counter = 0
             for song in songs_list:
+                song_counter += 1
                 # Add songs to the artist's profile
                 song_input = SongInput(
                     title=song['name'],
@@ -76,6 +81,8 @@ def populate_with_artists_and_songs():
                     genre=song['genre'],
                     artist_name=artist.name,
                 )
+                if song_counter == 5:
+                    break
 
                 if song_input.title not in artist_song_list:
                     song = create_song(db, song_input)

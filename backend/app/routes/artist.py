@@ -17,7 +17,6 @@ def get_artists_alphabet(current_user : OptionalCurrentUser , db: Session = Depe
     """
     artists_list = get_all_artists_with_rank_data(db, current_user.id if current_user else None)
     artists_list.sort(key=lambda x: x.username)
-    print(artists_list)
     return artists_list
 
 @router.get("/engagement", response_model=List[ArtistOutput])

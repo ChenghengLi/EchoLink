@@ -56,6 +56,7 @@
                 <p>Connect with your favorite musicians on EchoLink by asking them questions and staying up to date with their latest releases.</p>
 
                 <ArtistsCarousel/>
+                <ArtistsList/>
             </div>
 
             <!--Songs-->
@@ -135,6 +136,7 @@ import Toast from '../utilities/toast.js'
 import QuestionService from '../services/question.js'
 import { computed, ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import ArtistsList from '../components/ArtistsList.vue';
 
 const router = useRouter()
 

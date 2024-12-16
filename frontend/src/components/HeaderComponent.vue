@@ -40,7 +40,7 @@
 												<router-link to="/music"
 													class="nav__dropdown-item hide-nav">Music</router-link>
 											</li>
-											<li v-if="isLoggedIn">
+											<li v-if="isLoggedIn && !isArtist()">
 												<router-link to="/questions"
 													class="nav__dropdown-item hide-nav">Questions</router-link>
 											</li>

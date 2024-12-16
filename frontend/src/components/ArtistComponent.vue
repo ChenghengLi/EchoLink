@@ -5,9 +5,9 @@
             <router-link :to="`/users/${artist.username}`" draggable="false">
                 <img :src="artist.image" :alt="artist.name" class="clickable-image" />
             </router-link>
-            <div class="overlay">
+            <div class="overlay" >
                 <h5 class="artist-name">{{ artist.username }}</h5>
-                <p class="artist-genre">{{ artist.genre }}</p>
+                <p class="artist-genre" >{{ artist.genre }}</p>
             </div>
         </div>
     </div>
@@ -161,15 +161,15 @@ export default {
     color: white;
 }
 
+
 .artist-name {
-    font-size: 1.5rem;
-}
+    font-size: clamp(1rem, 5%, 2rem); /* Dynamically scales with container size */
+  }
 
-.artist-genre {
-    font-size: 1rem;
+  .artist-genre {
+    font-size: clamp(0.8rem, 4%, 1.5rem); /* Dynamically scales with container size */
     margin-top: 5px;
-}
-
+  }
 .engagement-shape {
     position: absolute;
     top: 0;

@@ -58,7 +58,7 @@ def get_artist_followers(artist_name: str, db: Session = Depends(get_db)) -> int
 
 
 
-@router.get("/rank_data", response_model=dict)
+@router.get("/ranking", response_model=dict)
 def get_artist_rank_data(artist_name: str, db: Session = Depends(get_db)) -> dict:
     """
     Retrieve and return the rank_data for an artist.

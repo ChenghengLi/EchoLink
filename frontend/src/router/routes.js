@@ -11,6 +11,8 @@ import ArtistDashboard from '../pages/ArtistDashboard.vue';
 import SongDetails from '../pages/SongDetails.vue';
 import QuestionPage from '../pages/QuestionPage.vue';
 import ExploreSongs from '../pages/ExploreSongs.vue';
+import ArtistPage from '../pages/ArtistPage.vue';
+
 
 export default  [
         {
@@ -47,6 +49,11 @@ export default  [
             path: '/music',
             name: 'Explore Songs',
             component: ExploreSongs,
+        },
+        {
+            path: '/artist',
+            name: 'Artist Page',
+            component: ArtistPage,
         },
         {
             path: '/dashboard/',
@@ -99,6 +106,24 @@ export default  [
         {
             path: '/questions',
             name: 'QuestionPage',
-            component: QuestionPage
+            component: QuestionPage,
+            beforeEnter: async (to, from, next) => {
+                try {
+                    if (!UserService.isLoggedIn()) {
+                        // Redirect to login page if no user is authenticated
+                        next('/login');
+                        return;
+                    }
+        
+                    const role = await UserService.getUserRole(UserService.getCurrentUsername()); 
+                    if (role === 'listener') {
+                        next(); 
+                    } else {
+                        next('/'); // Redirect to the homepage if the user is not an artist
+                    }
+                } catch {
+                    next('/'); // Redirect to the homepage in case of an error
+                }
+            },
         },
     ];
