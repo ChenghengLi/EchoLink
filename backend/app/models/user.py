@@ -95,6 +95,7 @@ class UserInput(UserLogin):
     visibility: Optional[VisibilityEnum] = VisibilityEnum.public
     role: Optional[RoleEnum] = RoleEnum.listener
     image_url: Optional[HttpUrl] = None
+    description: Optional[str] = None
 
 # Output user
 class UserOutput(BaseModel):

@@ -17,8 +17,8 @@ from crud.song import create_song, get_songs_by_artist_id
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code
-    #populate_with_artists_and_songs()
-    #populate_with_users()
+    populate_with_artists_and_songs()
+    populate_with_users()
     yield
     # Shutdown code (if needed)
 
@@ -50,7 +50,8 @@ def populate_with_artists_and_songs():
                 password=artist['password'],
                 role=RoleEnum.artist,
                 image_url=artist['image_url'],
-                genre=artist['genres']
+                genre=artist['genres'],
+                description=artist['description']
             )
 
             songs_list = artist['songs']
@@ -78,6 +79,7 @@ def populate_with_artists_and_songs():
                     album=song['album'],
                     genre=song['genre'],
                     artist_name=artist.name,
+                    sources=song['sources']
                 )
                 if song_counter == 5:
                     break
