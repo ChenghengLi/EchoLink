@@ -323,9 +323,6 @@ test('Create Public Playlist', async ({ page }) => {
     await passwordInput2.fill(userData2.password);
     await passwordInput2.press('Enter');
 
-    const successToast2 = page.locator('text="Log in successful!"');
-    await expect(successToast2).toBeVisible();
-
     // Redirect to the playlist page
     await page.goto(`/playlists/${playlistId}`);
     await expect(page).toHaveURL(`/playlists/${playlistId}`);

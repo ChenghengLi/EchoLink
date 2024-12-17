@@ -48,6 +48,38 @@ test('Successful registration', async ({ page }) => {
     await expect(page).toHaveURL('/'); // Redirect to homepage
 });
 
+// Register a user as an artist
+test('Successful registration as an artist', async ({ page }) => {
+    await page.goto('/register');
+    await expect(page).toHaveURL('/register');
+
+    // Determine the user data
+    const username = generateRandomUsername();
+    const email = generateRandomEmail();
+    const password = generateRandomPassword();
+    
+    // Fill in valid artist data
+    await page.locator('[data-test="field-username"]').fill(username);
+    await page.locator('[data-test="field-email"]').fill(email);
+    await page.locator('[data-test="field-password"]').fill(password);
+    await page.locator('[data-test="field-passwordconfirmation"]').fill(password);
+    
+    // Locate the dropdown and select the artist option
+    await page.locator('[data-test="field-role"]').selectOption('Artist');
+
+    // Check the TOS checkbox
+    await page.locator('[data-test="checkbox-tos"]').check();
+
+    // Submit the form
+    await page.locator('[data-test="button-register"]').click();
+
+    // Verify successful registration
+    const successToast = page.locator('text="Registration successful!"');
+    await expect(successToast).toBeVisible();
+    await expect(page).toHaveURL('/'); // Redirect to homepage
+});
+
+
 test('Registration fails with invalid email', async ({ page }) => {
     await page.goto('/register');
     await expect(page).toHaveURL('/register');
