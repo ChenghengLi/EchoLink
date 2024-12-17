@@ -250,10 +250,10 @@ onBeforeUnmount(() => {
 </script>
 <style scoped>
 .artist-card {
-	position: relative;
-	height: 400px;
-	width: 400px;
-	margin: 0 30px;
+    position: relative;
+    height: calc(90vw); /* 1/4th of the screen width */
+    width: calc(90vw); /* 1/4th of the screen width */
+    margin: 0 30px;
 }
 
 .carousel-with-blur {
@@ -307,6 +307,13 @@ onBeforeUnmount(() => {
 		grid-template-columns: repeat(2, 1fr);
 		/* 2 columns */
 	}
+
+	.artist-card {
+    position: relative;
+    height: calc(40vw); /* 1/4th of the screen width */
+    width: calc(40vw); /* 1/4th of the screen width */
+    margin: 0 30px;
+}
 }
 
 @media (min-width: 1024px) {
@@ -316,6 +323,13 @@ onBeforeUnmount(() => {
 		grid-template-columns: repeat(3, 1fr);
 		/* 3 columns */
 	}
+
+	.artist-card {
+    position: relative;
+    height: calc(22vw); /* 1/4th of the screen width */
+    width: calc(22vw); /* 1/4th of the screen width */
+    margin: 0 30px;
+}
 }
 
 .home-two-light {
@@ -340,5 +354,14 @@ onBeforeUnmount(() => {
 	position: relative;
 	z-index: 10;
 	/* Ensure selectors and search bar stay above other content */
+}
+
+.page-container {
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	/* Align items to the top */
 }
 </style>

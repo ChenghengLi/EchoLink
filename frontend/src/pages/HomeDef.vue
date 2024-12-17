@@ -1,11 +1,19 @@
 <template>
 	<div v-if="!isLoggedIn()">
 		<div class="home-two-light my-app home-light container">
-
 			<Header />
 			<Banner />
 			<Broadcast />
 
+			<!-- Explore Section -->
+			<div class="explore-section">
+				<div class="explore-column">
+					<a href="/artist" class="btn btn--primary">Explore all artists</a>
+				</div>
+				<div class="explore-column">
+					<a href="/music" class="btn btn--primary">Explore songs</a>
+				</div>
+			</div>
 
 			<Footer class="footer-light mx-10" />
 		</div>
@@ -17,7 +25,7 @@
 	</div>
 	<!-- Show dashboard instead if the user is logged in -->
 	<div v-else>
-		<ListenerDashboard/>
+		<ListenerDashboard />
 	</div>
 </template>
 
@@ -26,9 +34,9 @@ import Header from '../components/HeaderComponent.vue';
 import Footer from '../components/FooterComponent.vue';
 import Banner from '../components/BannerComponent.vue';
 import Broadcast from '../components/BroadcastComponent.vue';
-import ArtistsList from '../components/ArtistsList.vue';
 import ListenerDashboard from '../pages/ListenerDashboard.vue';
 import UserService from '../services/user.js';
+
 export default {
 	name: "HomeLight",
 	components: {
@@ -36,9 +44,9 @@ export default {
 		Footer,
 		Banner,
 		Broadcast,
-		ArtistsList,
 		ListenerDashboard,
-	}, mounted(){
+	},
+	mounted() {
 		if (!this.isLoggedIn()) {
 			const progressPath = this.$el.querySelector(".progress-wrap path");
 			const pathLength = 307.919;
@@ -55,39 +63,91 @@ export default {
 			window.addEventListener("scroll", updateProgress);
 			updateProgress();
 		}
-	}, beforeDestroy(){
+	},
+	beforeDestroy() {
 		window.removeEventListener("scroll", this.updateProgress);
-	}, methods: {
-		scrollToBroadcast() {
-			this.$nextTick(() => {
-				this.$refs.broadcastComponent.$el.scrollIntoView({ behavior: 'smooth' });
-			});
-		},
-		scrollToTop(){
+	},
+	methods: {
+		scrollToTop() {
 			window.scrollTo({ top: 0, behavior: 'smooth' });
 		},
 		isLoggedIn() {
-			return UserService.isLoggedIn()
+			return UserService.isLoggedIn();
 		},
-	}
+	},
 };
 </script>
 
 <style scoped>
-.home-two-dark .anime--light {
-	display: none;
-}
-
 .container {
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Align items to the top */
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start; /* Align items to the top */
+	min-height: 100vh; /* Ensure the container takes the full height of the viewport */
 }
 
+.footer-light {
+	width: 100vw;
+}
 
-.home-two-light .anime--dark {
-	display: none;
+/* Explore Section Styles */
+.explore-section {
+	display: flex;
+	flex-direction: row; /* Default: buttons side by side */
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 40px;
+	width: 100%; /* Full width */
+	gap: 20px; /* Add spacing between buttons */
+}
+
+.explore-column {
+	width: 100%; /* Ensure buttons take full width */
+	display: flex;
+	justify-content: center; /* Center the button */
+}
+
+/* Button Styles */
+.btn {
+	display: inline-block;
+	text-align: center;
+	font-weight: bold;
+	padding: 15px 30px; /* Default padding */
+	border-radius: 50px; /* Fully rounded corners */
+	background-color: #3b82f6; /* Primary blue color */
+	color: white;
+	font-size: 16px; /* Default font size */
+	text-decoration: none; /* Remove underline */
+	cursor: pointer;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn--primary {
+	background-color: #3b82f6; /* Primary blue */
+}
+
+.btn--primary:hover {
+	background-color: #2563eb; /* Slightly darker blue on hover */
+}
+
+/* Bigger Buttons and Adjustments for Large Screens */
+@media (min-width: 1024px) {
+	.btn {
+		padding: 20px 50px; /* Bigger padding for larger screens */
+		font-size: 20px; /* Larger font size */
+	}
+}
+
+/* Responsive Design for Small Screens */
+@media (max-width: 768px) {
+	.explore-section {
+		flex-direction: column; /* Stack buttons vertically */
+	}
+
+	.btn {
+		width: 100%; /* Buttons take full width on small screens */
+	}
 }
 </style>

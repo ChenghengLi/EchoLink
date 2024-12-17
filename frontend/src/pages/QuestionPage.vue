@@ -209,7 +209,7 @@ onBeforeUnmount(() => {
 <style scoped>
 /* Page container styles */
 .page-container {
-    width: 100%;
+    width: 100vw;
     max-width: 100%;
     padding: 0 10px; /* Adjust padding for smaller screens */
     margin: 0 auto;
@@ -248,5 +248,6 @@ onBeforeUnmount(() => {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
 
 </style>
