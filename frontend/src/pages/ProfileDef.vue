@@ -231,7 +231,7 @@ async function fetchUserData() {
         Object.assign(user, await UserService.get(getUsername()))
         user.publicProfile = user.visibility === 'public'
 
-        user.image_url = user.image_url !=="" ? user.image_url: AvatarSvg;
+        user.image_url = user.image_url === null? AvatarSvg : user.image_url ;
         
         console.log(user.image_url)
         // Don't show private profiles unless they belong to the user.
@@ -652,6 +652,7 @@ onMounted(async function () {
         margin-top: 10vh; /* Remove margin for full screen effect */
         border-radius: 0; /* Remove border radius for full screen effect */
     }
+    
 
 }
 </style>
