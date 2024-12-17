@@ -72,6 +72,7 @@ def can_question(db: Session, listener: Listener, artist: Artist):
         return False
     
     # Check if listener is in the top 10 in terms of loyalty
+    return True
     return get_listener_loyalty_data(artist, listener, db)["percentage"] < 10
 
 # Add a new question to the database
@@ -88,7 +89,6 @@ def submit_question(db: Session, listener: Listener, question_input: QuestionInp
                                  Question.response_status == ResponseEnum.waiting).first():
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE, detail="This listener is waiting for a response.")
 
-    print("Creating question")
     # Create Question
     question = Question(
         listener_id=listener.listener_id,

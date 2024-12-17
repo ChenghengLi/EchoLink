@@ -191,6 +191,8 @@ const fetchMetrics = async () => {
     const responseRate = await ArtistService.getResponseRate();
     const ranking = await ArtistService.getRanking();
 
+
+
     // Update the metrics array with the fetched data
     metrics.find(metric => metric.id === 'fans').value = fans || 0; 
     metrics.find(metric => metric.id === 'engagement').value = engagementRate|| 0; 
@@ -204,6 +206,7 @@ const fetchMetrics = async () => {
 async function fetchQuestions() {
     try {
         Object.assign(questions, await QuestionService.getUserQuestions());
+     
         errorMsg.value = null; 
     } catch (err) {
         errorMsg.value = err.response ? err.response.data.detail : err.message;
@@ -297,8 +300,8 @@ function answerQuestion(questionText, questionId) {
                                 title: 'The question has been rejected.',
                                 icon: 'success',
                             });
-                            fetchQuestions();
                             fetchMetrics();
+                            fetchQuestions();
                         })
                         .catch((err) => {
                             Swal.fire({

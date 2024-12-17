@@ -17,6 +17,7 @@ def reply_rate_score(artist_name: str, db: Session) -> float:
     rejected = sum(1 for question in all_questions if question.response_status == ResponseEnum.rejected)
     waiting = sum(1 for question in all_questions if question.response_status == ResponseEnum.waiting)
 
+    
     # Avoid division by zero
     if answered + rejected == 0:
         return 0.0  # No answered or rejected questions, rate is 0%
