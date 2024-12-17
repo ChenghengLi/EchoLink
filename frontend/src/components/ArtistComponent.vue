@@ -8,7 +8,7 @@
             <div class="overlay">
                 <h5 class="artist-name">{{ artist.username }}</h5>
                 <p class="artist-genre">{{ artist.genre }}</p>
-         
+
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@
             <i class="fa" :class="artist.is_following ? 'fa-user-minus' : 'fa-user-plus'"></i>
         </button>
 
-        
+
 
         <!-- Message Button (conditionally rendered) -->
         <button v-if="artist.can_ask" class="action-button dialog-button" @click="sendMessage">
@@ -182,11 +182,77 @@ export default {
             }
         };
 
+        const handleMouseMove = (event) => {
+            // Check if the artist is followed
+            if (!isFollowing.value) return; // Use the reactive variable `isFollowing` instead of `this.artist.is_following`
+            if (event.buttons !== 0) return; // Check if the mouse button is pressed
+
+            // Create a heart animation
+            const body = document.querySelector('body');
+            const heart = document.createElement('span');
+            heart.classList.add('heart-animation');
+
+            const x = event.clientX + window.scrollX;
+            const y = event.clientY + window.scrollY;
+            heart.style.left = x + 'px';
+            heart.style.top = y + 'px';
+
+            const size = Math.random() * 80;
+            heart.style.width = 20 + size + 'px';
+            heart.style.height = 20 + size + 'px';
+
+            const transformValue = Math.random() * 360;
+            heart.style.transform = 'rotate(' + transformValue + 'deg)';
+
+            // Add CSS for the heart animation
+            const style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = `
+        .heart-animation::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url(heart.png);
+            background-size: cover;
+            animation: animate 1s linear infinite;
+        }
+        .heart-animation {
+            z-index: 1000;
+            position: absolute;
+            pointer-events: none;
+            filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.5));
+        }
+        @keyframes animate {
+            0% {
+                transform: translate(0) rotate(0deg);
+                opacity: 0;
+            }
+            20%, 80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(300px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    `;
+            document.getElementsByTagName('head')[0].appendChild(style);
+
+            body.appendChild(heart);
+
+            // Remove the heart after 1 second
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        };
+
         // Return reactive variables and methods to template
         return {
             isFollowing,
             toggleFollow,
             sendMessage,
+            handleMouseMove
         };
     },
 };
