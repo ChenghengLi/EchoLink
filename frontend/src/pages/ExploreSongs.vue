@@ -8,7 +8,7 @@
 				<h2>Explore songs</h2>
 				<p>Discover new songs of artists</p>
 
-				<!-- Search and filters -->
+
 				<!-- Search and Filters Container -->
 				<div class="search-and-filters w-full flex flex-col gap-4">
 					<!-- Search Bar -->
@@ -20,13 +20,13 @@
 						<!-- Genre Dropdown -->
 						<div class="dropdown w-full lg:w-1/2">
 							<OptionSelector v-model="search.genre" :options="genres" label="Genre" track-by="id"
-								option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
+								option-label-key="label" :allow-empty="false" :can-search="true"></OptionSelector>
 						</div>
 
 						<!-- Sort Dropdown -->
 						<div class="dropdown w-full lg:w-1/2">
 							<OptionSelector v-model="search.filter" :options="filters" label="Sort" track-by="id"
-								option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
+								option-label-key="label" :allow-empty="false" :can-search="true"></OptionSelector>
 						</div>
 					</div>
 				</div>
