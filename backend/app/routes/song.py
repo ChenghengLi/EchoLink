@@ -124,6 +124,6 @@ def transform_song_to_output(song: song_model.Song):
         genre=song.genre,
         release_date=song.release_date,
         artist_name=song.artist.name,
-        sources=song.sources
+        sources=song.source_urls
     )
 
