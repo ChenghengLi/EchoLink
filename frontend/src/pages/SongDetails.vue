@@ -12,19 +12,33 @@
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
                 <div class="sm:flex min-h-32 relative">
-                    <!-- Icon and full title -->                        
+                    <!-- Icon and full title -->
                     <div class="flex items-end">
                         <div class="flex size-32 min-w-10 rounded bg-indigo-400">
-                            <MusicalNoteIcon class="p-4 my-auto mx-auto"/>
+                            <MusicalNoteIcon class="p-4 my-auto mx-auto" />
                         </div>
+                        <!-- Updated artist name and song title display -->
                         <div class="ms-3 flex flex-col items-start">
-                            <!-- TODO ensure contrast vs banner -->
-                            <p v-if="!isEditing" class="font-bold text-lg text-white mb-2 text-left"><router-link :to="'/users/' + song.artist_name" class="text-white text-lg font-bold">{{ song.artist_name }}</router-link> - {{ song.title }}</p>
+                            <!-- Artist name with smaller font -->
+
+                            <!-- Song title with custom color -->
+                            <p v-if="!isEditing" class="song-title font-bold text-xl text-blue-300 text-left mb-2">
+                                {{ song.title }}
+                            </p>
+
+                            <p v-if="!isEditing" class="artist-name text-sm text-gray-300 text-left mb-1">
+                                <router-link :to="'/users/' + song.artist_name" class="text-gray-300 font-medium">
+                                    {{ song.artist_name }}
+                                </router-link>
+                            </p>
+
                             <!-- While editing, show artist name as text and title as input field -->
-                            <span v-else class="font-bold text-lg text-white mb-2 text-left">{{ song.artist_name }} - 
-                                <input class="details-field details-field-editable" v-model="song.title"></input>
+                            <span v-else class="font-bold text-lg text-white mb-2 text-left">
+                                <span class="artist-name text-sm text-gray-300">{{ song.artist_name }}</span> -
+                                <input class="details-field details-field-editable" v-model="song.title" />
                             </span>
                         </div>
+
                     </div>
 
                     <div class="mx-auto my-3"></div>
@@ -49,47 +63,64 @@
                 <!-- Sources -->
                 <div class="content-block flex flex-grow lg:mr-2">
                     <div class="flex flex-column w-100">
-                        <h2 v-if="!isEditing" class="section-header">{{ youtubeVideoID ? 'Listen on YouTube' : 'Listen' }}</h2>
+                        <h2 v-if="!isEditing" class="section-header">{{ youtubeVideoID ? 'Listen on YouTube' : 'Listen'
+                            }}</h2>
                         <h2 v-else class="section-header">Edit sources</h2>
 
                         <!-- Source view -->
                         <div v-if="!isEditing" class="flex flex-col w-100 mt-2">
-                            <p v-if="song.sources.length == 0" class="text-left">The artist hasn't added any sources for this song yet.</p>
+                            <p v-if="song.sources.length == 0" class="text-left">The artist hasn't added any sources for
+                                this song yet.</p>
 
                             <!-- Youtube embed -->
                             <div v-if="youtubeVideoID" class="flex flex-col min-w-full aspect-video">
                                 <!-- <router-link :to="`https://www.youtube.com/watch?v=${youtubeVideoID}`" class="text-left">On YouTube</router-link> -->
-                                <iframe width="100%" height="100%" :src="`https://www.youtube.com/embed/${youtubeVideoID}`" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                <iframe width="100%" height="100%"
+                                    :src="`https://www.youtube.com/embed/${youtubeVideoID}`"
+                                    title="YouTube video player" frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                             </div>
                             <!-- Other sources -->
                             <h2 v-if="youtubeVideoID" class="section-header my-3">Also available on</h2>
                             <div class="flex flex-wrap place-content-center gap-4 mx-auto">
-                                <SongSourceCard v-if="spotifyLink" class="bg-green-200 hover:bg-green-300" :link="spotifyLink" :img="SpotifyLogo" label="On Spotify"></SongSourceCard>
-                                <SongSourceCard v-if="soundCloudLink" class="bg-orange-300 hover:bg-orange-400" :link="soundCloudLink" :img="SoundCloudLogo" label="On SoundCloud"></SongSourceCard>
-                                <SongSourceCard v-if="bandcampLink" class="bg-teal-200 hover:bg-teal-300" :link="bandcampLink" :img="BandcampLogo" label="On Bandcamp"></SongSourceCard>
-                                <SongSourceCard v-if="piaproLink" class="bg-pink-300 hover:bg-pink-400" :link="piaproLink" :img="PiaproLogo" label="On Piapro"></SongSourceCard>
+                                <SongSourceCard v-if="spotifyLink" class="bg-green-200 hover:bg-green-300"
+                                    :link="spotifyLink" :img="SpotifyLogo" label="On Spotify"></SongSourceCard>
+                                <SongSourceCard v-if="soundCloudLink" class="bg-orange-300 hover:bg-orange-400"
+                                    :link="soundCloudLink" :img="SoundCloudLogo" label="On SoundCloud"></SongSourceCard>
+                                <SongSourceCard v-if="bandcampLink" class="bg-teal-200 hover:bg-teal-300"
+                                    :link="bandcampLink" :img="BandcampLogo" label="On Bandcamp"></SongSourceCard>
+                                <SongSourceCard v-if="piaproLink" class="bg-pink-300 hover:bg-pink-400"
+                                    :link="piaproLink" :img="PiaproLogo" label="On Piapro"></SongSourceCard>
                             </div>
                             <div v-if="otherSources.length > 0" class="flex flex-col mt-2">
                                 <p class="text-left">Other sources</p>
                                 <ul>
-                                    <li v-for="source in otherSources" class="text-left"><a :href="source">{{ source }}</a></li>
+                                    <li v-for="source in otherSources" class="text-left"><a :href="source">{{ source
+                                            }}</a></li>
                                 </ul>
                             </div>
                         </div>
                         <!-- Source editor -->
                         <div v-else class="flex flex-col w-100">
-                            <div v-if="song.sources.length > 0" v-for="source,index in song.sources" class="flex place-items-start w-100">
-                                <DetailField class="w-100 pr-3" v-model="song.sources[index]" :id="index.toString()" inputType="text" :label="`Source ${index + 1}`" :readonly="false" :pad-between="false" inputFieldClass="text-left" placeholder="Link to source">
+                            <div v-if="song.sources.length > 0" v-for="source, index in song.sources"
+                                class="flex place-items-start w-100">
+                                <DetailField class="w-100 pr-3" v-model="song.sources[index]" :id="index.toString()"
+                                    inputType="text" :label="`Source ${index + 1}`" :readonly="false"
+                                    :pad-between="false" inputFieldClass="text-left" placeholder="Link to source">
                                     <!-- TODO different icon per source? -->
-                                    <MusicalNoteIcon class="icon"/>
+                                    <MusicalNoteIcon class="icon" />
                                 </DetailField>
-                                <button class="btn-small btn-blue max-w-min text-nowrap my-1" @click="deleteSource(index)"><TrashIcon class="icon"/></button>
+                                <button class="btn-small btn-blue max-w-min text-nowrap my-1"
+                                    @click="deleteSource(index)">
+                                    <TrashIcon class="icon" />
+                                </button>
                             </div>
                             <p v-else class="text-left">You haven't added any sources for this song yet.</p>
                             <button class="btn btn-blue max-w-min text-nowrap mx-auto mt-1" @click="addSource">
-                            <PlusIcon class="icon" />
-                            Add Source
-                        </button>
+                                <PlusIcon class="icon" />
+                                Add Source
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -104,17 +135,20 @@
                                 <MusicalNoteIcon class="icon" /> Genre:
                             </span></p>
                         <div class="mx-auto"></div>
-                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass" class="details-field text-right max-w-min min-w-0" placeholder="Favorite genre" list="genresList" :readonly="!isEditing" v-model="song.genre"></input>
+                        <input type="text" :maxlength="GENRE_MAX_LENGTH" :class="editableFieldClass"
+                            class="details-field text-right max-w-min min-w-0" placeholder="Favorite genre"
+                            list="genresList" :readonly="!isEditing" v-model="song.genre"></input>
                         <!-- Necessary for browser auto-completion -->
                         <datalist id="genresList">
                             <option v-for="genre in genres" :value="genre" />
                         </datalist>
                     </div>
-                    <DetailField id="releaseDate" v-model="song.release_date" label="Release Date" :readonly="!isEditing" input-type="date">
-                        <CalendarIcon class="icon"/>
+                    <DetailField id="releaseDate" v-model="song.release_date" label="Release Date"
+                        :readonly="!isEditing" input-type="date">
+                        <CalendarIcon class="icon" />
                     </DetailField>
                     <DetailField id="album" v-model="song.album" label="Album" :readonly="!isEditing">
-                        <BookmarkIcon class="icon"/>
+                        <BookmarkIcon class="icon" />
                     </DetailField>
                     <!-- TODO duration field -->
                 </div>
@@ -364,14 +398,15 @@ onMounted(function () {
 </script>
 
 <style scoped>
-
 .container {
     width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Align items to the top */
-    min-height: 100vh; /* Ensure the container takes the full height of the viewport */
+    justify-content: flex-start;
+    /* Align items to the top */
+    min-height: 100vh;
+    /* Ensure the container takes the full height of the viewport */
 }
 
 .btn {
@@ -451,19 +486,38 @@ onMounted(function () {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px; /* Esto puede ser ajustado si es necesario */
-    min-width: 320px; /* Un ancho mínimo para la ventana emergente */
-    max-width: 600px; /* Ancho máximo de la ventana emergente */
-    width: 90%; /* Puedes ajustarlo según lo que prefieras */
+    padding: 20px;
+    /* Esto puede ser ajustado si es necesario */
+    min-width: 320px;
+    /* Un ancho mínimo para la ventana emergente */
+    max-width: 600px;
+    /* Ancho máximo de la ventana emergente */
+    width: 90%;
+    /* Puedes ajustarlo según lo que prefieras */
 }
 
 @media (max-width: 900px) {
     .container-main {
-        width: 90%; /* Full viewport width for small screens */
-        height: auto; /* Full viewport height for small screens */
-        margin-top: 10vh; /* Remove margin for full screen effect */
-        border-radius: 0; /* Remove border radius for full screen effect */
+        width: 90%;
+        /* Full viewport width for small screens */
+        height: auto;
+        /* Full viewport height for small screens */
+        margin-top: 10vh;
+        /* Remove margin for full screen effect */
+        border-radius: 0;
+        /* Remove border radius for full screen effect */
     }
 
 }
+
+.artist-name {
+    font-size: 0.875rem; /* Small font size */
+    color: #d1d5db; /* Light gray (tailwind text-gray-300) */
+}
+
+.song-title {
+    font-size: 1.25rem; /* Large font size */
+    color: #93c5fd; /* Light blue (tailwind text-blue-300) */
+}
+
 </style>

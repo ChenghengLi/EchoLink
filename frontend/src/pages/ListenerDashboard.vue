@@ -19,10 +19,52 @@
                 </div>
             </div>
 
+            
+
             <!-- Latest tracks -->
 
+            <div class="explore-section" v-if="!isListener()">
+				<div class="explore-column">
+					<a href="/dashboard" class="btn btn--primary">Go to your dashboard</a>
+				</div>
+				<div class="explore-column">
+					<a href="/uploadTrack" class="btn btn--primary">Upload a track</a>
+				</div>
+			</div>
+
+
+            <div class="px-4 mx-auto" v-if="!isListener()">
+                <hr class="h-divider my-5" />
+                <h2>Explore tracks</h2>
+                <p>Be the first to hear what's new on EchoLink, or find new tracks from your favourite genres.</p>
+
+                <div v-if="songsError === null" class="flex flex-col-reverse lg:flex-row place-content-center w-100 mt-3">
+                    <!-- Song list -->
+                    <div class="flex flex-col flex-grow max-w-xl">
+                        <p v-if="shownSongs.length === 0" class="text-gray-500 w-100">There are no songs that match your search criteria.</p>
+                        <SongList class="flex-grow" v-model="shownSongs" :editable=false />
+                    </div>
+
+                    <div class="mx-2 my-2"/> <!-- Spacing -->
+
+                    <!-- Search and filters -->
+                    <div class="content-block max-h-min max-w-lg lg:min-w-96">
+                        <p class="section-header mb-2">Filter</p>
+                        
+                        <TextInput label="Search" placeholder="Search by name or artist..." input-type="text" :value="search.text" @changed="search.text = $event"></TextInput>
+
+                        <OptionSelector v-model="search.genre" :options="genres" label="Genre" track-by="id" option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
+                    </div>
+                </div>
+                <p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
+                <button @click="router.push('/music')" class="btn btn--primary mt-3 min-w-64 text-black">
+                            Explore all songs
+                        </button>
+            
+            </div>
+
             <!-- Browse artists -->
-            <div class="mx-auto">
+            <div class="mx-auto" v-if="isListener()">
                 <h2>Your artists</h2>
                 <p>Connect with your favorite musicians on EchoLink by asking them questions and staying up to date with
                     their latest releases.</p>
@@ -85,7 +127,7 @@
             <hr class="h-divider my-5" />
 
             <!-- Questions -->
-            <div v-if="isListener" class="mx-auto">
+            <div v-if="isListener()" class="mx-auto">
                 <h2>Your questions</h2>
                 <p>See how artists have responded to your questions.</p>
                 <div v-if="!questionsError && topQuestions.length > 0"
@@ -160,7 +202,12 @@ async function fetchSongs() {
 
             // Track all used genres
             if (!registeredGenres.value.has(song.genre)) {
-                genres.push({ id: song.genre, label: song.genre })
+
+                const capitalizedGenre = song.genre
+					.split(' ')
+					.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+					.join(' ');
+				genres.push({ id: song.genre, label: capitalizedGenre });
                 registeredGenres.value.add(song.genre)
             }
         }
@@ -229,7 +276,7 @@ const validSongs = computed(() => {
 
 
 const shownSongs = computed(() => {
-    const results = validSongs.value.slice(0, shownSongsAmount.value)
+    const results = validSongs.value.slice(0, 5)
     return results
 })
 
@@ -332,5 +379,65 @@ onMounted(function () {
         width: 40vw;
         /* Adjust width for larger screens */
     }
+}
+
+
+/* Explore Section Styles */
+.explore-section {
+	display: flex;
+	flex-direction: row; /* Default: buttons side by side */
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 40px;
+	width: 100%; /* Full width */
+	gap: 20px; /* Add spacing between buttons */
+}
+
+.explore-column {
+	width: 100%; /* Ensure buttons take full width */
+	display: flex;
+	justify-content: center; /* Center the button */
+}
+
+/* Button Styles */
+.btn {
+	display: inline-block;
+	text-align: center;
+	font-weight: bold;
+	padding: 15px 30px; /* Default padding */
+	border-radius: 50px; /* Fully rounded corners */
+	background-color: #3b82f6; /* Primary blue color */
+	color: white;
+	font-size: 16px; /* Default font size */
+	text-decoration: none; /* Remove underline */
+	cursor: pointer;
+	transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn--primary {
+	background-color: #3b82f6; /* Primary blue */
+}
+
+.btn--primary:hover {
+	background-color: #2563eb; /* Slightly darker blue on hover */
+}
+
+/* Bigger Buttons and Adjustments for Large Screens */
+@media (min-width: 1024px) {
+	.btn {
+		padding: 20px 50px; /* Bigger padding for larger screens */
+		font-size: 20px; /* Larger font size */
+	}
+}
+
+/* Responsive Design for Small Screens */
+@media (max-width: 768px) {
+	.explore-section {
+		flex-direction: column; /* Stack buttons vertically */
+	}
+
+	.btn {
+		width: 100%; /* Buttons take full width on small screens */
+	}
 }
 </style>
