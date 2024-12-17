@@ -39,6 +39,8 @@ def get_top_artists():
         songs = list()
 
         for track in top_tracks['tracks'][:5]:  # Get the top 10 songs
+            if len(track['name']) > 30:
+                continue
             song_info = {
                 'name': track['name'],
                 'release_date': track['album']['release_date'],  # Get release date
