@@ -25,10 +25,10 @@
 
             <div class="explore-section" v-if="!isListener()">
 				<div class="explore-column">
-					<a href="/dashboard" class="btn btn--primary">Go to your dashboard</a>
+					<a href="/dashboard" class="btn btn--primary ">Go to your dashboard</a>
 				</div>
 				<div class="explore-column">
-					<a href="/uploadTrack" class="btn btn--primary">Upload a track</a>
+					<a href="/uploadTrack" class="btn btn--primary ">Upload a track</a>
 				</div>
 			</div>
 
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
-                <button @click="router.push('/music')" class="btn btn--primary mt-3 min-w-64 text-black">
+                <button @click="router.push('/music')" class="btn btn--primary mt-3 min-w-64">
                             Explore all songs
                         </button>
             

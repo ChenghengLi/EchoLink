@@ -4,6 +4,7 @@ import unicodedata
 import json
 import requests
 from bs4 import BeautifulSoup
+import urllib.parse
 
 # Spotify API credentials
 client_id = '53d2b2391f6640cdbff8277ec6485fb7'
@@ -23,16 +24,7 @@ def clean_name(name):
     return cleaned[:16]
 
 
-import requests
-from bs4 import BeautifulSoup
 
-import requests
-from bs4 import BeautifulSoup
-import urllib.parse
-
-import requests
-from bs4 import BeautifulSoup
-import urllib.parse
 
 def search_youtube_link(song_name, artist_name):
     """Search for the first YouTube link for the song using Bing."""
