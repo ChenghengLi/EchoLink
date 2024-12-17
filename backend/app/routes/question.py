@@ -6,7 +6,7 @@ from typing import List
 from models.question import ResponseEnum, QuestionModel, QuestionInput, QuestionResponse
 from crud.question import (
     get_questions_by_listener,
-    get_questions_by_artist,
+    get_waiting_questions_by_artist,
     submit_question,
     response_question,
     archive_question,
@@ -29,7 +29,7 @@ def get_questions(user: CurrentUser, db: Session = Depends(get_db)):
     except Exception:
         # If not, try to get questions for an artist
         try:
-            return get_questions_by_artist(db, user.username)
+            return get_waiting_questions_by_artist(db, user.username)
         
         except Exception:
             raise HTTPException(

@@ -72,8 +72,8 @@ def test_two_questions_error():
     assert response.status_code == 200
 
     response = client.post("/questions/", json=question_data, headers=headers)
-    assert response.status_code == 406
-    assert response.json() == {"detail": "This listener is waiting for a response."}
+    assert response.status_code == 403
+    assert response.json() == {"detail": "This listener cannot ask this artist."}
 
     # Check if the question is created
     db_question = db.query(Question).filter(Question.question_text == question_data["question_text"]).first()
