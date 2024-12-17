@@ -10,40 +10,73 @@
                 </div>
             </div>
 
+            <!-- Loading Spinner -->
+            <div v-if="isLoading" class="loading-spinner-container">
+                <LoadingSpinner />
+            </div>
+
             <!-- Artist Carousel -->
-            <div class="artist-carousel mt-4">
-                <Flicking ref="carousel" :options="{ gap: 30, align: 'center' }" class="carousel-with-blur">
-                    <div v-for="artist in artists" :key="artist.username" class="artist-card">
+            <div v-else class="artist-carousel mt-4">
+                <Flicking
+                    ref="carousel"
+                    :options="{ gap: 30, align: 'center', circular: true }"
+                    class="carousel-with-blur"
+                    @changed="onSlideChange"
+                >
+                    <div
+                        v-for="artist in artists"
+                        :key="artist.username"
+                        class="artist-card fade-slide-animation"
+                    >
                         <ArtistComponent @edited="handleArtistEdited" :artist="artist" />
                     </div>
-                    <div v-if="artists.length != 0" class="artist-card view-all-artists-div">
-                        <h4>Want to see a list of your favorite artists?</h4>
-                        <button @click="$router.push('/artist')" class="btn btn--primary mt-3 min-w-64 text-black">Click
-                            here!</button>
-                    </div>
                 </Flicking>
+
+                <!-- Pagination Circles -->
+                <div class="pagination-dots">
+                    <span
+                        v-for="(artist, index) in artists"
+                        :key="index"
+                        :class="{ active: currentSlide === index }"
+                        class="dot"
+                        @click="goToSlide(index)"
+                    ></span>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="carousel-navigation">
+                    <button @click="prevSlide" class="nav-button prev-button">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button @click="nextSlide" class="nav-button next-button">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </section>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import Flicking from '@egjs/vue3-flicking';
 import '@egjs/vue3-flicking/dist/flicking.css';
 import ArtistComponent from './ArtistComponent.vue';
 import ListenerService from '../services/listener.js';
 import fixedImage from '../assets/images/cara1.jpg';
-import { ref } from 'vue';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
 
 export default defineComponent({
     components: {
         Flicking,
         ArtistComponent,
+        LoadingSpinner,
     },
     data() {
         return {
-            artists: ref([])
+            artists: ref([]),
+            currentSlide: 0, // Track the current slide
+            isLoading: true, // Track loading state
         };
     },
     methods: {
@@ -56,20 +89,16 @@ export default defineComponent({
                 }));
             } catch (error) {
                 console.error('Error fetching artists:', error);
+            } finally {
+                this.isLoading = false; // Stop loading spinner
             }
         },
 
         async updateCanAsk(index, updatedArtist) {
             const artist = this.artists[index];
             try {
-                // Fetch the updated can_ask status
                 updatedArtist.can_ask = await ListenerService.canAsk(artist.username);
-
-                // Update the sortedArtists array
-                // If sortedArtists is a reactive property, Vue will automatically track changes
-                this.artists[index] = { ...updatedArtist }; // Spread to ensure reactivity
-
-                // Return the updated can_ask value
+                this.artists[index] = { ...updatedArtist };
                 return this.artists[index].can_ask;
             } catch (err) {
                 console.error('Error fetching canAsk:', err);
@@ -77,30 +106,35 @@ export default defineComponent({
             }
         },
 
-
         handleArtistEdited(updatedArtist) {
-            // Find the artist in the sortedArtists list
             const index = this.artists.findIndex((artist) => artist.username === updatedArtist.username);
-
             if (index !== -1) {
-                // Update the artist's data in the list
                 const artist = this.artists[index];
-
-                // Check if `is_following` changed from false to true
                 if (!artist.is_following && updatedArtist.is_following) {
-                    this.updateCanAsk(index, updatedArtist)
+                    this.updateCanAsk(index, updatedArtist);
                 }
-
                 if (!updatedArtist.is_following) {
                     updatedArtist.can_ask = false;
                 }
-
-
-                // Update the artist in the list
                 this.artists[index] = updatedArtist;
             }
-        }
+        },
 
+        onSlideChange(e) {
+            this.currentSlide = e.index; // Update the current slide index
+        },
+
+        goToSlide(index) {
+            this.$refs.carousel.moveTo(index); // Navigate to the selected slide
+        },
+
+        prevSlide() {
+            this.$refs.carousel.prev(); // Navigate to the previous slide
+        },
+
+        nextSlide() {
+            this.$refs.carousel.next(); // Navigate to the next slide
+        },
     },
     props: {
         showHeader: Boolean,
@@ -117,6 +151,24 @@ export default defineComponent({
     height: 400px;
     width: 400px;
     margin: 0 30px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.artist-card.fade-slide-animation {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeSlideIn 0.6s forwards;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .carousel-with-blur {
@@ -148,10 +200,61 @@ export default defineComponent({
     margin-right: auto;
 }
 
-.view-all-artists-div {
+.pagination-dots {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot.active {
+    background-color: #000;
+}
+
+.carousel-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.nav-button:hover {
+    color: #555;
+}
+
+.loading-spinner-container {
+    display: flex;
     justify-content: center;
     align-items: center;
+    height: 400px;
+}
+
+@media (max-width: 768px) {
+    .artist-card {
+        height: 300px;
+        width: 300px;
+    }
+
+    .carousel-with-blur {
+        max-width: 100%;
+    }
 }
 </style>

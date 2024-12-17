@@ -26,6 +26,10 @@
                 <p>Connect with your favorite musicians on EchoLink by asking them questions and staying up to date with their latest releases.</p>
 
                 <ArtistsCarousel/>
+
+                <button @click="router.push('/artist')" class="btn btn--primary mt-3 min-w-64 text-black">
+                    Explore all artists
+                </button>
             </div>
 
             <!--Songs-->

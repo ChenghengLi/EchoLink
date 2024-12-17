@@ -6,7 +6,7 @@
 
 			<div class="lg:px-4 mx-auto max-w-screen-xl">
 				<h2>Explore Artists</h2>
-				<p>See if your artists answered you.</p>
+				<p>Discover and connect with fantastic musicians, artists, and creators – explore their world and get inspired!</p>
 				<div class="search-and-filters w-full flex flex-col gap-4">
     <!-- Search Bar -->
     <TextInput
@@ -129,14 +129,14 @@ const filteredArtists = computed(() => {
 		);
 	}
 
-	// Sort the filtered results
+
 	if (search.order.id === 2) {
 		// Alphabetical order
 		filtered.sort((a, b) => a.username.localeCompare(b.username));
 
-	} else if (search.order.id === 1) {
+	} else if (search.order.id === 0) {
 		// Followers
-		filtered.sort((a, b) => b.followers - a.followers);
+		filtered.sort((a, b) => a.rank_data.ranking - b.rank_data.ranking);
 	}
 
 	return filtered;
@@ -146,6 +146,7 @@ const filteredArtists = computed(() => {
 
 async function fetchArtists() {
 	try {
+		
 		isLoading.value = true;
 		fetchedArtists = await ArtistService.getArtistByFollowers();
 		fetchedArtists = fetchedArtists.map((artist) => ({
@@ -165,7 +166,7 @@ async function fetchArtists() {
 		if (!genres.some((genre) => genre.id === 'all')) {
 			genres.unshift({ id: 'all', label: 'All' });
 		}
-
+		console.log(fetchedArtists);
 		Object.assign(sortedArtists, fetchedArtists);
 	} catch (err) {
 		sortedArtistsError.value = err.response ? err.response.data.detail : err.message;

@@ -17,8 +17,8 @@ from crud.song import create_song, get_songs_by_artist_id
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code
-    # populate_with_artists_and_songs()
-    # populate_with_users()
+    populate_with_artists_and_songs()
+    populate_with_users()
     yield
     # Shutdown code (if needed)
 
@@ -41,10 +41,9 @@ def populate_with_artists_and_songs():
         with open(filename, 'r', encoding='utf-8') as f:
 
             artists = json.load(f)  
-        artist_counter = 0
+
         for artist in artists:
-            print(artist)
-            artist_counter += 1
+
             user_input = UserInput(
                 username=artist['name'].replace(' ', '_'),
                 email=artist['email'],
@@ -53,8 +52,6 @@ def populate_with_artists_and_songs():
                 image_url=artist['image_url'],
                 genre=artist['genres']
             )
-            if artist_counter == 8:
-                break
 
             songs_list = artist['songs']
             existing_user_by_username = db.query(User).filter(User.username == user_input.username).first()
@@ -103,6 +100,7 @@ def populate_with_users():
             users = json.load(f)
         
         for user in users.values():
+            
             user_input = UserInput(
                 username=user['username'],
                 email=user['email'],
@@ -114,6 +112,7 @@ def populate_with_users():
             followed_artists = user["followers"]
 
             existing_user_by_username = db.query(User).filter(User.username == user_input.username).first()
+
             if not existing_user_by_username:
                 user = create_user(db, user_input)
             else:
@@ -134,7 +133,11 @@ def populate_with_users():
                     artist_username=artist,
                     question_text=question
                 )
-                submit_question(db, listener, question)
+                try:    
+                    submit_question(db, listener, question)
+                except Exception as e:
+                    print(e)
+                    
 
     except Exception as e:
         print(e)
