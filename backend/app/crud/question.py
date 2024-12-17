@@ -60,22 +60,25 @@ def can_question(db: Session, listener: Listener, artist: Artist):
     # Check if listener follows the artist
     if not check_follow(db, listener, artist.user.username):
         return False
-    
-
     '''
     if db.query(Question).filter(Question.listener_id == listener.listener_id, 
                                 Question.artist_id == artist.artist_id,
                                 Question.response_status == ResponseEnum.waiting).first():
         return False
+    
+    return True
     '''
     # Check if listener is in the top 10 in terms of loyalty
     return get_listener_loyalty_data(artist, listener, db)["percentage"] < 10
 
 # Add a new question to the database
 def submit_question(db: Session, listener: Listener, question_input: QuestionInput) -> Question:
+    print("Creating question")
     artist = get_artist_by_username(db, question_input.artist_username)
 
     # Decide if the listener can ask a question to the artist
+    print("Checking if listener can ask a question")
+    print(can_question(db, listener, artist))
     if not can_question(db, listener, artist):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="This listener cannot ask this artist.")
     
