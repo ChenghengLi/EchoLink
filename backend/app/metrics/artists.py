@@ -125,7 +125,7 @@ def get_all_artists_with_rank_data(db: Session, user_id : str = None):
     artists = get_all_artists(db)
 
     listener = get_listener_by_user_id(db, user_id) if user_id else None
-
+    print(listener)
     return [
         ArtistOutput(
             username=artist.username,

@@ -14,11 +14,12 @@
             <div class="artist-carousel mt-4">
                 <Flicking ref="carousel" :options="{ gap: 30, align: 'center' }" class="carousel-with-blur">
                     <div v-for="artist in artists" :key="artist.username" class="artist-card">
-                        <ArtistComponent :artist="artist" />
+                        <ArtistComponent @edited="handleArtistEdited" :artist="artist" />
                     </div>
                     <div v-if="artists.length != 0" class="artist-card view-all-artists-div">
                         <h4>Want to see a list of your favorite artists?</h4>
-                        <button @click="$router.push('/artist')" class="btn btn--primary mt-3 min-w-64 text-black">Click here!</button>
+                        <button @click="$router.push('/artist')" class="btn btn--primary mt-3 min-w-64 text-black">Click
+                            here!</button>
                     </div>
                 </Flicking>
             </div>
@@ -33,6 +34,7 @@ import '@egjs/vue3-flicking/dist/flicking.css';
 import ArtistComponent from './ArtistComponent.vue';
 import ListenerService from '../services/listener.js';
 import fixedImage from '../assets/images/cara1.jpg';
+import { ref } from 'vue';
 
 export default defineComponent({
     components: {
@@ -41,7 +43,7 @@ export default defineComponent({
     },
     data() {
         return {
-            artists: []
+            artists: ref([])
         };
     },
     methods: {
@@ -55,7 +57,50 @@ export default defineComponent({
             } catch (error) {
                 console.error('Error fetching artists:', error);
             }
+        },
+
+        async updateCanAsk(index, updatedArtist) {
+            const artist = this.artists[index];
+            try {
+                // Fetch the updated can_ask status
+                updatedArtist.can_ask = await ListenerService.canAsk(artist.username);
+
+                // Update the sortedArtists array
+                // If sortedArtists is a reactive property, Vue will automatically track changes
+                this.artists[index] = { ...updatedArtist }; // Spread to ensure reactivity
+
+                // Return the updated can_ask value
+                return this.artists[index].can_ask;
+            } catch (err) {
+                console.error('Error fetching canAsk:', err);
+                return false;
+            }
+        },
+
+
+        handleArtistEdited(updatedArtist) {
+            // Find the artist in the sortedArtists list
+            const index = this.artists.findIndex((artist) => artist.username === updatedArtist.username);
+
+            if (index !== -1) {
+                // Update the artist's data in the list
+                const artist = this.artists[index];
+
+                // Check if `is_following` changed from false to true
+                if (!artist.is_following && updatedArtist.is_following) {
+                    this.updateCanAsk(index, updatedArtist)
+                }
+
+                if (!updatedArtist.is_following) {
+                    updatedArtist.can_ask = false;
+                }
+
+
+                // Update the artist in the list
+                this.artists[index] = updatedArtist;
+            }
         }
+
     },
     props: {
         showHeader: Boolean,
@@ -109,5 +154,4 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
 }
-
 </style>

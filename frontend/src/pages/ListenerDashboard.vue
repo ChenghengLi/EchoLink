@@ -105,7 +105,7 @@ import Toast from '../utilities/toast.js'
 import QuestionService from '../services/question.js'
 import { computed, ref, reactive, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import ArtistsList from '../components/ArtistsList.vue';
+import ArtistService from '../services/artist.js'
 
 const router = useRouter()
 
@@ -238,6 +238,12 @@ onMounted(function () {
     fetchQuestions()
     fetchUser()
     fetchRecommendationSongs()
+   ArtistService.getArtistByFollowers().then((a) => {
+        console.log("Artists loaded")
+        console.log(a)
+    }).catch((err) => {
+        console.error("Error loading artists: " + err)
+    })
 })
 
 </script>

@@ -8,29 +8,34 @@
 				<h2>Your Questions</h2>
 				<p>See if your artists answered you.</p>
 
-				<!-- Search and filters -->
-				<TextInput class="w-full lg:w-4/4" placeholder="Search by Artist or Question Content..." input-type="text"
-					:value="search.text" @changed="search.text = $event"></TextInput>
+				<!-- Search and Filters Container -->
+				<div class="search-and-filters w-full flex flex-col gap-4">
+					<!-- Search Bar -->
+					<TextInput class="search-bar w-full" placeholder="Search by Artist or Question Content..."
+						input-type="text" :value="search.text" @changed="search.text = $event"></TextInput>
 
-				<div class="mx-2 my-2" /> <!-- Spacing -->
+					<!-- Dropdown Filters -->
+					<div class="filters-container flex flex-col lg:flex-row gap-4 w-full">
+						<!-- Filter By Dropdown -->
+						<div class="dropdown w-full lg:w-1/2">
+							<OptionSelector v-model="search.filter" :options="filters" label="Filter by" track-by="id"
+								option-label-key="label" :allow-empty="false" :can-search="true"></OptionSelector>
+						</div>
 
-				<div class="flex justify-center gap-4 my-4">
-					<div class="content-block max-h-min max-w-lg lg:min-w-96 flex-grow">
-						<OptionSelector v-model="search.filter" :options="filters" label="Filter by" track-by="id"
-							option-label-key="label" :allow-empty="false" :can-search="true"></OptionSelector>
-					</div>
-
-					<div class="content-block max-h-min max-w-lg lg:min-w-96 flex-grow">
-						<OptionSelector v-model="search.order" :options="orders" label="Sort by" track-by="id"
-							option-label-key="label" :allow-empty="false" :can-search="true"></OptionSelector>
+						<!-- Sort By Dropdown -->
+						<div class="dropdown w-full lg:w-1/2">
+							<OptionSelector v-model="search.order" :options="orders" label="Sort by" track-by="id"
+								option-label-key="label" :allow-empty="false" :can-search="true"></OptionSelector>
+						</div>
 					</div>
 				</div>
 
 				<div class="mx-2 my-2" /> <!-- Spacing -->
 
-				<div v-if="!sortedQuestionsError && sortedQuestions.length > 0"
-					class="flex flex-col gap-y-4 mx-auto mt-2 max-w-screen-lg">
-					<QuestionCard v-for="question in filterQuestions()" :question="question"
+				<!-- Questions Container -->
+				<div v-if="!sortedQuestionsError && filterQuestions().length > 0"
+					class="questions-container mx-auto mt-2">
+					<QuestionCard v-for="question in filterQuestions()" :key="question.question_id" :question="question"
 						@archived="onQuestionArchived(question)"></QuestionCard>
 				</div>
 				<p v-else-if="sortedQuestionsError" class="text-gray-500">Something went wrong while fetching latest
@@ -38,9 +43,7 @@
 				<p v-else-if="sortedQuestions.length == 0" class="text-gray-500">You have made no questions to artists
 					yet. Visit their profiles to start asking questions.</p>
 
-				<p v-else class="text-gray-500">Something went wrong while fetching your questions :<br>{{
-					sortedQuestionsError
-					}}.<br>Try refreshing the page.</p>
+				<p v-else class="text-gray-500"> No questions found using your filter!</p>
 			</div>
 
 			<FooterComponent class="footer-light mx-10" />
@@ -83,7 +86,7 @@ const sortedQuestions = reactive([])
 const sortedQuestionsError = ref(null)
 const filters = reactive([
 	{ id: 0, label: 'All' },
-	{ id: 1, label: 'Waiting Response' },
+	{ id: 1, label: 'Awaiting Response' },
 	{ id: 2, label: 'Answered' },
 	{ id: 3, label: 'Rejected' },
 	{ id: 4, label: 'Archived' },
@@ -104,10 +107,10 @@ function filterQuestions() {
 
 	if (search.filter.id !== 0) {
 		const statusMap = {
-			1: 'waiting',  
-			2: 'answered',  
-			3: 'rejected',  
-			4: 'archived',  
+			1: 'waiting',
+			2: 'answered',
+			3: 'rejected',
+			4: 'archived',
 		};
 
 		if (search.filter.id === 4) {
@@ -123,7 +126,7 @@ function filterQuestions() {
 	if (search.text.trim() !== '') {
 		const searchText = search.text.toLowerCase();
 		filtered = filtered.filter(question =>
-			question.artist_username.toLowerCase().includes(searchText)  ||
+			question.artist_username.toLowerCase().includes(searchText) ||
 			question.question_text.toLowerCase().includes(searchText) // Search in artist name
 		);
 	}
@@ -204,21 +207,46 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.home-two-dark .anime--light {
-	display: none;
-}
-
+/* Page container styles */
 .page-container {
-	width: 100vw;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	/* Align items to the top */
+    width: 100%;
+    max-width: 100%;
+    padding: 0 10px; /* Adjust padding for smaller screens */
+    margin: 0 auto;
 }
 
-
-.home-two-light .anime--dark {
-	display: none;
+/* Questions Container */
+.questions-container {
+    width: 100%;
+    margin: 0 auto;
 }
+
+/* Add margin between question cards */
+.questions-container > * {
+    margin: 10px; /* Adjust the value as needed */
+}
+
+/* Search and Filter adjustments */
+.search-and-filters {
+    width: 100%;
+    padding: 0;
+}
+
+.dropdown {
+    width: 100%;
+}
+
+/* Question cards grid layout */
+@media (min-width: 768px) {
+    .questions-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .questions-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 </style>

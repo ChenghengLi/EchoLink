@@ -17,8 +17,8 @@ from crud.song import create_song, get_songs_by_artist_id
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup code
-    # populate_with_artists_and_songs()
-    # populate_with_users()
+    populate_with_artists_and_songs()
+    populate_with_users()
     yield
     # Shutdown code (if needed)
 
@@ -43,6 +43,7 @@ def populate_with_artists_and_songs():
             artists = json.load(f)  
         artist_counter = 0
         for artist in artists:
+            print(artist)
             artist_counter += 1
             user_input = UserInput(
                 username=artist['name'].replace(' ', '_'),

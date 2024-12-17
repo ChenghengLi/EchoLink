@@ -5,44 +5,56 @@
 			<HeaderComponent />
 
 			<div class="lg:px-4 mx-auto max-w-screen-xl">
-                <h2>Explore songs</h2>
-                <p>Discover new songs of artists</p>
+				<h2>Explore songs</h2>
+				<p>Discover new songs of artists</p>
 
 				<!-- Search and filters -->
-				<TextInput class="w-full lg:w-4/4" placeholder="Search by name or artist..." input-type="text" :value="search.text" @changed="search.text = $event"></TextInput>
+				<!-- Search and Filters Container -->
+				<div class="search-and-filters w-full flex flex-col gap-4">
+					<!-- Search Bar -->
+					<TextInput class="search-bar w-full" placeholder="Search by name or artist..." input-type="text"
+						:value="search.text" @changed="search.text = $event"></TextInput>
 
-				<div class="mx-2 my-2"/> <!-- Spacing -->
+					<!-- Dropdown Filters -->
+					<div class="filters-container flex flex-col lg:flex-row gap-4 w-full">
+						<!-- Genre Dropdown -->
+						<div class="dropdown w-full lg:w-1/2">
+							<OptionSelector v-model="search.genre" :options="genres" label="Genre" track-by="id"
+								option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
+						</div>
 
-				<div class="flex justify-center gap-4 my-4">
-					<div class="content-block max-h-min max-w-lg lg:min-w-96 flex-grow">
-						<OptionSelector v-model="search.genre" :options="genres" label="Genre" track-by="id" option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
-					</div>
-
-					<div class="content-block max-h-min max-w-lg lg:min-w-96 flex-grow">
-						<OptionSelector v-model="search.filter" :options="filters" label="Sort" track-by="id" option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
+						<!-- Sort Dropdown -->
+						<div class="dropdown w-full lg:w-1/2">
+							<OptionSelector v-model="search.filter" :options="filters" label="Sort" track-by="id"
+								option-label-key="label" :allow-empty="true" :can-search="true"></OptionSelector>
+						</div>
 					</div>
 				</div>
-				
-				<div class="mx-2 my-2"/> <!-- Spacing -->
 
-                <div v-if="sortedSongsError === null" class="flex flex-col items-center mt-3 gap-4">
-                    <!-- Song list -->
-                    <div class="flex flex-col-reverse lg:flex-row items-center justify-center gap-4" >
-                        <p v-if="sortedSongs.length === 0" class="text-gray-500 w-100">There are no songs that match your search criteria.</p>		
+				<div class="mx-2 my-2" /> <!-- Spacing -->
+
+				<div v-if="sortedSongsError === null" class="flex flex-col items-center mt-3 gap-4">
+					<!-- Song list -->
+					<div class="flex flex-col-reverse lg:flex-row items-center justify-center gap-4">
+						<p v-if="sortedSongs.length === 0" class="text-gray-500 w-100">There are no songs that match
+							your search criteria.</p>
 						<div class="grid xl:grid-cols-2 gap-2 max-md:max-w-sm">
 							<SongList class="max-md:max-w-sm" v-model="songsByColumns.left" :editable="false" />
 							<SongList class="max-md:max-w-sm" v-model="songsByColumns.right" :editable="false" />
 						</div>
-                    </div>
-                </div>
-                <p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError }}.<br>Try refreshing the page.</p>
-            </div>
+					</div>
+				</div>
+				<p v-else class="text-gray-500">Something went wrong while fetching latest songs:<br>{{ songsError
+					}}.<br>Try refreshing the page.</p>
+			</div>
 
 			<FooterComponent class="footer-light mx-10" />
 		</div>
 		<div class="progress-wrap active-progress" @click="scrollToTop">
 			<svg width="100%" height="100%" viewBox="-1 -1 102 102" class="progress-circle svg-content">
-				<path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" style="transition: stroke-dashoffset 10ms linear; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 178,377;"></path>
+				<path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"
+					style="transition: stroke-dashoffset 10ms linear; stroke-dasharray: 307.919, 307.919; stroke-dashoffset: 178,377;">
+				</path>
 			</svg>
 		</div>
 
@@ -59,8 +71,8 @@ import SongService from '../services/song.js'
 import { reactive, ref, computed, onMounted, onBeforeUnmount, watch, onUpdated } from 'vue';
 
 const search = reactive({
-    genre: { id: 'all', label: 'All' },
-    text: '',
+	genre: { id: 'all', label: 'All' },
+	text: '',
 	filter: { id: 1, label: 'Alphabetically' },
 })
 const genres = reactive([])
@@ -69,26 +81,26 @@ const songsError = ref(null)
 const sortedSongs = reactive([])
 const sortedSongsError = ref(null)
 const filters = reactive([
-    { id: 1, label: 'Alphabetically' },
-    { id: 2, label: 'By release date' },
-    { id: 3, label: 'By artist engagement' },
-    { id: 4, label: 'By listener affinity' },
+	{ id: 1, label: 'Alphabetically' },
+	{ id: 2, label: 'By release date' },
+	{ id: 3, label: 'By artist engagement' },
+	{ id: 4, label: 'By listener affinity' },
 ]);
 const previousFilterId = ref(search.filter.id);
 
 
 watch(() => search.filter.id, (newValue) => {
-    if (previousFilterId.value !== newValue) {
-        previousFilterId.value = newValue;
+	if (previousFilterId.value !== newValue) {
+		previousFilterId.value = newValue;
 		fetchSongs()
-    }
+	}
 })
 
 
-async function fetchSongs(){
-	try{
+async function fetchSongs() {
+	try {
 		let fetchedSongs
-		switch (search.filter.id){
+		switch (search.filter.id) {
 			case 1:
 				fetchedSongs = await SongService.getSortedAlphabetically();
 				break;
@@ -106,11 +118,11 @@ async function fetchSongs(){
 			const song = fetchedSongs[index]
 
 			// Add an extra field to improve vue-multiselect search support (since it only supports searching by one key)
-            song.fullTitle = `${song.artist_name} - ${song.title}`
+			song.fullTitle = `${song.artist_name} - ${song.title}`
 
 			// Track all used genres
 			if (!registeredGenres.value.has(song.genre)) {
-				genres.push({id: song.genre, label: song.genre})
+				genres.push({ id: song.genre, label: song.genre })
 				registeredGenres.value.add(song.genre)
 			}
 		}
@@ -120,9 +132,9 @@ async function fetchSongs(){
 		}
 
 		Object.assign(sortedSongs, fetchedSongs)
-		
+
 	} catch (err) {
-        sortedSongsError.value = (err.response) ? err.response.data.detail : err.message
+		sortedSongsError.value = (err.response) ? err.response.data.detail : err.message
 	}
 }
 
@@ -130,55 +142,55 @@ onUpdated(() => {
 	updateProgress() // Must update the scroll widget as the page dimensions most likely changed, ex. if songs were fetched.
 })
 
-function scrollToTop(){
+function scrollToTop() {
 	window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 const validSongs = computed(() => {
-    const searchText = search.text.toLowerCase(); // Convert search input to lowercase
-    const results = sortedSongs.filter((song) => {
-        const fullTitle = song.fullTitle.toLowerCase(); // Convert song title and artist to lowercase
-        const genreMatch = search.genre === null || search.genre.id === song.genre || search.genre.id === 'all';
-        const textMatch = search.text === '' || fullTitle.includes(searchText); // Perform case-insensitive search
-        return textMatch && genreMatch;
-    });
-    return results;
+	const searchText = search.text.toLowerCase(); // Convert search input to lowercase
+	const results = sortedSongs.filter((song) => {
+		const fullTitle = song.fullTitle.toLowerCase(); // Convert song title and artist to lowercase
+		const genreMatch = search.genre === null || search.genre.id === song.genre || search.genre.id === 'all';
+		const textMatch = search.text === '' || fullTitle.includes(searchText); // Perform case-insensitive search
+		return textMatch && genreMatch;
+	});
+	return results;
 })
 
 
 const songsByColumns = computed(() => {
-    const leftColumn = [];
-    const rightColumn = [];
-    validSongs.value.forEach((song, index) => {
-        if (index % 2 === 0) {
-            leftColumn.push(song); // Elementos pares a la columna izquierda
-        } else {
-            rightColumn.push(song); // Elementos impares a la columna derecha
-        }
-    });
-    return { left: leftColumn, right: rightColumn };
+	const leftColumn = [];
+	const rightColumn = [];
+	validSongs.value.forEach((song, index) => {
+		if (index % 2 === 0) {
+			leftColumn.push(song); // Elementos pares a la columna izquierda
+		} else {
+			rightColumn.push(song); // Elementos impares a la columna derecha
+		}
+	});
+	return { left: leftColumn, right: rightColumn };
 });
 
 const updateProgress = () => {
-		const progressPath = document.querySelector(".progress-wrap path");
-		const pathLength = 307.919;
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = (scrollTop / docHeight) * 100;
+	const progressPath = document.querySelector(".progress-wrap path");
+	const pathLength = 307.919;
+	const scrollTop = window.scrollY;
+	const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+	const progress = (scrollTop / docHeight) * 100;
 
-        const offset = pathLength - (pathLength * progress) / 100;
-        progressPath.style.strokeDashoffset = offset;
-    };
+	const offset = pathLength - (pathLength * progress) / 100;
+	progressPath.style.strokeDashoffset = offset;
+};
 
 onMounted(() => {
-    fetchSongs(); 
+	fetchSongs();
 
-    window.addEventListener("scroll", updateProgress);
-    updateProgress();
+	window.addEventListener("scroll", updateProgress);
+	updateProgress();
 })
 
 onBeforeUnmount(() => {
-    window.removeEventListener("scroll", updateProgress);
+	window.removeEventListener("scroll", updateProgress);
 });
 
 </script>
@@ -189,16 +201,16 @@ onBeforeUnmount(() => {
 }
 
 .page-container {
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Align items to the top */
+	width: 100vw;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	/* Align items to the top */
 }
 
 
 .home-two-light .anime--dark {
 	display: none;
 }
-
 </style>
