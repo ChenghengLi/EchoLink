@@ -28,7 +28,7 @@ def clean_name(name):
 def get_top_artists():
     # Spotify does not have a direct "top artists" endpoint, so we use the search API
     # Here, we search for popular artists globally
-    results = sp.search(q='genre:pop', type='artist', limit=50)  # Adjust query as needed
+    results = sp.search(q='genre:pop', type='artist', limit=10)  # Adjust query as needed
     top_artists = []
     
     for artist in results['artists']['items']:
@@ -38,7 +38,7 @@ def get_top_artists():
         top_tracks = sp.artist_top_tracks(artist['uri'], country='US')  # Adjust country as needed
         songs = list()
 
-        for track in top_tracks['tracks'][:10]:  # Get the top 10 songs
+        for track in top_tracks['tracks'][:5]:  # Get the top 10 songs
             song_info = {
                 'name': track['name'],
                 'release_date': track['album']['release_date'],  # Get release date

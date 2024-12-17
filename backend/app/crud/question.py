@@ -61,10 +61,7 @@ def can_question(db: Session, listener: Listener, artist: Artist):
     if not check_follow(db, listener, artist.user.username):
         return False
 
-    if db.query(Question).filter(Question.listener_id == listener.listener_id, 
-                                Question.artist_id == artist.artist_id,
-                                Question.response_status == ResponseEnum.waiting).first():
-        return False
+
     # Check if listener is in the top 10 in terms of loyalty
     return get_listener_loyalty_data(artist, listener, db)["percentage"] < 10
 
