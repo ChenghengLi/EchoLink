@@ -1,4 +1,5 @@
 import pytest
+from models.user import User
 from metrics.listeners import get_listener_loyalty_data, loyalty_points, loyalty_sorted_listeners
 from models.question import Question, ResponseEnum
 from crud.listener import follow_artist, get_all_listeners
@@ -79,6 +80,9 @@ def test_loyalty_points(db_session):
 
 # Test: Test loyalty points sort function with listeners
 def test_loyalty_sorted_listeners(db_session):
+    db_session.query(User).delete()  # Deletes all rows in the User table
+    db_session.commit()              # Commit the changes to the database
+    
     artist = create_artist(db_session)
     listener1 = create_listener(db_session, "listener1")
     listener2 = create_listener(db_session, "listener2")
