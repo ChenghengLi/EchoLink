@@ -7,7 +7,7 @@
             <LoadingSpinner class="mx-auto" />
         </div>
         <!-- Profile view -->
-        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg"
+        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto max-w-screen-lg container-main"
             data-test="container-main">
             <!-- Username, badges and banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
@@ -15,7 +15,7 @@
                 <div class="sm:flex min-h-32 relative">
                     <!-- Avatar and username -->                        
                     <div class="flex items-end">
-                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" :src=" user.image_url" />
                         <div class="ms-3 flex flex-col items-start w-full">
                             <!-- TODO ensure contrast vs banner -->
                             <div class="flex items-center w-full mb-2 space-x-4">
@@ -190,6 +190,7 @@ import PlaylistService from '../services/playlist.js'
 import ListenerService from '../services/listener.js'
 import Swal from 'sweetalert2'
 import Toast from '../utilities/toast.js'
+import AvatarSvg from '../assets/images/avatar.svg'
 import Cookies from 'js-cookie';
 import { computed, onMounted, ref, watch, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -219,6 +220,7 @@ const user = reactive({
     visibility: 'public',
     publicProfile: true, // Alias of visibility; exists to simplify reactivity of the visibility checkbox.
     role: 'listener',
+    image_url: '',
 })
 const playlists = reactive([])
 
@@ -229,6 +231,9 @@ async function fetchUserData() {
         Object.assign(user, await UserService.get(getUsername()))
         user.publicProfile = user.visibility === 'public'
 
+        user.image_url = user.image_url !=="" ? user.image_url: AvatarSvg;
+        
+        console.log(user.image_url)
         // Don't show private profiles unless they belong to the user.
         // TODO this should be done in the backend, but I felt like "mocking" it now
         // so we don't get embarrassed in the demo over a checkbox for a not-fully-implemented feature.
@@ -482,7 +487,7 @@ function askQuestion() {
             icon: 'warning',
             timer: 3000,
         });
-        router.push('/');
+        router.push('/logIn');
     }
     
 }
@@ -490,6 +495,8 @@ function askQuestion() {
 function goToPlaylistCreator(){
     router.push('/playlists/new');
 }
+
+
 
 const visiblePlaylists = computed(() => {
     // Only show private playlists for their creator

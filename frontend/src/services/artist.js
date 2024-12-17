@@ -85,6 +85,7 @@ class ArtistService{
             console.error('Error fetching response rate:', error);
         }
     }
+
     
 }
 

@@ -7,7 +7,7 @@
             <LoadingSpinner class="mx-auto" />
         </div>
         <!-- Song view -->
-        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto min-w-full">
+        <div v-else-if="isLoaded && errorMsg === null" class="flex flex-col mx-auto min-w-full container-main">
             <!-- Banner area -->
             <div class="banner content-block mx-auto w-100 mt-8 mb-2">
                 <!-- Inner banner area -->
