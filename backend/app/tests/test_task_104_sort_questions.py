@@ -2,7 +2,7 @@ import pytest
 from datetime import datetime
 from crud.listener import follow_artist, get_listener_by_listener_id
 from models.question import Question, ResponseEnum
-from crud.question import get_questions_by_listener, get_questions_by_artist
+from crud.question import get_questions_by_listener, get_waiting_questions_by_artist
 from tests.utils import create_artist, create_listener, get_session
 
 @pytest.fixture(scope="function")
@@ -119,7 +119,7 @@ def test_get_questions_by_artist(db_session):
     listener2 = create_listener(db_session, "listener2")
 
     # No questions yet
-    assert len(get_questions_by_artist(db_session, artist.user.username)) == 0
+    assert len(get_waiting_questions_by_artist(db_session, artist.user.username)) == 0
 
     questions = [
         Question(listener_id=listener1.listener_id, artist_id=artist.artist_id, question_text="Answered question",
@@ -146,7 +146,7 @@ def test_get_questions_by_artist(db_session):
     follow_artist(db_session, listener1, artist.user.username)
 
     # Call the function
-    sorted_questions = get_questions_by_artist(db_session, artist.user.username)
+    sorted_questions = get_waiting_questions_by_artist(db_session, artist.user.username)
 
     # Assertions
     assert len(sorted_questions) == 3  # Only waiting questions should be retrieved

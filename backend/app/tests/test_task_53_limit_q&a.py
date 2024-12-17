@@ -46,8 +46,8 @@ def test_submit_question_when_waiting_for_response(db_session):
     with pytest.raises(HTTPException) as exc_info:
         submit_question(db_session, listener, new_question_input)
     
-    assert exc_info.value.status_code == status.HTTP_406_NOT_ACCEPTABLE
-    assert exc_info.value.detail == "This listener is waiting for a response."
+    assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
+    assert exc_info.value.detail == "This listener cannot ask this artist."
 
     # Delete data created
     db_session.delete(listener.user)
