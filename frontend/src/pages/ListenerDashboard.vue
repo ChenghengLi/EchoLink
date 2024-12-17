@@ -7,8 +7,9 @@
                 <div class="sm:flex min-h-32 relative">
                     <!-- Avatar and username -->
                     <div class="flex items-center mx-auto">
-                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black" src="../assets/images/avatar.svg" />
-                        
+                        <img class="max-w-32 min-w-20 h-auto rounded-3 border-black"
+                            src="../assets/images/avatar.svg" />
+
                         <!-- TODO ensure contrast vs banner -->
                         <div class="flex flex-col items-start ms-3">
                             <p class="font-bold text-lg text-white">Welcome back, {{ getUsername() }}</p>
@@ -23,66 +24,83 @@
             <!-- Browse artists -->
             <div class="mx-auto">
                 <h2>Your artists</h2>
-                <p>Connect with your favorite musicians on EchoLink by asking them questions and staying up to date with their latest releases.</p>
+                <p>Connect with your favorite musicians on EchoLink by asking them questions and staying up to date with
+                    their latest releases.</p>
 
-                <ArtistsCarousel/>
+                <ArtistsCarousel />
 
                 <button @click="router.push('/artist')" class="btn btn--primary mt-3 min-w-64 text-black">
                     Explore all artists
                 </button>
             </div>
 
-            <!--Songs-->
+            <!-- Songs -->
             <div v-if="isListener()" class="mx-auto">
-                <hr class="h-divider my-5"/>
+                <hr class="h-divider my-5" />
                 <h2>Your songs</h2>
                 <p>This list of songs may be of your interest!</p>
-                <div v-if="recommendationSongsError === null" class="flex flex-col items-center w-100 mt-3 gap-x-4 h-full"> <!-- Gap is present on 2-column layout only (not mobile) -->
+                <div v-if="recommendationSongsError === null"
+                    class="flex flex-col items-center w-100 mt-3 gap-x-4 h-full">
                     <template v-if="recommendationSongs.length > 0">
-                        <div
-                            :class="{
+                        <div :class="{
                             'flex flex-col items-center': recommendationSongs.length <= 5,
                             'flex flex-col-reverse lg:flex-row items-center justify-center': recommendationSongs.length > 5
-                            }"
-                            class="gap-x-4 w-full"
-                        >
+                        }" class="gap-x-4 w-full">
                             <div v-if="recommendationSongs.length <= 5" class="flex flex-col flex-grow max-w-xl">
-                                <SongList :value="recommendationSongs" :editable="false" />
+                                <div v-for="song in recommendationSongs" :key="song.id" class="song-item">
+                                    <SongList :value="[song]" :editable="false" />
+                                </div>
                             </div>
                             <template v-else>
                                 <div class="flex flex-col flex-grow max-w-xl">
-                                    <SongList :value="recommendationSongs.slice(0, Math.ceil(recommendationSongs.length / 2))" :editable="false" />
+                                    <div v-for="song in recommendationSongs.slice(0, Math.ceil(recommendationSongs.length / 2))"
+                                        :key="song.id" class="song-item">
+                                        <SongList :value="[song]" :editable="false" />
+                                    </div>
                                 </div>
                                 <div class="flex flex-col flex-grow max-w-xl">
-                                    <SongList :value="recommendationSongs.slice(Math.ceil(recommendationSongs.length / 2))" :editable="false" />
+                                    <div v-for="song in recommendationSongs.slice(Math.ceil(recommendationSongs.length / 2))"
+                                        :key="song.id" class="song-item">
+                                        <SongList :value="[song]" :editable="false" />
+                                    </div>
                                 </div>
                             </template>
                         </div>
-          
-                            <button @click="router.push('/music')" class="btn btn--primary mt-3 min-w-64 text-black">
-                                Explore songs
-                            </button>
-                
+
+                        <button @click="router.push('/music')" class="btn btn--primary mt-3 min-w-64 text-black">
+                            Explore songs
+                        </button>
                     </template>
                     <template v-else>
-                        <p class="text-gray-500 text-center mt-4">No recommendations available. Please check back later!</p>
+                        <p class="text-gray-500 text-center mt-4">No recommendations available. Please check back later!
+                        </p>
                     </template>
                 </div>
-                <p v-else class="text-gray-500">Something went wrong while fetching your recommendation songs:<br>{{ recommendationSongsError }}.<br>Try refreshing the page.</p>    
+                <p v-else class="text-gray-500">
+                    Something went wrong while fetching your recommendation songs:<br />
+                    {{ recommendationSongsError }}.<br />
+                    Try refreshing the page.
+                </p>
             </div>
-
-            <hr class="h-divider my-5"/>
+            <hr class="h-divider my-5" />
 
             <!-- Questions -->
             <div v-if="isListener" class="mx-auto">
                 <h2>Your questions</h2>
                 <p>See how artists have responded to your questions.</p>
-                <div v-if="!questionsError && topQuestions.length > 0" class="flex flex-col gap-y-4 mx-auto mt-2 max-w-screen-lg">
-                    <QuestionCard v-for="question in topQuestions" :question="question" @archived="onQuestionArchived(question)"></QuestionCard>
+                <div v-if="!questionsError && topQuestions.length > 0"
+                    class="flex flex-col gap-y-4 mx-auto mt-2 max-w-screen-lg">
+                    <QuestionCard v-for="question in topQuestions" :question="question"
+                        @archived="onQuestionArchived(question)">
+                    </QuestionCard>
                 </div>
-                <p v-else-if="questionsError" class="text-gray-500">Something went wrong while fetching latest questions:<br>{{ songsError }}.<br>Try refreshing the page.</p>
-                <p v-else-if="topQuestions.length == 0" class="text-gray-500">You have made no questions to artists yet. Visit their profiles to start asking questions.</p>
-                
+                <p v-else-if="questionsError" class="text-gray-500">Something went wrong while fetching latest
+                    questions:<br>{{
+                    songsError }}.<br>Try refreshing the page.</p>
+                <p v-else-if="topQuestions.length == 0" class="text-gray-500">You have made no questions to artists yet.
+                    Visit their
+                    profiles to start asking questions.</p>
+
                 <button @click="router.push('/questions')" class="btn btn--primary mt-3 min-w-64 text-black">
                     View all questions
                 </button>
@@ -142,7 +160,7 @@ async function fetchSongs() {
 
             // Track all used genres
             if (!registeredGenres.value.has(song.genre)) {
-                genres.push({id: song.genre, label: song.genre})
+                genres.push({ id: song.genre, label: song.genre })
                 registeredGenres.value.add(song.genre)
             }
         }
@@ -152,7 +170,7 @@ async function fetchSongs() {
     }
 }
 
-async function fetchRecommendationSongs(){
+async function fetchRecommendationSongs() {
     try {
         const fetchedRecommendationSongs = await SongService.getRecommendation()
         for (const index in fetchedRecommendationSongs) {
@@ -193,10 +211,10 @@ function splitSongs() {
     // Dividir las canciones en dos columnas
     const midPoint = Math.ceil(this.recommendationSongs.length / 2);
     return [
-      this.recommendationSongs.slice(0, midPoint),
-      this.recommendationSongs.slice(midPoint)
+        this.recommendationSongs.slice(0, midPoint),
+        this.recommendationSongs.slice(midPoint)
     ];
-  }
+}
 
 const validSongs = computed(() => {
     const searchText = search.text.toLowerCase(); // Convert search input to lowercase
@@ -211,7 +229,7 @@ const validSongs = computed(() => {
 
 
 const shownSongs = computed(() => {
-    const results =  validSongs.value.slice(0, shownSongsAmount.value)
+    const results = validSongs.value.slice(0, shownSongsAmount.value)
     return results
 })
 
@@ -242,7 +260,7 @@ onMounted(function () {
     fetchQuestions()
     fetchUser()
     fetchRecommendationSongs()
-   ArtistService.getArtistByFollowers().then((a) => {
+    ArtistService.getArtistByFollowers().then((a) => {
         console.log("Artists loaded")
         console.log(a)
     }).catch((err) => {
@@ -259,13 +277,16 @@ onMounted(function () {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Align items to the top */
-    min-height: 100vh; /* Ensure the container takes the full height of the viewport */
+    justify-content: flex-start;
+    /* Align items to the top */
+    min-height: 100vh;
+    /* Ensure the container takes the full height of the viewport */
 }
 
 .footer-light {
     width: 100vw;
 }
+
 .section-header {
     @apply text-left font-bold text-xl
 }
@@ -286,4 +307,30 @@ onMounted(function () {
     @apply bg-cover
 }
 
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    /* Default to 1 column */
+    gap: 20px;
+    width: 100%;
+}
+
+.song-item {
+    width: 90vw;
+    /* Default width for small screens */
+    height: auto;
+}
+
+@media (min-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns for medium and large screens */
+    }
+
+    .song-item {
+        width: 40vw;
+        /* Adjust width for larger screens */
+    }
+}
 </style>
