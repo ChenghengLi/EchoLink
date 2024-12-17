@@ -158,7 +158,11 @@ async function fetchArtists() {
 			const artist = fetchedArtists[index];
 
 			if (!registeredGenres.value.has(artist.genre)) {
-				genres.push({ id: artist.genre, label: artist.genre });
+				const capitalizedGenre = artist.genre
+					.split(' ')
+					.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+					.join(' ');
+				genres.push({ id: artist.genre, label: capitalizedGenre });
 				registeredGenres.value.add(artist.genre);
 			}
 		}
@@ -363,5 +367,37 @@ onBeforeUnmount(() => {
 	align-items: center;
 	justify-content: flex-start;
 	/* Align items to the top */
+}
+
+@media (max-width: 768px) {
+	/* Center the text at the top */
+	h2, p {
+		text-align: center;
+		padding: 0 10px; /* Add some padding for better readability */
+	}
+
+	/* Center and resize the TextInput and OptionSelector */
+	.search-and-filters {
+		width: 100%; /* Ensure the container takes full width */
+		display: flex;
+		flex-direction: column; /* Stack the elements vertically */
+		align-items: center; /* Center align the elements */
+		gap: 10px; /* Add spacing between the elements */
+	}
+
+	.search-bar {
+		width: 80%; /* Make the TextInput 80% of the screen width */
+	}
+
+	.filters-container {
+		width: 80%; /* Make the dropdown container 80% of the screen width */
+		flex-direction: column; /* Stack the dropdowns vertically */
+		align-items: center; /* Center align the dropdowns */
+		gap: 10px; /* Add spacing between the dropdowns */
+	}
+
+	.dropdown {
+		width: 100%; /* Ensure dropdowns take full width of their container */
+	}
 }
 </style>

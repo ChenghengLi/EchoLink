@@ -7,7 +7,10 @@
             </router-link>
             <div class="overlay">
                 <h5 class="artist-name">{{ artist.username }}</h5>
-                <p class="artist-genre">{{ artist.genre }}</p>
+                <p class="artist-genre">{{ 				artist.genre
+					.split(' ')
+					.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+					.join(' ')}}</p>
 
             </div>
         </div>
@@ -401,5 +404,20 @@ export default {
 .action-button.dialog-button:hover {
     background-color: #0056b3;
     /* Darker blue for the message button */
+}
+
+.artist-name {
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+    /* Minimum size: 0.8rem, scales with viewport width (1.5vw), maximum size: 1.2rem */
+    font-weight: bold;
+    margin: 0;
+    color: white;
+}
+
+.artist-genre {
+    font-size: clamp(0.6rem, 1vw, 0.9rem);
+    /* Minimum size: 0.6rem, scales with viewport width (1vw), maximum size: 0.9rem */
+    margin-top: 5px;
+    color: white;
 }
 </style>
